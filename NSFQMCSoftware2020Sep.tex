@@ -209,6 +209,8 @@
 \newcommand{\bhh}{{\boldsymbol{h}}}
 \newcommand{\beps}{{\boldsymbol{\varepsilon}}}
 \newcommand{\tbeps}{\tilde{\beps}}
+\newcommand{\bt}{{\boldsymbol{t}}}
+\newcommand{\bT}{{\boldsymbol{T}}}
 \newcommand{\bx}{{\boldsymbol{x}}}
 \newcommand{\bX}{{\boldsymbol{X}}}
 \newcommand{\bh}{{\boldsymbol{h}}}
@@ -220,7 +222,6 @@
 \newcommand{\bv}{{\boldsymbol{v}}}
 \newcommand{\bu}{{\boldsymbol{u}}}
 \newcommand{\by}{{\boldsymbol{y}}}
-\newcommand{\bt}{{\boldsymbol{t}}}
 \newcommand{\bz}{{\boldsymbol{z}}}
 \newcommand{\bvarphi}{{\boldsymbol{\varphi}}}
 \newcommand{\bgamma}{{\boldsymbol{\gamma}}}
@@ -258,6 +259,7 @@
 \newcommand{\caln}{{\mathcal{N}}}
 \newcommand{\calp}{{\mathcal{P}}}
 \newcommand{\cals}{{\mathcal{S}}}
+\newcommand{\calu}{{\mathcal{U}}}
 \newcommand{\cL}{\mathcal{L}}
 \newcommand{\cP}{\mathcal{P}}
 \newcommand{\cT}{\mathcal{T}}
@@ -306,6 +308,8 @@
 \newcommand{\ErrN}{\ERR\bigl(\dataN,n\bigr)}
 \newcommand{\fint}{f_{\text{int}}}
 \newcommand{\inflate}{\fC}
+\newcommand{\IIDSim}{\overset{\text{IID}}{\sim}}
+\newcommand{\LDSim}{\overset{\text{LD}}{\sim}}
 
 
 \definecolor{MATLABOrange}{rgb}{0.85,  0.325, 0.098}
@@ -355,6 +359,41 @@ Quasi-Monte Carlo Community Software\\
 \vspace{-6ex}
 
 \section{Overview}
+
+Quasi-Monte Carlo (QMC)methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to achieve substantial efficiency gains.  We propose to grow a Python QMC software library that will be shared by QMC researchers and benefit an expanding base of QMC users.
+
+\subsection{Applications of (Q)MC}  Many situations are best understood by building randomness into the mathematical model.  Examples include statistical inference, financial risk, light transport, power grid resilience, and particle physics.  Simulations of these situations using random vectors or discrete stochastic processes, allows one to estimate expectations (means, averages), quantiles, and other statistical properties of the outcomes.  Multi-dimensional integrals can be written as  expectations.  (Q)MC methods avoid the curse of dimensionality that would arise from gridded samples.
+
+In construction of surrogate models for computer experiments (multivariate function approximation), one often wishes to evenly sample the domain to search for regions where the function changes more sharply.  IID and LD samples are possibilities.
+
+\subsection{LD versus IID Sampling}
+
+The quantity of interest, $Y$ (option payoff, pixel intensity, time to failure), is typically expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  When $f$ is complex, the population mean, $\mu = \bbE(Y)$,  may be estimated the sample mean,
+\begin{equation}
+\hmu_n = \frac 1n \sum_{i=1}^n Y_i = \frac 1n  \sum_{i=1}^n f(\bX_i).
+\end{equation}
+How does one choose $\bX_1, \bX_2, \ldots $ to make $\abs{\mu - \hmu_n}$ small?
+
+
+Figure \ref{fig:iid_vs_ld} displays IID and LD points intended to mimic the standard uniform distribution in dimension $d=2$, i.e., 
+$\calu[0,1]^2$.  The points on the left, $\bX_1, \bX_2,  \ldots \IIDSim \calu[0,1]^2$, do not know about each other.  They are 
+random.  Since they are IID, the multivariate distribution of $\bX_1, \ldots \bX_n$ is  $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
+\cdots F(\bx_n) = x_{11}x_{12} x_{21} \cdots x_{n2}$, where $F(\bx)  = x_1x_2$ in this case.
+
+
+
+\begin{figure}
+	\centering
+	\includegraphics[height = 6cm]{ProgramsImages/iid_uniform_pts.png} \quad
+	\includegraphics[height = 6cm]{ProgramsImages/lattice_pts.png}
+	\caption{IID points (left) and LD lattice points (right).  The LD points have fewer gaps and clusters of points. \label{fig:iid_vs_ld}}
+\end{figure}
+
+In contrast, the  points on the right, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are coordinated with each other.  They might be deterministic or random.  They are designed to mimic the distribution $F$ will in the sense that the empirical distribution function of  $\bX_1, \ldots \bX_n$, which is denoted, $F_{\{\bX_i\}_{i=1}^n}$ should be close to $F$.  (The empirical distribution for $n$  points assigns probability $1/n$ to each of point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$, and LD points make the discrepancy small.
+
+
+\end{document}
+
 
 Low Discrepancy vs.\ IID Sampling
 
