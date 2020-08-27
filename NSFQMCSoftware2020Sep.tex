@@ -359,7 +359,7 @@ QMCPy: Quasi-Monte Carlo Community Software\\
 
 \vspace{-6ex}
 
-\section{Overview}
+\section{Overview of QMC}
 
 Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to achieve substantial efficiency gains.  We propose to grow QMCPy \cite{QMCPy2020a}, a Python QMC software library, which will be embraced by QMC researchers and benefit an expanding base of QMC users.  QMCPy will become
 \begin{enumerate}
@@ -404,7 +404,7 @@ Figure \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to 
 	\centering
 	\includegraphics[height = 5cm]{ProgramsImages/iid_uniform_pts.png} \quad
 	\includegraphics[height = 5cm]{ProgramsImages/lattice_pts.png} \quad
-	\includegraphics[height = 5cm]{ProgramsImages/lattice_pts.png}
+	\includegraphics[height = 4cm]{ProgramsImages/GridPts.png}
 	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points. \label{fig:iid_vs_ld}}
 \end{figure}
 
@@ -429,16 +429,26 @@ Figure \ref{fig:KeisterTimes} displays the results of approximating an integral 
 \begin{equation}
     \mu = \int_{\reals^d} \cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2) \, \dif \bt,
 \end{equation}
-under several absolute error tolerances, $\varepsilon$, using QMCPy.  Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases. 
+for the case $d =?$ under several absolute error tolerances, $\varepsilon$, using QMCPy.  Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases. 
+
 
 \begin{figure}
     \centering
-    \includegraphics[height = 6 cm]{ProgramsImages/iid_uniform_pts.png} \qquad
-    \includegraphics[height = 6 cm]{ProgramsImages/iid_uniform_pts.png}
-    \caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister}.  The  }
+    \includegraphics[height = 5.5 cm]{ProgramsImages/KeisterN.png} \qquad
+    \includegraphics[height = 5.5 cm]{ProgramsImages/KeisterTime.png}
+    \caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister} using QMCPy.  LD sampling is much more efficient than IID sampling, especially as the error tolerance decreases.}
     \label{fig:KeisterTimes}
 \end{figure}
 
+The advantage of LD sampling is illustrated by the fact sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = $ the difference is already minutes for LD versus hours for IID and tens of thousands of function values for LD versus tens of millions of function values for IID.
+
+The computational cost rates as $\varepsilon$ decreases for IID and LD sampling are essentially independent of $d$.  This is not the case for tensor product rules.  If the derivatives of $f$ up to total order $rd$ exist, then there exist tensor product rules that provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a cost (time or function values) of $\Order(\varepsilon^{-d/r})$.  While increased smoothness, $r$, helps, it cannot overcome the curse of dimensionality (exponential growth of the cost with $d$).
+
+\section{QMCPy Now}
+
+
+
+\section{What QMCPy Should Become}
 
 
 \section{Intellectual Merit}
