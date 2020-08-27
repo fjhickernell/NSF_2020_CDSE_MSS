@@ -442,9 +442,46 @@ for the case $d =?$ under several absolute error tolerances, $\varepsilon$, usin
 
 The advantage of LD sampling is illustrated by the fact sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = $ the difference is already minutes for LD versus hours for IID and tens of thousands of function values for LD versus tens of millions of function values for IID.
 
-The computational cost rates as $\varepsilon$ decreases for IID and LD sampling are essentially independent of $d$.  This is not the case for tensor product rules.  If the derivatives of $f$ up to total order $rd$ exist, then there exist tensor product rules that provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a cost (time or function values) of $\Order(\varepsilon^{-d/r})$.  While increased smoothness, $r$, helps, it cannot overcome the curse of dimensionality (exponential growth of the cost with $d$).
+The computational cost rates as $\varepsilon$ decreases for IID and LD sampling are essentially independent of $d$.  This is not the case for tensor product rules.  If the derivatives of $f$ up to total order $rd$ exist, then there exist tensor product rules that provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a cost (time or function values) of $\Order(\varepsilon^{-d/r})$.  While increased smoothness, $r$, helps, it cannot overcome the curse of dimensionality, i.e., exponential growth of the cost with $d$.
+
+To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a proving ground for the latest developments.  This is why we need a library like QMCPy.
 
 \section{QMCPy Now}
+
+\subsection{The Start of QMCPy}
+During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC researchers how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now, which are similar to then, include:
+
+\begin{description}[format=\textup]
+	\item[MATLAB] Sobol' and Halton sequences in their Statistics and Machine Learning Toolbox, commercial \cite{MAT9.8}
+	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}
+\end{description}
+
+\end{document}
+
+MATLAB Statistics Toolbox}}---\newline Sobol' and Halton} &
+\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{\alert{Mike Giles}}---Multi-Level (Quasi-)Monte Carlo  \uncover<1>{in C++, MATLAB, Python, and R}
+\tabularnewline
+\href{https://cran.r-project.org/web/packages/qrng/qrng.pdf}{\alert{Marius Hofert \& Christiane Lemieux }}---\texttt{qrng} \uncover<1>{R package,} Sobol' and Halton &
+\href{http://gailgithub.github.io/GAIL_Dev/}{\alert{Guaranteed Automatic Integration Library (GAIL)}}---Stopping criteria  \uncover<1>{in MATLAB}
+\tabularnewline
+\uncover<1>{\href{http://www.broda.co.uk}{\alert{BRODA, Sergei Kucherenko}}---Sobol' in C, MATLAB, and Excel}& 
+\uncover<1>{\href{https://www.uqlab.com}{\alert{UQLab}}---Framework for Uncertainty Quantification in MATLAB}
+\tabularnewline
+\href{http://statweb.stanford.edu/~owen/code/}{\alert{Art Owen}}---randomized Halton\uncover<1>{ in R}&
+\multirow{3}{0.47\textwidth}{\uncover<1>{\centering \href{http://www.openturns.org}{\alert{OpenTURNS}---An Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python}}}
+\tabularnewline
+\uncover<1>{\href{https://github.com/PieterjanRobbe/QMC.jl}{\alert{Pieterjan Robbe}---LD sequences in Julia}}
+\tabularnewline
+\href{https://pytorch.org/}{\alert{PyTorch}---Sobol' \uncover<1>{in Python}}
+\tabularnewline
+\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://simul.iro.umontreal.ca}{\alert{Pierre L'Ecuyer}---Lattice Builder \uncover<1>{and  Stochastic Simulation in C/C++ and Java}}}
+\tabularnewline
+\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://people.cs.kuleuven.be/~dirk.nuyens/}{\alert{Dirk Nuyens}}---Magic Point Shop \uncover<1>{and QMC4PDE in MATLAB, Python, and C++}}
+\tabularnewline
+\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\uncover<1>{\href{http://people.sc.fsu.edu/~jburkardt/}{\alert{John Burkhardt}}---variety in C++, Fortran, MATLAB, \& Python}}
+\tabularnewline
+\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{\alert{QMCPy}}---Python package \alert<2->{incorporating and connecting} the work of different groups}
+\tabularnewline
 
 
 
