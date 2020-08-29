@@ -359,7 +359,7 @@ QMCPy: Quasi-Monte Carlo Community Software\\
 
 \vspace{-6ex}
 
-\section{Overview of QMC}
+\section{Overview of QMC and LD Sampling}
 
 Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to achieve substantial efficiency gains.  We propose to grow QMCPy \cite{QMCPy2020a}, a Python QMC software library, which will be embraced by QMC researchers and benefit an expanding base of QMC users.  QMCPy will become
 \begin{enumerate}
@@ -458,15 +458,15 @@ During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC r
 	\item[Owen]
 	\item[Robbe] 
 	\item[PyTorch]
+	\item[ML(Q)MC] Multi-Level (Quasi-)Monte Carlo routines in C++, MATLAB, Python, and R \cite{GilesSoft}
+	
 \end{description}
 
 \iffalse
 
 MATLAB Statistics Toolbox}}---\newline Sobol' and Halton} &
 \href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{\alert{Mike Giles}}---Multi-Level (Quasi-)Monte Carlo  \uncover<1>{in C++, MATLAB, Python, and R}
-\tabularnewline
-\href{https://cran.r-project.org/web/packages/qrng/qrng.pdf}{\alert{Marius Hofert \& Christiane Lemieux }}---\texttt{qrng} \uncover<1>{R package,} Sobol' and Halton &
-\href{http://gailgithub.github.io/GAIL_Dev/}{\alert{Guaranteed Automatic Integration Library (GAIL)}}---Stopping criteria  \uncover<1>{in MATLAB}
+
 \tabularnewline
 \uncover<1>{\href{http://www.broda.co.uk}{\alert{BRODA, Sergei Kucherenko}}---Sobol' in C, MATLAB, and Excel}& 
 \uncover<1>{\href{https://www.uqlab.com}{\alert{UQLab}}---Framework for Uncertainty Quantification in MATLAB}
