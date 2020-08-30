@@ -448,49 +448,31 @@ To harness the efficiency of LD sampling via QMC methods, practitioners need qua
 \section{QMCPy Now}
 
 \subsection{The Start of QMCPy}
-During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC researchers how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now, which are similar to then, include:
-
+During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC researchers how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now, which are similar to then, include the following:
 \begin{description}[format=\textup]
 	\item[MATLAB] Sobol' and Halton sequences in their Statistics and Machine Learning Toolbox, commercial \cite{MAT9.8}
 	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}
-	\item[GAIL] Automatic stopping criteria for (Q)MC in MATLAB \cite{ChoEtal20a}
 	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a}
-	\item[Owen]
-	\item[Robbe] 
-	\item[PyTorch]
+	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch}
+	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LatNet}
+	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a}
+	\item[Owen] Randomized Halton sequences in R \cite{Owe20a}
+	\item[Robbe] LD Sequences in Julia \cite{Rob20a}
+	\item[Burkhardt] various QMC software in C++, Fortran, MATLAB, \& Python \cite{Bur20a}
+	\item[SSJ] Stochastic Simulation in Java \cite{SSJ}
 	\item[ML(Q)MC] Multi-Level (Quasi-)Monte Carlo routines in C++, MATLAB, Python, and R \cite{GilesSoft}
-	
-	\cite{BinSur13}
-	
+	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a}
+	\item[GAIL] Automatic stopping criteria for (Q)MC in MATLAB \cite{ChoEtal20a}
+	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}
+	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS}
 \end{description}
+All focus on certain aspects of QMC: some on the generation of LD sequences, some on fundamental QMC algorithms, and others on the applications of QMC.  They are mainly the initiatives of individual research groups.
 
-\iffalse
+ 
 
-MATLAB Statistics Toolbox}}---\newline Sobol' and Halton} &
-\href{https://people.maths.ox.ac.uk/gilesm/mlmc/}{\alert{Mike Giles}}---Multi-Level (Quasi-)Monte Carlo  \uncover<1>{in C++, MATLAB, Python, and R}
 
-\tabularnewline
-\uncover<1>{\href{http://www.broda.co.uk}{\alert{BRODA, Sergei Kucherenko}}---Sobol' in C, MATLAB, and Excel}& 
-\uncover<1>{\href{https://www.uqlab.com}{\alert{UQLab}}---Framework for Uncertainty Quantification in MATLAB}
-\tabularnewline
-\href{http://statweb.stanford.edu/~owen/code/}{\alert{Art Owen}}---randomized Halton\uncover<1>{ in R}&
-\multirow{3}{0.47\textwidth}{\uncover<1>{\centering \href{http://www.openturns.org}{\alert{OpenTURNS}---An Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python}}}
-\tabularnewline
-\uncover<1>{\href{https://github.com/PieterjanRobbe/QMC.jl}{\alert{Pieterjan Robbe}---LD sequences in Julia}}
-\tabularnewline
-\href{https://pytorch.org/}{\alert{PyTorch}---Sobol' \uncover<1>{in Python}}
-\tabularnewline
-\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{http://simul.iro.umontreal.ca}{\alert{Pierre L'Ecuyer}---Lattice Builder \uncover<1>{and  Stochastic Simulation in C/C++ and Java}}}
-\tabularnewline
-\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://people.cs.kuleuven.be/~dirk.nuyens/}{\alert{Dirk Nuyens}}---Magic Point Shop \uncover<1>{and QMC4PDE in MATLAB, Python, and C++}}
-\tabularnewline
-\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\uncover<1>{\href{http://people.sc.fsu.edu/~jburkardt/}{\alert{John Burkhardt}}---variety in C++, Fortran, MATLAB, \& Python}}
-\tabularnewline
-\multicolumn{2}{>{\centering}m{0.96\textwidth}}{\href{https://qmcsoftware.github.io/QMCSoftware/}{\alert{QMCPy}}---Python package \alert<2->{incorporating and connecting} the work of different groups}
-\tabularnewline
 
-\fi
-
+\cite{BinSur13}
 
 
 \section{What QMCPy Should Become}
