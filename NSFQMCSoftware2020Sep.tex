@@ -427,32 +427,33 @@ For LD sampling the absolute error has an upper bound of
 \end{equation}
 Here the Banach space $\calf$ typically requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., integrable mixed partial derivatives up to order one in each direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n, F)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$ for well-chosen LD sequences, where $\delta$ may be an arbitrarily small, positive number.
 
-
-\begin{figure}
-    \centering
-    \includegraphics[height =0.35\textwidth]{ProgramsImages/keister_timing.eps} \qquad
-    \includegraphics[height =0.35\textwidth]{ProgramsImages/keister_n.eps}
-    \caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister} using QMCPy.  LD sampling is much more efficient than IID sampling, especially as the error tolerance decreases.}
-    \label{fig:KeisterTimes}
-\end{figure}
-
 Figure \ref{fig:KeisterTimes} displays the results of approximating an integral from a computational physics example of Keister \cite{Kei96},
 \begin{equation} \label{eq:Keister}
 \mu = \int_{\reals^d} \cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2) \, \dif \bt,
 \end{equation}
-for the case $d =?$ under several absolute error tolerances, $\varepsilon$, using QMCPy.  Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases. 
+for the case $d =5$ under several absolute error tolerances, $\varepsilon$, using QMCPy.  Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases. 
+
+
+\begin{wrapfigure}{r}{0.75\textwidth}
+	\centering
+	\includegraphics[height =0.35\textwidth]{ProgramsImages/keister_n.eps}
+	\includegraphics[height =0.35\textwidth]{ProgramsImages/keister_timing.eps} 
+	\caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister} using QMCPy.  LD sampling is substantially more efficient than IID sampling, especially as the error tolerance decreases.}
+	\label{fig:KeisterTimes}
+\end{wrapfigure}
+
 
 
 The advantage of LD sampling is illustrated by the fact sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = $ the difference is already minutes for LD versus hours for IID and tens of thousands of function values for LD versus tens of millions of function values for IID.
 
 The computational cost rates as $\varepsilon$ decreases for IID and LD sampling are essentially independent of $d$.  This is not the case for tensor product rules.  If the derivatives of $f$ up to total order $rd$ exist, then there exist tensor product rules that provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a cost (time or function values) of $\Order(\varepsilon^{-d/r})$.  While increased smoothness, $r$, helps, it cannot overcome the curse of dimensionality, i.e., exponential growth of the cost with $d$.
 
-To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a proving ground for the latest developments.  This is why we need a library like QMCPy.
+To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a proving ground for their latest developments.  This is why we need QMCPy.
 
 \section{QMCPy Now}
 
 \subsection{The Start of QMCPy}
-During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC researchers how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now, which are similar to then, include the following:
+During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC researchers how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
 \begin{description}[format=\textup]
 	\item[MATLAB] Sobol' and Halton sequences in their Statistics and Machine Learning Toolbox, commercial \cite{MAT9.8}
 	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}
@@ -470,15 +471,17 @@ During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC r
 	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}
 	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS}
 \end{description}
-All these software packages focus on just certain aspects of QMC: some on the generation of LD sequences, some on fundamental QMC algorithms, and others on the applications of QMC.  They are mainly the initiatives of individual research groups.
+All these software packages focus on just certain aspects of QMC: some on the generation of LD sequences, some on fundamental QMC algorithms, and others on the applications of QMC.  They are mainly the initiatives of individual research groups, not a shared community effort.
 
-After these fruitful discussions, SigOpt, a Silicon Valley startup, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups. Python 3 was chosen as the language based on its popularity among a broad sector of potential users, especially those in the high tech industry who are not using it as widely as they might.  2019 to begin work on QMCPy, which would combine the efforts of several different research groups.  Python also supports C libraries to speed up crucial code.  Aleksei Sorokin,  co-terminal BS applied mathematics and MS data science student at Illinois Tech was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020, and FH provided a tutorial on QMC software---with a focus on QMCPy at MCQMC 2020 \cite{}.  A Google Colaboratory notebook \cite{} was made available for the audience to try QMCPy simultaneously with the tutorial.
+After these fruitful discussions in 2018, SigOpt, a Silicon Valley startup, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language based on its popularity among a broad sector of potential users, especially those in the high tech industry who are not using it as widely as they might.  Python also supports C libraries to speed up crucial code.  Aleksei Sorokin,  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \mintinline{python}{pip} and imported via \mintinline{python}{from qmcpy import *}.
+
+FH gave a tutorial on QMC software---with a focus on QMCPy at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory notebook \cite{QMCPyTut2020} was made available for the audience to try QMCPy simultaneously with the tutorial.  A series of blogs to introduce the broader community to QMC was developed \cite{QMCBlog}.
 
 
 
 \subsection{The Architecture of QMCPy}
 
-QMCPy may be installed using \texttt{pip} an imported in the 
+QMCPy may be installed using \mintinline{python}{pip} and imported via \mintinline{python}{from qmcpy import *}
 
 \begin{minted}{python}
 	!pip install qmcpy --quiet
