@@ -15,6 +15,8 @@
 \usepackage[font=small,labelfont=bf]{caption}
 %\usepackage[sort&compress]{natbib}
 
+\usepackage{minted}
+
 \voffset 0.2in
 \textheight 8.8 in
 \pagestyle{empty}
@@ -29,7 +31,7 @@
 \algnewcommand\RETURN{\State \textbf{Return }}
 
 %\usepackage{showlabels}
-\newcommand{\Upara}[1]{\noindent\underline{\upshape #1}:}
+\newcommand{\Upara}[1]{\noindent{\itshape #1}:}
 
 \newcommand{\myshade}{60}
 \colorlet{mylinkcolor}{violet}
@@ -425,19 +427,21 @@ For LD sampling the absolute error has an upper bound of
 \end{equation}
 Here the Banach space $\calf$ typically requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., integrable mixed partial derivatives up to order one in each direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n, F)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$ for well-chosen LD sequences, where $\delta$ may be an arbitrarily small, positive number.
 
-Figure \ref{fig:KeisterTimes} displays the results of approximating an integral from a computational physics example of Keister \cite{Kei96},
-\begin{equation}
-    \mu = \int_{\reals^d} \cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2) \, \dif \bt,
-\end{equation}
-for the case $d =?$ under several absolute error tolerances, $\varepsilon$, using QMCPy.  Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases. 
-
 
 \begin{figure}
     \centering
-    \includegraphics[height = 5.5 cm]{ProgramsImages/keister_timing.eps}
+    \includegraphics[height =0.35\textwidth]{ProgramsImages/keister_timing.eps} \qquad
+    \includegraphics[height =0.35\textwidth]{ProgramsImages/keister_n.eps}
     \caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister} using QMCPy.  LD sampling is much more efficient than IID sampling, especially as the error tolerance decreases.}
     \label{fig:KeisterTimes}
 \end{figure}
+
+Figure \ref{fig:KeisterTimes} displays the results of approximating an integral from a computational physics example of Keister \cite{Kei96},
+\begin{equation} \label{eq:Keister}
+\mu = \int_{\reals^d} \cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2) \, \dif \bt,
+\end{equation}
+for the case $d =?$ under several absolute error tolerances, $\varepsilon$, using QMCPy.  Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases. 
+
 
 The advantage of LD sampling is illustrated by the fact sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = $ the difference is already minutes for LD versus hours for IID and tens of thousands of function values for LD versus tens of millions of function values for IID.
 
@@ -466,7 +470,28 @@ During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC r
 	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}
 	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS}
 \end{description}
-All focus on certain aspects of QMC: some on the generation of LD sequences, some on fundamental QMC algorithms, and others on the applications of QMC.  They are mainly the initiatives of individual research groups.
+All these software packages focus on just certain aspects of QMC: some on the generation of LD sequences, some on fundamental QMC algorithms, and others on the applications of QMC.  They are mainly the initiatives of individual research groups.
+
+After these fruitful discussions, SigOpt, a Silicon Valley startup, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups. Python 3 was chosen as the language based on its popularity among a broad sector of potential users, especially those in the high tech industry who are not using it as widely as they might.  2019 to begin work on QMCPy, which would combine the efforts of several different research groups.  Python also supports C libraries to speed up crucial code.  Aleksei Sorokin,  co-terminal BS applied mathematics and MS data science student at Illinois Tech was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020, and FH provided a tutorial on QMC software---with a focus on QMCPy at MCQMC 2020 \cite{}.  A Google Colaboratory notebook \cite{} was made available for the audience to try QMCPy simultaneously with the tutorial.
+
+
+
+\subsection{The Architecture of QMCPy}
+
+QMCPy may be installed using \texttt{pip} an imported in the 
+
+\begin{minted}{python}
+	!pip install qmcpy --quiet
+	from qmcpy import *
+\end{minted}
+
+
+Arising from discussions with Dirk Nuyens, Mike Giles, Art Owen, and others in the summer of 2018, it was decided that QMCPy should have four major abstract classes:
+\begin{itemize}
+	\item a 
+\end{itemize}
+
+\subsection{}
 
  
 
@@ -521,7 +546,125 @@ kernel density estimation
 sampling from large data
 
 
-\section{Results from Previous Work} \label{sec:prevwork}
+\section{Results from NSF Support} \label{sec:prior_work}
+
+\subsection{NSF-DMS-1522687\except{toc}{, \emph{Stable, Efficient, Adaptive Algorithms for 
+			Approximation and Integration},
+		\$270,000, August 2015 -- July 2018}
+} \label{sec:Previous}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Gregory E.\ Fasshauer (GEF, co-PI) and FH (PI) led this project, and Sou-Cheng Terrya Choi (SCTC) contributed as senior personnel.  Other major contributors were FH's research students Yuhan Ding (YD, PhD 2015), Lan Jiang (LJ, PhD 2016), 
+Llu\'is Antoni Jim\'enez Rugama (LlAJR, PhD 2016), Da Li (DL, MS 2016), Jiazhen Liu (JL, MS 2018), Jagadeeswaran Rathinavel (JR, 
+PhD 2019), Xin Tong (XT, MS 2014, PhD 2020 @ University of Illinois at Chicago), Kan Zhang (KZ, PhD student), Yizhi Zhang (YZ, PhD 2018), and Xuan Zhou (XZ, PhD 2015).  Articles, theses,  
+software, and preprints supported in 
+part by this 
+grant 
+include 
+\cite{ala_augmented_2017, 
+	ChoEtal17a,
+	ChoEtal19a,
+	Din15a, 
+	DinHic20a,
+	GilEtal16a,
+	Hic17a,
+	HicJag18b,
+	HicJim16a,
+	HicEtal18a,
+	HicEtal17a,
+	HicKriWoz19a,
+	RatHic19a,
+	GilJim16b,
+	JimHic16a,
+	JohFasHic18a,
+	Li16a,
+	Liu17a,
+	MarEtal18a,
+	mccourt_stable_2017,
+	MCCEtal19a,
+	mishra_hybrid_2018,
+	MisEtal19a,
+	rashidinia_stable_2016,
+	rashidinia_stable_2018,
+	Zha18a,
+	Zha17a,
+	Zho15a,
+	ZhoHic15a}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Intellectual Merit from Previous NSF Funding}
+\label{previousmeritsubsec}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\phantom{a}
+
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+	\centering
+	\vspace{-1ex}
+	\includegraphics[width = 0.4\textwidth]{ProgramsImages/sampling-funappxg.png}
+	\\
+	\includegraphics[width = 0.4\textwidth]{ProgramsImages/sampling-funming.png}
+	
+	\vspace{-2ex}
+	\caption{The function data ({\color{MATLABOrange}$\bullet$}) for the locally adaptive 
+		function approximation (top) and minimization (bottom) algorithms in \cite{ChoEtal17a}.  Sampling is denser where $\abs{f''}$ is larger.  For minimization it is also denser where the function values are smaller. \label{localadaptfig}}
+\end{wrapfigure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Upara{Adaptive Algorithms for Univariate Problems} \label{sec:localadpat}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FH, STSC, YD, XT, YZ and collaborators developed several adaptive algorithms for univariate integration, function approximation, and optimization \cite{ChoEtal17a,HicEtal14b,  Din15a, Ton14a, Zha18a}.  Most of these algorithms are \emph{globally adaptive}---the sampling density is constant, but the number of data sites is chosen adaptively to meet the error tolerance.
+
+However, the function approximation and integration algorithms constructed by FH, SCTC, YD, and XT in \cite{ChoEtal17a} are \emph{locally adaptive}, meaning that the sampling density is non-uniform and influenced by the function data.  Qualitatively, the cone of functions for which these algorithms are guaranteed to succeed consists of functions where the maximum of the second derivative in a sub-interval is not drastically smaller than the larger of it's minimum value to the immediate left or right.  For function approximation, the adaptive sample is denser where $\abs{f''}$ is larger, as shown in Fig.\ \ref{localadaptfig}.  This locally adaptive function approximation algorithm has a computational cost of $\Order\left(\sqrt{\norm[1/2]{f''}/\varepsilon} \right)$, where $\varepsilon$ is the error tolerance, and is essentially optimal.  An intriguing aspect is the appearance of the $1/2$-quasinorm $\norm[1/2]{f''}$, which may be much smaller than 
+$\norm[\infty]{f''}$ for peaky functions.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Upara[QMCsec]{Globally Adaptive Cubature Based on Space-Filling Designs} \hypertarget{QMClink}{}
+\label{sec:QMC}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FH, LlAJR, DL, and JR developed globally adaptive algorithms for approximating $d$-dimensional integrals,  $\int_{[0,1]^d} f(\bx) \, \dif \bx$, based on space-filling designs \cite{HicJim16a,HicEtal17a,JimHic16a}.  Two common space-filling or low discrepancy designs are integration lattice nodes and digital sequences \cite{DicEtal14a} (see   Fig.\ \ref{PtsFig}). 
+
+The error bounds underlying the adaptive cubatures developed by FH, LlAJR, DL are based on the Fourier coefficients of the sampled function values on these space-filling designs.  The Fourier  \{complex exponential/Walsh functions\} bases are chosen to match the \{lattices/ digital sequences\}  designs, which makes the cubature error bounds possible.  The globally adaptive cubatures increase $n$ by powers of two until the error bounds are no greater than the error tolerance, $\varepsilon$.  The cones, $\calc$, of integrands for which these adaptive cubatures are guaranteed are those for which  the Fourier coefficients decay steadily, but not necessarily monotonically, in magnitude.
+
+FH and JR  assumed that the integrand is an instance of a Gaussian process with constant mean $m$, and covariance kernel, $K:[0,1]^d \times [0,1]^d \to \reals$.  The same space-filling designs are used as are pictured in Fig.\ \ref{PtsFig}.  A $99\%$ credible interval for the integral is constructed.  The sample size, $n$, is increased until the half-width is no greater than the error tolerance, $\varepsilon$, the algorithm terminates.  The hyper-parameters, $m$ and the parameters defining the covariance kernel, $K$, may be treated by empirical Bayes (maximum likelihood estimation), full Bayes, and/or cross-validation \cite{RatHic19a}. The major contribution of FH and JR is to speed up the computational cost required by this Bayesian cubature.  Bayesian cubature requires operations
+involving the Gram matrix $\mK$ defined in \eqref{appxExOne}, and ordinarily these operations  have a cost of
+$\Order(n^3)$.  FH and JR chose covariance kernels, $K$, which matched the space-filling designs and reduced the computational cost to $\Order(n 
+\log(n))$, making Bayesian cubature practical.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Upara{Multivariate Function Approximation} \label{sec:PrevFunAppx}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FH, YD, and LlAJR and collaborators investigated the function approximation problems for Banach spaces, $\calf$, defined by general series representations \cite{DinHic20a,DinEtal20a}.  For example, the bases can be general multivariate polynomials.  Three different definitions of cone, $\calc$, of functions were defined, all describing a reasonable behavior of the series coefficients.  Adaptive function approximation algorithms were constructed for these three cones shown to be essentially optimal.  The shortcoming of this research is that the algorithms use series coefficients as data rather than function values. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Broader Impacts from Previous NSF Funding} \label{prevBIsect}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\phantom{a}
+
+\Upara{Publications, Conference Participation, Conference Organization, and Leadership} Publications by GEF, FH,  SCTC, students, and collaborators are listed at the beginning of this section.  We have spoken at many applied mathematics, statistics, 
+and computational science conferences and given colloquium/seminar talks to mathematics and 
+statistics departments.  FH co-organized the 
+2016 Spring Research 
+Conference, a long-running annual industrial statistics conference.   FH gave an invited tutorial
+at MCQMC 2016
+\cite{Hic17a}, a biennial conference for which he serves on the steering committee.  FH 
+was a program leader for the SAMSI 2017--18 Quasi-Monte Carlo (QMC) Program.   FH received the 2016 Joseph F.\ Traub Prize for Achievement in Information-Based Complexity. In recognition of his research leadership, FH was appointed the director of Illinois Tech's new Center for Interdisciplinary 
+Scientific Computation in 2017.  In 2018, FH was appointed Vice Provost for Research.
+
+\Upara{\GAIL Software} The results of this research have been implemented in 
+\GAIL, our open source \MATLAB library hosted on
+Github. This software 
+has been implemented with input parsing, input validation, unit tests, inline documentation, and 
+demonstrations.  \GAIL makes it easier for practitioners to try our new adaptive algorithms.  SCTC has been key in this effort.  \GAIL has been used in the yearly graduate course in Monte Carlo methods taught by FH and YD.  
+%With the help of students, we are starting to port GAIL to Python and \Rlang.
+
+\Upara{Boosting the STEM Workforce} GEF, FH, and SCTC mentored a number of 
+research students associated with this project.  Female students mentored include YD, LJ, JL, XT, and Xiaoyang Zhao (MS 2017).   GEF, FH,  and SCTC have mentored many undergraduate students including more than a dozen 
+Brazilian Science Mobility Program students in the summers of 2015 and 2016, plus eight other students (two female) from Illinois Tech, Biola U, U Minnesota, Macalester U, NUS, Colorado School of Mines.  All but one have enrolled in graduate programs.   As part of our team, all of
+these students have learned how to conduct theoretical and/or practical computational mathematics research.
 
 \subsection{}
 
