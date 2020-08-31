@@ -494,7 +494,7 @@ There is also an \pyinline{AccumulateData} class to keep track of intermediate r
 \subsubsection{\textup{\pyinline{DiscreteDistribution}}} LD sequences are constructed by creating the object and then generating the points.  The code below illustrates how to generate the points shown in the center panel of Fig.\ \ref{fig:iid_vs_ld}.
 \begin{pythoncode}
 ld = qmcpy.Lattice(dimension = 2)  #define a discrete LD distribution 
-points = lattice.gen_samples(n = 64)  #construct some points
+points = lattice.gen_samples(n = 64)  #construct points
 \end{pythoncode}
 \begin{wrapfigure}{r}{0.65\textwidth}
 	\centering
@@ -513,8 +513,8 @@ points = lattice.gen_samples(n = 64)  #construct some points
 \subsubsection{\textup{\pyinline{TrueMeasure}}} 
 To construct good points that mimic distributions other than standard uniform, one must make a transformation, often the inverse cumulative distribution.  The \pyinline{TrueMeasure} class takes care of that transformation automatically.
 \begin{pythoncode}
-gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specfiy the distribution parameters 
-points = gaussian_ld.gen_samples(n = 64)  #construct some points
+gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specify the distribution parameters 
+points = gaussian_ld.gen_samples(n = 64)  #construct points
 \end{pythoncode}
 
 
@@ -527,7 +527,7 @@ points = gaussian_ld.gen_samples(n = 64)  #construct some points
 
 Fig.\ \ref{fig:ld_Gauss} displays  lattice and Sobol' points that have been transformed to mimic the Gaussian distribution with mean $\begin{pmatrix} 3 \\ 2 \end{pmatrix}$ and covariance matrix $\begin{pmatrix} 9 & 5 \\ 5 & 4 \end{pmatrix}$.  A set of transformed low discrepancy points may or may not be low discrepancy with respect to the new distribution, depending on how one defines the discrepancy \cite{LiKanHic20a}.  But, transformed low discrepancy points often outperform IID points in Monte Carlo calculations.
 
-\subsubsection{\textup{\pyinline{Integrand}}} 
+\subsubsection{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}} 
 For computing expectations and multivariate integration as described in \eqref{eq:mean}, one must specify the integrand.  Sometimes original form of the problem is not the one most convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with independent marginals of zero mean and variance $1/2$:
 \begin{equation} \label{eq:KeisterAlt}
 \mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)} 
@@ -535,16 +535,16 @@ For computing expectations and multivariate integration as described in \eqref{e
 \end{equation}
 Alternatively, it can be thought of as an integral of $h$ with respect to Lebesgue measure.  QMCPy can compute the integral either way.
 
-The first way defines the Gaussian transformed LD \mintinline{python}{TrueMeasure} instance \minti function $g$ as above
+The first way constructs the Gaussian transformed LD \pyinline{TrueMeasure} instance \pyinline{gs} as discussed in the previous section.  One defines the function $g$ as in \eqref{eq:KeisterAlt} above, and then uses \pyinline{CustomFun} to construct an integrand $f$ such that the integral can be written in terms of the uniform distribution, which the LD sequence mimics, i.e., $\mu = \int_{[0,1]^d} f(\bx) \, \dif \bx$.  The statement below involving \pyinline{CustomFun} makes that transformation.
 \begin{pythoncode}
 def g(t):  #your desired integrand, calculations must be vectorized
 	d = t.shape[1]
 	g_val = np.pi**(d/2) * np.cos(np.sqrt((t**2).sum(1))) 
 	return g_val  #size n vector
 	
-gs = qmcpy.Gaussian(qmcpy.Sobol(d), covariance = 1/2)    #choose the Lebesgue distribution
+gs = qmcpy.Gaussian(qmcpy.Sobol(d), covariance = 1/2)    #choose the Gaussian distribution
 f = qmcpy.CustomFun(gs, custom_fun = g)
-sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)  #stopping criterion must match  points
+sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)   #stopping criterion must match  points
 solution = sc.integrate()
 \end{pythoncode}
 
@@ -556,7 +556,7 @@ solution = sc.integrate()
  	h_val = np.cos(norm) * np.exp(-norm**2)
  	return h_val  #size n vector
  
- lb = qmcpy.Lebesgue(qmcpy.Sobol(d), lower_bound=-np.inf, upper_bound=np.inf)  #choose the Lebesgue distribution
+ lb = qmcpy.Lebesgue(qmcpy.Sobol(d), lower_bound=-np.inf, upper_bound=np.inf)   #choose the Lebesgue distribution
  f = qmcpy.CustomFun(lebesgue, custom_fun = h)
  sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)  #stopping criterion must match  points
  solution = sc.integrate()
