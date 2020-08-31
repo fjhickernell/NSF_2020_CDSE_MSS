@@ -1,0 +1,505 @@
+\documentclass[12pt]{article}
+\usepackage{latexsym,amsfonts,amsmath,graphics,amssymb}
+\usepackage{verbatim}
+\usepackage{epsfig}
+\usepackage{enumitem}
+\usepackage{color}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{natbib}
+\usepackage{url}
+\bibliographystyle{apalike}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{definition}{Definition}
+%\newtheorem{algorithm}{Algorithm}
+\newtheorem{remark}{Remark}
+\newcommand{\bm}[1]{\mathbf{#1}}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\crd}[1]{{\color{red}{#1}}}
+\newcommand{\cbl}[1]{{\color{blue}{#1}}}
+
+\newenvironment{proof}{\begin{trivlist}
+    \item[\hskip\labelsep{\it Proof.}]}{$\hfill\Box$\end{trivlist}}
+
+\newcommand{\satop}[2]{\stackrel{\scriptstyle{#1}}{\scriptstyle{#2}}}
+
+\allowdisplaybreaks
+
+\begin{document}
+
+\title{Low-discrepancy data reduction}
+
+\date{\today}
+
+\maketitle
+
+
+\section{Introduction}
+
+%For a Banach space $(\mathcal{H}, \|\cdot\|_{\mathcal{H}})$ and a Borel measure $\mu$ on $\Omega$ we define the worst-case error
+%\begin{equation*}
+%e(\mathcal{H},\mu, P) = \sup_{f \in \mathcal{H}, \|f\|_{\mathcal{H}} \le 1} \left|\int_\Omega f(x) \mathrm{d} \mu(x) - %\frac{1}{|P|} \sum_{x \in P} f(x) \right|.
+%\end{equation*}
+
+\subsection{Motivation}
+In modern statistical learning problems, one often needs to train a complex predictive model using big data, which can easily exceed millions or billions of data points. Model training can therefore be very computationally intensive to perform. One solution is to reduce the big data to a smaller representative dataset, which can then be used for efficient model training. This smaller dataset should contain much of the information from the big data, i.e., the \textit{discrepancy} between the two datasets should be small. Standard machine learning techniques (e.g., stochastic gradient descent, stochastic gradient boosting, cross-validation) typically use random subsampling, which can result in large discrepancies between the full and reduced datasets. We present an efficient framework for \textit{low-discrepancy} subsampling of the reduced dataset, which can be integrated within many state-of-the-rat ML techniques to improve predictive performance.
+
+\subsection{Discrepancies}
+
+For a reproducing kernel Hilbert space $(\mathcal{H}, \|\cdot\|_{\mathcal{H}}, K)$ with reproducing kernel $K$ and two point sets $P, Q$ we define the kernel discrepancy by
+\begin{equation*}
+e(K,P, Q) = \sup_{f \in \mathcal{H}, \|f\|_{\mathcal{H}} \le 1} \left|\frac{1}{|P|} \sum_{x \in P} f(x) - \frac{1}{|Q|} \sum_{y \in Q} f(y) \right|.
+\end{equation*}
+It can be shown that
+\begin{align}\label{eRK}
+e^2(K,P,Q) = & \left\| \frac{1}{|P|} \sum_{x \in P} K(\cdot, x) - \frac{1}{|Q|} \sum_{y \in Q} K(\cdot, y) \right\|_{\mathcal{H}}^2 \\ = & \frac{1}{|P|^2} \sum_{x, x' \in P} K(x, x') - 2\frac{1}{|P|} \sum_{x \in P} \frac{1}{|Q|} \sum_{y \in Q} K(x,y) + \frac{1}{|Q|^2} \sum_{y,y'\in Q} K(y, y').
+\end{align}
+
+
+Let $1_A$ be the indicator function of the set $A$. We define the discrepancy function by
+\begin{equation*}
+\mathrm{disc}(P,Q; t) =  \frac{1}{|P|} \sum_{x \in P} 1_A(x) - \frac{1}{|Q|} \sum_{y \in Q} 1_A(y), \quad A = \prod_{j=1}^p [0, t_j].
+\end{equation*}
+The $L_q$-discrepancy of the point sets $P, Q \subset [0,1]^p$ is defined by
+\begin{equation*}
+\mathrm{disc}_q(P,Q) = \left( \int_{\Omega} |\mathrm{disc}(P,Q; t)|^q \,\mathrm{d} t \right)^{1/q}.
+\end{equation*}
+The star-discrepancy of the point sets $P, Q \subset [0,1]^p$ is given by the $L_\infty$ norm
+\begin{equation*}
+\mathrm{disc}^\ast(P,Q) = \mathrm{disc}_\infty(P,Q) = \sup_{t \in [0,1]^p} \left| \mathrm{disc}(P,Q; t) \right|.
+\end{equation*}
+
+\section{Discrepancy data reduction}
+
+Let $Y = \{y_1, y_2, \ldots, y_L\} \subset \mathbb{R}^p$ and $X = \{x_1, x_2, \ldots, x_N\} \subset \mathbb{R}^p$.
+
+The following is \cite{AD14}[Lemma~5].
+\begin{lemma}
+Given any (not necessarily distinct) points $y_1, \ldots, y_L \in [0,1]^p$ and any number $N$ satisfying $N \leq \sqrt{L}$, we can find an $N$-element subset $\{x_1, \ldots, x_N\}$ of $\{y_1, \ldots, y_L\}$ such that for any axis-parallel box $A = \prod_{j=1}^p [0, a_j] \subset [0,1]^p$ which has one vertex at the origin, we have
+\begin{equation*}
+\left| \sum_{i=1}^N 1_A(x_i) -  \frac{N}{L} \sum_{i=1}^L 1_{A}(y_i)  \right| \le 60 \sqrt{p} (2 + \log_2 N)^{(3p+1)/2} + 4p + 6.
+\end{equation*}
+\end{lemma}
+
+The proof of this lemma only uses orderings of the points with respect to each of the coordinates and does not use the fact that $y_1,\ldots, y_L \in [0,1]^d$. Therefore the result actually holds for all $y_1, \ldots, y_L \in \mathbb{R}^p$. We state this slight generalization as a proposition.
+
+\begin{proposition}
+ Given any (not necessarily distinct) points $y_1, \ldots, y_L \in \mathbb{R}^p$ and any number $N$ satisfying $N \leq \sqrt{L}$, we can find an $N$-element subset $\{x_1, \ldots, x_N\}$ of $\{y_1, \ldots, y_L\}$ such that for any box $A = \prod_{j=1}^p (-\infty, a_j] \subset \mathbb{R}^p$, we have
+\begin{equation*}
+\left| \frac{1}{N} \sum_{i=1}^N 1_A(x_i) -  \frac{1}{L} \sum_{i=1}^L 1_{A}(y_i)  \right| \le \frac{ 60 \sqrt{p} (2 + \log_2 N)^{(3p+1)/2} + 4p + 6 }{N}.
+\end{equation*}
+\end{proposition}
+
+We can also consider the case of boxes of the form $A  = \prod_{j=1}^p [a_j, b_j]$ (the bound increases by at most a factor of $2^p$)
+\begin{equation*}
+\left| \frac{1}{N} \sum_{i=1}^N 1_A(x_i) -  \frac{1}{L} \sum_{i=1}^L 1_{A}(y_i)  \right| \le 2^p \frac{ 60 \sqrt{p} (2 + \log_2 N)^{(3p+1)/2} + 4p + 6 }{N}.
+\end{equation*}
+
+\section{Kernel data reduction}
+
+
+\subsection*{Korobov data kernel}
+
+The Korobov space kernel is given by
+\begin{equation*}
+K(x,y) = \sum_{k \in \mathbb{Z}^p} \lambda_k \mathrm{e}^{2\pi \mathrm{i} k \cdot (x-y)},
+\end{equation*}
+where $k = (k_1, \ldots, k_p)$ and
+\begin{equation*}
+\lambda_k =  \prod_{j=1}^p \left( \max(1, 2 \pi |k_j|) \right)^{-2}.
+\end{equation*}
+The corresponding Korobov space $\mathcal{K}$ is the set of all Fourier series
+\begin{equation}\label{eqFS}
+f(x) = \sum_{k \in \mathbb{Z}^p} \widehat{f}(k) \mathrm{e}^{2\pi \mathrm{i} k \cdot x}
+\end{equation}
+with finite norm
+\begin{equation*}
+\|f\|_{\mathcal{K}}^2 = \sum_{k \in \mathbb{Z}^p} |\widehat{f}(k)|^2/\lambda_k.
+\end{equation*}
+
+Monte Carlo or quasi-Monte Carlo algorithms integrate constant functions exactly. Hence if we have two functions $f$ and $g$ which only differ by a constant $f(x) - g(x) = \mathrm{const}$ for all $x \in \Omega$, then the absolute integration error is the same in both instances. In that sense $f$ is just as difficult to integrate by MC or QMC as $g$.
+
+To account for that, we introduce $\overline{\mathcal{K}}$ as the set of equivalence classes of functions in $\mathcal{K}$ which only differ by a constant, that is,
+\begin{align*}
+\overline{f}(x) = \{f + c \in \mathcal{K}: c \in \mathbb{R}\}, \\
+\overline{\mathcal{K}} = \{ \overline{f}: f \in \mathcal{K}\}.
+\end{align*}
+For $\overline{f} \in \overline{\mathcal{K}}$ we define the norm
+\begin{equation*}
+\|\overline{f} \|_{\overline{ \mathcal{K} }}^2 = \sum_{k \in \mathbb{Z}^p \setminus \{0\} } |\widehat{f}(k)|^2/\lambda_k.
+\end{equation*}
+(This is a semi-norm on $\mathcal{K}$.) The corresponding reproducing kernel is
+\begin{equation*}
+\overline{K}(x,y) = \sum_{k \in \mathbb{Z}^p \setminus \{0\} } \lambda_k \mathrm{e}^{2\pi \mathrm{i} k \cdot (x-y)},
+\end{equation*}
+
+Therefore, for any point sets $P, Q \subset [0,1]^p$ we have
+\begin{equation*}
+ e(K, P, Q) = e(\overline{K}, P, Q).
+\end{equation*}
+
+
+
+%\subsection*{Data kernel}
+
+In the following we introduce the Korobov data kernel.
+%Let $y_1, \ldots, y_L \in \prod_{j=1}^p (u_j, v_j) = \Omega$ for $-\infty < u_j < v_j < \infty$. 
+Assume that $y_1, \ldots, y_L \in (0,1)^p$ (note that no points are on the boundary). Let $\Omega = [0,1]^p$.
+Let $D: \Omega \times \Omega \to \mathbb{R}$ be a reproducing kernel given by the Karhunen-Lo\'eve expansion
+\begin{equation*}
+D(x,y) = \sum_{k \in \mathbb{Z}^p \setminus \{0\} } \lambda_k \varphi_k(x) \overline{\varphi_k(y)},
+\end{equation*}
+where $x = (x_1, \ldots, x_p)$ and
+\begin{equation*}
+\varphi_k(x) =  \mathrm{e}^{2 \pi \mathrm{i} k \cdot x} - b_k,
+\end{equation*}
+for some $b_k \in \mathbb{R}$ to be specified later. Let $\mathcal{D}$ denote the corresponding reproducing kernel Hilbert space.
+
+Let $f \in \mathcal{D}$ be given by the series expansion
+\begin{equation*}
+f(x) = \sum_{k \in \mathbb{Z}^p \setminus 0} a_k \varphi_k(x) =  \sum_{k \in \mathbb{Z}^p \setminus \{0\}} a_k \mathrm{e}^{2\pi \mathrm{i} k \cdot x} - \sum_{k \in \mathbb{Z}^p \setminus \{0\}} a_k b_k.
+\end{equation*}
+This implies that the Fourier coefficients of $f$ satisfy $\widehat{f}(k) = a_k$ for $k \neq 0$ and $\widehat{f}(0) = -  \sum_{k \in \mathbb{Z}^p \setminus \{0\}} a_k b_k$.
+
+The norm for $f \in \mathcal{D}$ is defined by
+\begin{equation*}
+\|f\|^2_{\mathcal{D}} = \sum_{k \in \mathbb{Z}^p \setminus \{0\}} |a_k|^2/ \lambda_k.
+\end{equation*}
+Thus for any $f \in \mathcal{D}$ we have
+\begin{equation*}
+\|f\|_{\mathcal{D}} = \|f\|_{\overline{\mathcal{K}}}.
+\end{equation*}
+This implies
+\begin{equation*}
+e(K, P, Q) = e(\overline{K}, P, Q) = e(D, P, Q).
+\end{equation*}
+
+
+\subsubsection*{Data kernel property}
+
+For a given data set $Y = \{y_1, \ldots, y_L\} \subset (0,1)^p$. Let
+\begin{equation*}
+b_k = \frac{1}{L} \sum_{\ell=1}^L \mathrm{e}^{2\pi \mathrm{i} k \cdot y_\ell}.
+\end{equation*}
+Then for any $x \in \Omega$
+\begin{equation*}
+\sum_{\ell=1}^L \kappa(x,y_\ell) = 0.
+\end{equation*}
+
+As a consequence, we obtain the simplified form of the data kernel distance
+\begin{align}
+\begin{split}
+e^2(D, Y, X) = & \frac{1}{L^2} \sum_{\ell,n = 1}^L D(y_\ell,y_n) - 2 \frac{1}{L} \sum_{\ell=1}^L \frac{1}{N} \sum_{n=1}^N D(y_\ell, x_n) + \frac{1}{N^2} \sum_{\ell, n=1}^N D(x_\ell, x_n) \\ = &  \frac{1}{N^2} \sum_{\ell,n =1}^N D(x_\ell, x_n).
+\label{eq:simpdisc}
+\end{split}
+\end{align}
+
+We can efficiently compute the values of $b_k$ using the non-uniform fast Fourier transformation. We have
+\begin{equation*}
+|b_k| \le \frac{1}{L} \sum_{\ell=1}^L \left| \mathrm{e}^{2\pi \mathrm{i} k \cdot y_\ell} \right| \le 1.
+\end{equation*}
+
+\textit{Remark}: The term $b_k$ in the data kernel $D$ in essence captures the required information from the big data $Y$. Given this data kernel, the resulting discrepancy criterion \eqref{eq:simpdisc} then depends on \textit{only} reduced dataset $X = \{x_1, \cdots, x_N\}$ (and not the big data $Y$), which allows for efficient reduction via optimization of $e^2$. More on this later.
+
+%
+%
+%In order to facilitate the minimization of $e(D,Y,X)$ we restrict the sum in the definition of the kernel $D$ to a subset $I \subseteq \mathbb{Z}^p \setminus \{0\}$
+%\begin{equation*}
+%D_I(x,y)= \sum_{k \in I} \lambda_k \phi_k(x) \overline{\phi_k(y)}.
+%\end{equation*}
+%This defines a subspace $\mathcal{D}_I \subseteq \mathcal{D}$ and for $f \in \mathcal{D}_I$ we have $\|f\|_{\mathcal{D}_I} = \|f\|_{\mathcal{D}}$. Thus we have
+%\begin{equation*}
+%e(D_I, P, Q) \le e(D,P,Q).
+%\end{equation*}
+%
+%
+%
+%
+%\section{Connection between data kernel distance and discrepancy}
+%
+%To make the connection to the discrepancy, we consider the restricted reproducing kernel Hilbert space $\mathcal{R}$ with reproducing kernel
+%\begin{equation*}
+%R(x,y) = \prod_{j=1}^p \min\{1-x_j, 1-y_j \}.
+%\end{equation*}
+%The inner product in this space is
+%\begin{equation*}
+%\langle f, g \rangle_{\mathcal{R}} = \int_{[0,1]^{p}} \frac{\partial^{p}}{\partial x} f(x) \frac{\partial^{p}}{\partial x} g(x) \,\mathrm{d} x
+%\end{equation*}
+%and for any function $f \in \mathcal{R}$ we have $f(x_u, 1) = 0$ for any $u \neq \{1, \ldots, p\}$ and any $x_u \in [0,1]^{|u|}$, where $(x_u, 1)$ is the vector whose $j$th component is $x_j$ for $j \in u$ and $1$ otherwise. The corresponding norm is denoted by $\|\cdot \|_{\mathcal{R}}$.
+%
+%Similar to \cite{DP10}[Section~2.4] we obtain that
+%\begin{equation*}
+%e(R, P, Q)  = \mathrm{disc}_2(P,Q)\le \mathrm{disc}^\ast(P,Q).
+%\end{equation*}
+%
+%Let $f \in \mathcal{K} \cap \mathcal{R}$ with Fourier series given by \eqref{eqFS}. Then
+%\begin{equation*}
+%\|f\|^2_{\mathcal{R}} = \sum_{k \in (\mathbb{Z}\setminus \{0\})^p} |\widehat{f}(k)|^2/ \lambda_k \le \|f\|_{\mathcal{D}} = \|f\|_{\overline{\mathcal{K}}} \le \|f\|_{\mathcal{K}}.
+%\end{equation*}
+%
+%
+%To remove the restriction that $f(x_u,1) = 0$ we consider the anchored kernel
+%\begin{align}\label{ARdecomp}
+%A(x,y) = & \prod_{j=1}^p (1 + \min \{1-x_j, 1-y_j\}) = \sum_{u \subseteq \{1, \ldots, p\}}  \prod_{j\in u} \min\{1-x_j, 1-y_j\} \\  =  & \sum_{u \subseteq \{1, \ldots, p\}} R(x_u, y_u).
+%\end{align}
+%The inner product is
+%\begin{equation*}
+%\langle f, g \rangle_{\mathcal{A}} = \sum_{u \subseteq \{1, \ldots, p\}} \int_{[0,1]^{|u|}}  \frac{\partial^{|u|}}{\partial x_u} f(x_u, 1) \frac{\partial^{|u|}}{\partial x_u} g(x_u, 1) \,\mathrm{d} x_u.
+%\end{equation*}
+%Thus the norm satisfies
+%\begin{equation*}
+%\|f\|_{\mathcal{A}}^2 = \sum_{u \subseteq \{1, \ldots, p\}} \|f(x_u, 1)\|_{\mathcal{R}_u}^2.
+%\end{equation*}
+%
+%From \eqref{eRK} and \eqref{ARdecomp} we obtain that
+%\begin{equation*}
+%e(A,P,Q) = \sum_{\emptyset \neq u \subseteq \{1, \ldots, p\}} e(R_u, P_u, Q_u),
+%\end{equation*}
+%where $P_u$ is the projection of $P$ onto the coordinates in $u$.
+%
+%
+%We consider again the set of all equivalence classes of functions $\overline{f} = \{f + c: c \in \mathbb{R}\}$ and denote the corresponding space by $\overline{\mathcal{A}}$. The reproducing kernel is
+%\begin{align*}
+%\overline{A} (x,y) = & - 1 +  \prod_{j=1}^p (1 + \min \{1-x_j, 1-y_j\}) = \sum_{\emptyset \neq u \subseteq \{1, \ldots, p\}}  \prod_{j\in u} \min\{1-x_j, 1-y_j\} \\  =  & \sum_{\emptyset \neq u \subseteq \{1, \ldots, p\}} A(x_u, y_u).
+%\end{align*}
+%and the inner product is then
+%\begin{equation*}
+%\langle f, g \rangle_{\overline{\mathcal{A}}} = \sum_{\emptyset \neq u \subseteq \{1, \ldots, p\}} \int_{[0,1]^{|u|}}  \frac{\partial^{|u|}}{\partial x_u} f(x_u, 1) \frac{\partial^{|u|}}{\partial x_u} g(x_u, 1) \,\mathrm{d} x_u.
+%\end{equation*}
+%
+%We have $\mathcal{D} \subset \mathcal{K} \subset \mathcal{A}$ and $\overline{\mathcal{K}} \subset \overline{\mathcal{A}}$. For any $f \in \mathcal{D}$ we have
+%\begin{align*}
+%\|f\|_{\overline{ \mathcal{A} } }^2 = & \sum_{\emptyset \neq u \subseteq\{1, \ldots, p\}} \sum_{k_u \in (\mathbb{Z}\setminus \{0\})^{|u|}} \lambda_{k_u}^{-1} \left( \sum_{k_{-u} \in \mathbb{Z}^{p-|u|}} |\widehat{f}(k_u, k_{-u})| \frac{\sqrt{\lambda_{k_{-u}}}}{\sqrt{\lambda_{k_{-u}}}} \right)^2 \\ \le & \sum_{\emptyset \neq u \subseteq\{1, \ldots, p\}} \sum_{k_u \in (\mathbb{Z}\setminus \{0\})^{|u|}} \lambda_{k_u}^{-1} \sum_{k_{-u} \in \mathbb{Z}^{p-|u|}} |\widehat{f}(k_u, k_{-u})|^2 \lambda_{k_{-u}}^{-1}  \sum_{k_{-u} \in \mathbb{Z}^{p-|u|}} \lambda_{k_{-u}}.
+%\end{align*}
+%The last sum can be calculated explicitely to yield
+%\begin{align*}
+%\sum_{k_{-u} \in \mathbb{Z}^{p-|u|}} \lambda_{k_{-u}} = \left( 1 + \frac{2}{4\pi^2} \sum_{k=1}^\infty k^{-2} \right)^{p-|u|} = \left( \frac{13}{12} \right)^{p-|u|}
+%\end{align*}
+%We can now bound the norm of $f \in \mathcal{D}$
+%\begin{equation*}
+%\|f\|^2_{\mathcal{A}} \le  \left( \frac{13}{12} \right)^{p} \sum_{\emptyset \neq u \subseteq\{1, \ldots, p\}} \sum_{k \in \mathbb{Z}^p, k_j \neq 0, j \in u} \lambda_k^{-1} |\widehat{f}(k)|^2 \le \left( \frac{13}{6} \right)^p \|f\|^2_{\mathcal{D}}.
+%\end{equation*}
+%
+%This implies that
+%\begin{align*}
+%e(D, P, Q) = & \sup_{\satop{f \in \mathcal{D}}{\|f\|_{\mathcal{D}} \le 1}} \left|\frac{1}{|P|} \sum_{x \in P} f(x) - \frac{1}{|Q|} \sum_{y\in Q} f(y) \right| \\ \le & \sup_{\satop{f \in \mathcal{D}}{\|f\|_{\overline{ \mathcal{A} }} \le (13/6)^{p/2} }} \left|\frac{1}{|P|} \sum_{x \in P} f(x) - \frac{1}{|Q|} \sum_{y\in Q} f(y) \right| \\ \le & \sup_{\satop{f \in \overline{ \mathcal{A}} }{\|f\|_{\overline{ \mathcal{A} }} \le (13/6)^{p/2} }} \left|\frac{1}{|P|} \sum_{x \in P} f(x) - \frac{1}{|Q|} \sum_{y\in Q} f(y) \right| \\ \le & \left( \frac{13}{6} \right)^{p/2} \sup_{\satop{f \in \overline{ \mathcal{A} } }{\|f\|_{\overline{ \mathcal{A} }} \le 1}} \left|\frac{1}{|P|} \sum_{x \in P} f(x) - \frac{1}{|Q|} \sum_{y\in Q} f(y) \right| \\ \le & \left( \frac{13}{6} \right)^{p/2} e(\overline{A}, P, Q) = \left( \frac{13}{6} \right)^{p/2} e(A, P, Q) \\ \le & \left( \frac{13}{6} \right)^{p/2} \sum_{\emptyset \neq u \subseteq \{1, \ldots, p\}}  e(R_u, P_u, Q_u) \\ = & \left( \frac{13}{6} \right)^{p/2} \sum_{\emptyset \neq u \subseteq \{1, \ldots, p\}}  \mathrm{disc}_2(P_u, Q_u) \\ \le & \left( \frac{13}{6} \right)^{p/2} \sum_{\emptyset \neq u \subseteq \{1, \ldots, p\}}  \mathrm{disc}^\ast(P_u, Q_u) \\ \le & \left( \frac{26}{3} \right)^{p/2} \mathrm{disc}^\ast(P,Q).
+%\end{align*}
+
+\subsubsection*{Existence of low-discrepancy subsample}
+
+\begin{theorem}
+Let $I \subseteq \mathbb{Z}^p \setminus \{0\}$. Given any (not necessarily distinct) points $y_1, \ldots, y_L \in [0,1]^p$ and any number $N$ satisfying $N \leq \sqrt{L}$, we can find an $N$-element subset $\{x_1, \ldots, x_N\}$ of $\{y_1, \ldots, y_L\}$ such that for any choice of $b_k$ we have
+\begin{align*}
+e(D_I,\{y_1, \ldots, y_L\}, \{x_1, \ldots, x_N\}) & = \sup_{\satop{f \in \mathcal{D}}{\|f\|_{\mathcal{D}} \le 1}} \left|\frac{1}{N} \sum_{i=1}^N f(x_N) - \frac{1}{L} \sum_{j=1}^L f(y_j) \right| \\ & \le \left( \frac{26}{3} \right)^{p/2} \frac{60 \sqrt{p} (2 + \log_2 N)^{(3p+1)/2} + 4p + 6}{N}.
+\label{eq:subset}
+\end{align*}
+\label{thm:subset}
+\end{theorem}
+
+\section{Optimization}
+
+The data reduction problem amounts to solving (or approximating) the optimization problem:
+\[ \min_{x_1, \cdots, x_N} e^2(D,Y,X) = \min_{x_1, \cdots, x_N} \sum_{\ell,n =1}^N D(x_\ell, x_n) \]
+Again, this depends on \textit{only} the reduced subsample $X$ and not the big data $Y$, as long as the data kernel $D$ is computed using the non-uniform FFT.\\
+
+There are several potential ways to optimize $e^2$ above:
+\bi
+\item Binary quadratic programming
+\item Sequential nonlinear optimization (may not be a subset)
+\item Random Fourier feature approximation for scalability \citep{rahimi2008random}
+\ei
+
+Question: Can this optimization be extended for \textit{randomized} low-discrepancy reduction? How to do this efficiently?
+
+\section{Low-discrepancy batch gradient descent}
+
+\subsection{Stochastic gradient descent}
+
+Stochastic gradient descent (SGD, \citealp{Bot2010}) solves the following optimization problem:
+\begin{equation}
+\min_{\boldsymbol{\theta} \in \Theta} h(\boldsymbol{\theta}) := \min_{\boldsymbol{\theta} \in \Theta} \frac{1}{L} \sum_{l=1}^L f(\boldsymbol{\theta}; \bm{y}_l).
+\label{eq:sgdform}
+\end{equation}
+Here, $\boldsymbol{\theta} \in \Theta$ are model parameters to fit over some feasible set $\Theta \in \mathbb{R}^s$, $\mathcal{Y} = \{\bm{y}_l\}_{l=1}^L$ is the available training dataset (with $L \gg 1$, i.e., big data), and $f$ is the desired loss function to minimize. The formulation in \eqref{eq:sgdform} encapsulates many real-world statistical learning problems with big data, such as logistic regression \citep{Bac2014}, support vector machines \citep{Tan2013}, and neural networks \citep{Sea2014}.\\
+
+The key appeal of SGD is that, for large training data, it allows for more efficient iterations compared to standard gradient descent. To see why, consider the iteration scheme for standard gradient descent:
+\begin{equation}
+\boldsymbol{\theta}^{[t+1]} \leftarrow \boldsymbol{\theta}^{[t]} - \alpha \left[ \frac{1}{L} \sum_{l=1}^L \nabla f(\boldsymbol{\theta}^{[t]}; \bm{y}_l) \right],\
+\label{eq:gd}
+\end{equation}
+where $\alpha > 0$ is the \textit{stepsize} to take in the direction of the gradient. The computational burden is clear: \textit{each} iteration of \eqref{eq:gd} requires $\mathcal{O}(L)$ work, which is expensive to perform for $L \gg 1$. As a workaround, SGD approximates the true gradient using a single, randomly-chosen, training sample $\bm{x}^{[t]} \in \mathcal{Y}$. This yields the update scheme:
+\begin{equation}
+\boldsymbol{\theta}^{[t+1]} \leftarrow \boldsymbol{\theta}^{[t]} - \alpha \nabla f(\boldsymbol{\theta}^{[t]}; \bm{x}^{[t]}).
+\label{eq:sgd}
+\end{equation}
+The iterations in \eqref{eq:sgd} can be performed much quicker than \eqref{eq:gd} (namely, with $\mathcal{O}(1)$ work), but incurs large variation in the descent direction.\\
+
+An intermediate approach, called \textit{mini-batch} SGD, approximates the true gradient using a randomly-chosen \textit{batch} sample $(\bm{x}_i^{[t]})_{i=1}^N \subseteq \mathcal{Y}$, $N \ll L$:
+\begin{equation}
+\boldsymbol{\theta}^{[t+1]} \leftarrow \boldsymbol{\theta}^{[t]} - \alpha \left[ \frac{1}{N} \sum_{i=1}^N \nabla f(\boldsymbol{\theta}^{[t]}; \bm{x}_i^{[t]}) \right].
+\label{eq:mbsgd}
+\end{equation}
+This provides a trade-off between computation work (namely, $\mathcal{O}(N)$) and variance of the estimated gradient. Algorithm \ref{alg:mbsgd} summarizes the steps for mini-batch SGD. In practice, mini-batch SGD is by far the most popular variant of SGD, and is widely used for training neural networks and deep learning models \citep{Sea2014}.\\
+
+\begin{algorithm}[t]
+\caption{Mini-batch stochastic gradient descent}
+\label{alg:mbsgd}
+\begin{algorithmic}
+\STATE $\bullet$ Set initial solution $\boldsymbol{\theta}^{[0]}$, and set stepsize $\alpha = 2 / (\underline{\mu}+\bar{\mu})$.
+\STATE $\bullet$ \textbf{Repeat} for $t = 0, 1, \cdots$:
+\bi
+\item Batch sample $(\bm{x}_i^{[t]})_{i=1}^N$ uniformly from $\mathcal{Y}$.
+\item Update $\boldsymbol{\theta}^{[t+1]} \leftarrow \boldsymbol{\theta}^{[t]} - \alpha \left[ \frac{1}{N} \sum_{i=1}^N \nabla f(\boldsymbol{\theta}^{[t]}; \bm{x}_i^{[t]}) \right]$.
+\ei
+\end{algorithmic}
+\end{algorithm}
+
+Following the literature on convex optimization, we make the standard assumptions on \eqref{eq:sgdform}:
+\bi
+\item \textbf{(A1)}: Problem \eqref{eq:sgdform} has global optimum $\boldsymbol{\theta}^*$.
+\item \textbf{(A2)}: Feasible set $\Theta$ is convex.
+\item \textbf{(A3)}: Loss function $f$ is continuously twice-differentiable, with:
+\begin{equation}
+\underline{\mu} \bm{I} \preceq \nabla^2 f(\boldsymbol{\theta},\bm{x}) \preceq \bar{\mu} \bm{I}, \quad \bm{x} \in \mathcal{Y}
+\label{eq:muconv}
+\end{equation}
+for some constants $0 < \underline{\mu} < \bar{\mu}$.
+\ei
+Assumption \textbf{(A3)} implies $f$ is $\underline{\mu}$-strongly convex, which along with \textbf{(A1)}, ensures $\boldsymbol{\theta}^*$ is the unique global minimum.\\
+
+Under these assumptions, the following theorem provides a convergence guarantee for mini-batch SGD:
+\begin{theorem}[Mini-batch SGD convergence]
+Let $(\boldsymbol{\theta}^{[t]})_{t=1}^\infty$ be the solution sequence from the mini-batch SGD updates in Algorithm \ref{alg:mbsgd}, and let $\epsilon^2_t := \mathbb{E}[\|\boldsymbol{\theta}^{[t]} - \boldsymbol{\theta}^*\|_2^2]$ be the expected squared-distance from the optimum. Assume:
+\begin{equation}
+\textup{\textbf{(A4)}:} \quad M := \sup_{\boldsymbol{\theta} \in \Theta} \textup{Var}\{ \nabla f(\boldsymbol{\theta}; \bm{X}) \} < \infty, \text{ where }\bm{X} \sim \textup{Unif}(\mathcal{Y}).
+\label{eq:ass1}
+\end{equation}
+With $r = \max\{ |1-\alpha\underline{\mu}|, |1-\alpha \bar{\mu}| \}$, we have:
+\begin{enumerate}[label=(\alph*)]
+\item For any $t = 0, 1, \cdots$:
+\begin{equation}
+\epsilon^2_{t+1} \leq \crd{r^2 \epsilon^2_t} + \cbl{\left( \frac{\alpha^2 M}{N} \right)}.
+\label{eq:mbsgd1}
+\end{equation}
+\item Moreover, in the limit, we have:
+\begin{equation}
+\underset{t \rightarrow \infty}{\textup{limsup}} \; \epsilon^2_t \leq \frac{\alpha^2 M }{N(1-r^2)}.
+\label{eq:mbsgd2}
+\end{equation}
+\end{enumerate}
+\label{thm:mbsgd}
+\end{theorem}
+Part (a) provides the decay behavior of $\epsilon_t^2$ for each $t = 1, 2, \cdots$. The red term in \eqref{eq:mbsgd1} is the standard error term for gradient descent in convex optimization, while the blue term corresponds to the variance in gradient estimation. Part (b) shows that the iterates converge (on expectation) to a so-called ``noise ball'' of radius $(\alpha^2 M)/(N(1-r^2))$. As batch sample size $N$ increases to the full sample size $L$, the noise ball radius decreases to 0. 
+
+\subsection{Low-discrepancy gradient descent}
+The proposed data reduction procedure can be directly applied for improving mini-batch stochastic gradient descent. The strategy is to first reduce the large training data $\mathcal{Y}$ to the smaller subsample $\{\bm{x}_i\}_{i=1}^N$ in Theorem \ref{thm:subset}, then use this optimized subsample for gradient estimation within each iteration of \eqref{eq:mbsgd}. Algorithm \ref{alg:ldsgd} summarizes the steps behind this so-called (mini-batch) \textit{low-discrepancy} gradient descent.\\
+
+\begin{algorithm}[t]
+\caption{Mini-batch low-discrepancy gradient descent}
+\label{alg:ldsgd}
+\begin{algorithmic}
+\STATE $\bullet$ Set initial solution $\boldsymbol{\theta}^{[0]}$, and set stepsize $\alpha = 2 / (\underline{\mu}+\bar{\mu})$.
+\STATE $\bullet$ Generate low-discrepancy subset $\{\bm{x}_i\}_{i=1}^n$ from big data $\mathcal{Y}$
+\STATE $\bullet$ \textbf{Repeat} for $t = 0, 1, \cdots$:
+\bi
+\item Update $\boldsymbol{\theta}^{[t+1]} \leftarrow \boldsymbol{\theta}^{[t]} - \alpha \left[ \frac{1}{N} \sum_{i=1}^N \nabla f(\boldsymbol{\theta}^{[t]}; \bm{x}_i^{[t]}) \right]$.
+\ei
+\end{algorithmic}
+\end{algorithm}
+
+The following theorem shows the improvement of this low-discrepancy variant over the standard mini-batch SGD:
+\begin{theorem}[Mini-batch LDGD convergence]
+Let $(\boldsymbol{\theta}^{[t]})_{t=1}^\infty$ be the solution sequence from the mini-batch LDGD updates in Algorithm \ref{alg:ldsgd}, and let $\epsilon^2_t := \|\boldsymbol{\theta}^{[t]} - \boldsymbol{\theta}^*\|_2^2$. Assume:
+\begin{align}
+\begin{split}
+\textup{\textbf{(A5)}:} \quad &\nabla_{\theta_l} f(\boldsymbol{\theta}; \cdot) \in \mathcal{D}_I, \; \forall \boldsymbol{\theta} \in \Theta, \; \forall l = 1, \cdots, s, \quad \textup{and}\\
+& M' := \sup_{\boldsymbol{\theta} \in \Theta, \; l = 1, \cdots, s} \| \nabla_{\theta_l} f(\boldsymbol{\theta}; \cdot) \|_{\mathcal{D}_I} < \infty.
+\label{eq:ass2}
+\end{split}
+\end{align}
+With $r = \max\{ |1-\alpha\underline{\mu}|, |1-\alpha \bar{\mu}| \}$, we have:
+\begin{enumerate}[label=(\alph*)]
+\item For any $t = 0, 1, \cdots$:
+\begin{equation}
+\epsilon^2_{t+1} \leq \crd{r^2 \epsilon^2_t} + \cbl{ \frac{C_p \alpha^2 s M' (\log N)^{3p+1}}{N^2} }.
+\label{eq:ldsgd1}
+\end{equation}
+\item Moreover, in the limit, we have:
+\begin{equation}
+\underset{t \rightarrow \infty}{\textup{limsup}} \; \epsilon^2_t \leq \frac{C_p \alpha^2 M'}{1 - r^2} \frac{(\log N)^{3p+1}}{N^2} .
+\label{eq:ldsgd2}
+\end{equation}
+\end{enumerate}
+Here, $C_p$ captures all constants in the upper bound \eqref{eq:subset} w.r.t. $N$.
+\label{thm:ldsgd}
+\end{theorem}
+
+\begin{proof}
+For any $t = 0, 1, \cdots$, the squared-error $\epsilon_{t+1}^2$ can be decomposed as:
+\begin{align}
+\epsilon_{t+1}^2 &:= \|\boldsymbol{\theta}^{[t+1]} - \boldsymbol{\theta}^*\|_2^2 \notag \\
+&= \left\| (\boldsymbol{\theta}^{[t]} - \boldsymbol{\theta}^*) - \alpha \left[ \frac{1}{N} \sum_{i=1}^N \nabla f(\boldsymbol{\theta}^{[t]}; \bm{x}_i^{[t]}) \right] \right\|_2^2 \notag \\
+&= \left\| (\boldsymbol{\theta}^{[t]} - \boldsymbol{\theta}^*) - \alpha \left\{ \nabla h(\boldsymbol{\theta}^{[t]}) - \nabla h(\boldsymbol{\theta}^*) \right\} \right. \notag \\
+& \quad \quad \left. - \alpha \left\{ \frac{1}{N} \sum_{i=1}^N \nabla f(\boldsymbol{\theta}^{[t]}; \bm{x}_i^{[t]}) - \nabla h(\boldsymbol{\theta}^{[t]}) \right\} \right\|_2^2 \tag{$\nabla h(\boldsymbol{\theta}^*) = 0$}\\
+& \leq \left\| (\boldsymbol{\theta}^{[t]} - \boldsymbol{\theta}^*) - \alpha \left\{ \nabla h(\boldsymbol{\theta}^{[t]}) - \nabla h(\boldsymbol{\theta}^*) \right\} \right\|_2^2 \notag \\
+& \quad \quad + \alpha^2 \left\| \frac{1}{N} \sum_{i=1}^N \nabla f(\boldsymbol{\theta}^{[t]}; \bm{x}_i^{[t]}) - \nabla h(\boldsymbol{\theta}^{[t]}) \right\|_2^2. \notag
+\end{align}
+The first term can be further broken down as:
+\begin{align}
+\left\| (\boldsymbol{\theta}^{[t]} - \boldsymbol{\theta}^*) - \alpha \left\{ \nabla h(\boldsymbol{\theta}^{[t]}) - \nabla h(\boldsymbol{\theta}^*) \right\} \right\|_2^2 & \leq \left\| \left[ \bm{I} - \alpha \nabla^2 h(\boldsymbol{\theta}') \right] (\boldsymbol{\theta}^{[t]} - \boldsymbol{\theta}^*) \right\|_2^2 \tag{for some $\boldsymbol{\theta}' \in (\boldsymbol{\theta}^{[t]}, \boldsymbol{\theta}^*)$, by Taylor's theorem}\\
+& \leq r^2 \epsilon_t^2,
+\end{align}
+while the second term can be bounded by:
+\begin{align}
+\alpha^2 \left\| \frac{1}{N} \sum_{i=1}^N \nabla f(\boldsymbol{\theta}^{[t]}; \bm{x}_i^{[t]}) - \nabla h(\boldsymbol{\theta}^{[t]}) \right\|_2^2 & \leq \alpha^2 \sum_{l=1}^s \left[ \frac{1}{N} \sum_{i=1}^N \nabla_{\theta_l} f(\boldsymbol{\theta}^{[t]}; \bm{x}_i^{[t]}) - \nabla_{\theta_l} h(\boldsymbol{\theta}^{[t]}) \right]^2 \notag \\
+& \leq C_p \alpha^2 s M' \frac{(\log N)^{3p+1}}{N^2}. \tag{Theorem \ref{thm:subset}}
+\end{align}
+Part (a) is then proven by combining the above two bounds.\\
+
+Next, telescoping the bound in \eqref{eq:ldsgd1}, it follows that:
+\[\epsilon^2_{t+1} \leq r^{2(t+1)} \epsilon^2_0 + \frac{1-r^{2(t+1)}}{1-r^2}\frac{C_p \alpha^2 s M' (\log N)^{3p+1}}{N^2}, \quad t = 0, 1, \cdots.\]
+Part (b) is then proven by taking the limsup on both sides.
+\end{proof}
+
+Compared to random sampling (part (a) of Theorem \ref{thm:mbsgd}), part (a) above shows that the proposed low-discrepancy approach indeed enjoys an improved estimation rate for gradients. Similarly, compared to part (b) of Theorem \ref{thm:mbsgd}, part (b) above shows that the low-discrepancy method also reduces the noise ball radius of the solution iterates. This reduction in error and noise ball radius comes at a cost, however, since one needs to perform a one-shot reduction of the big data prior to gradient descent.
+
+\subsection{Numerical examples}
+
+\section{Low-discrepancy gradient boosting}
+
+A low-discrepancy version of stochastic gradient boosting, see \url{https://en.wikipedia.org/wiki/Gradient_boosting#Stochastic_gradient_boosting}.
+
+\section{Low-discrepancy cross-validation}
+
+
+
+
+%
+%\section{Other ideas}
+%
+%\begin{itemize}
+%\item Stochastic gradient decent - sample with low discrepancy
+%\item ABC with FFT and compare Fourier coefficients
+%\item Optimize weights sampling algorithm
+%\end{itemize}
+
+
+\bibliography{references}
+
+%\begin{thebibliography}{99}
+%
+%\bibitem{AD14} Ch. Aistleitner and J. Dick, Low-discrepancy point sets for non-uniform distribution. Acta Arithmetica, 163, 345--369, 2014.
+%
+%\bibitem{DP10} J. Dick and F. Pillichshammer, Digital nets and sequences. Discrepancy theory and quasi-Monte Carlo integration. Cambridge University Press, Cambridge, 2010.
+%
+%\end{thebibliography}
+
+
+
+\end{document}
