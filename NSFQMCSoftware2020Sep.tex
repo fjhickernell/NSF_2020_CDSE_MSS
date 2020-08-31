@@ -22,6 +22,7 @@
 
 \usepackage{minted}
 \newminted{python}{frame=lines,framerule=1.5pt,breaklines=true}
+\newmintinline[pyinline]{python}{}
 
 
 \usepackage{algpseudocode}
@@ -473,7 +474,7 @@ During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC r
 \end{description}
 All these software packages focus on just certain aspects of QMC: some on the generation of LD sequences, some on fundamental QMC algorithms, and others on the applications of QMC.  They are mainly the initiatives of individual research groups, not a shared community effort.
 
-After these fruitful discussions in 2018, SigOpt, a Silicon Valley startup, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language based on its popularity among a broad sector of potential users, especially those in the high tech industry who are not using it as widely as they might.  Python also supports C libraries to speed up crucial code.  Aleksei Sorokin,  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \mintinline{python}{pip} and imported via \mintinline{python}{from qmcpy import *}.
+After these fruitful discussions in 2018, SigOpt, a Silicon Valley startup, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language based on its popularity among a broad sector of potential users, especially those in the high tech industry who are not using it as widely as they might.  Python also supports C libraries to speed up crucial code.  Aleksei Sorokin,  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
 
 FH gave a tutorial on QMC software---with a focus on QMCPy at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory notebook \cite{QMCPyTut2020} was made available for the audience to try QMCPy simultaneously with the tutorial.  There is a series of blogs to introduce the broader community to QMC \cite{QMCBlog}.
 
@@ -483,14 +484,14 @@ FH gave a tutorial on QMC software---with a focus on QMCPy at MCQMC 2020 \cite{M
 
 Arising from discussions with Dirk Nuyens, Mike Giles, Art Owen, and others in the summer of 2018, it was decided that QMCPy should have four major abstract classes:
 \begin{itemize}
-	\item \mintinline{python}{DiscreteDistribution} for generating LD and IID sequences according to their original probability distributions,
-	\item \mintinline{python}{TrueMeasure} to accommodate problems defined for more general distributions or measures,
-	\item \mintinline{python}{Integrand} to define the particular function, $f$, of interest, and
-	\item \mintinline{python}{StippingCriterion} to determine when to stop the simulation.
+	\item \pyinline{DiscreteDistribution} for generating LD and IID sequences according to their original probability distributions,
+	\item \pyinline{TrueMeasure} to accommodate problems defined for more general distributions or measures,
+	\item \pyinline{Integrand} to define the particular function, $f$, of interest, and
+	\item \pyinline{StippingCriterion} to determine when to stop the simulation.
 \end{itemize}
-There is also an \mintinline{python}{AccumulateData} class to keep track of intermediate results.
+There is also an \pyinline{AccumulateData} class to keep track of intermediate results.
 
-\subsubsection{\textup{\mintinline{python}{DiscreteDistribution}}} LD sequences are constructed by creating the object and then generating the points.  The code below illustrates how to generate the points shown in the center panel of Fig.\ \ref{fig:iid_vs_ld}.
+\subsubsection{\textup{\pyinline{DiscreteDistribution}}} LD sequences are constructed by creating the object and then generating the points.  The code below illustrates how to generate the points shown in the center panel of Fig.\ \ref{fig:iid_vs_ld}.
 \begin{pythoncode}
 ld = qmcpy.Lattice(dimension = 2)  #define a discrete LD distribution 
 points = lattice.gen_samples(n = 64)  #construct some points
@@ -502,15 +503,15 @@ points = lattice.gen_samples(n = 64)  #construct some points
 	\caption{LD Sobol' (left) and Halton points (right).  These points also have fewer gaps and clusters than IID points. \label{fig:sobol_halton}}
 \end{wrapfigure}
 
- All LD generators provide points designed to mimic the distribution $\calu[0,1]^d$.  QMCPy also has \mintinline{python}{Sobol} \cite{DicPil10a} and \mintinline{python}{Halton} \cite{Hal60} LD generators whose syntax are comparable.  Fig.\ \ref{fig:sobol_halton} illustrates these LD points.  For comparison purposes, QMCPy also has standard uniform and normal psuedo-random generators.  
+ All LD generators provide points designed to mimic the distribution $\calu[0,1]^d$.  QMCPy also has \pyinline{Sobol} \cite{DicPil10a} and \pyinline{Halton} \cite{Hal60} LD generators whose syntax are comparable.  Fig.\ \ref{fig:sobol_halton} illustrates these LD points.  For comparison purposes, QMCPy also has standard uniform and normal psuedo-random generators.  
  
  Our LD generators are extensible, meaning that one may generate additional points while reusing the ones that have already been generated.  For lattice and Sobol' points it is preferable to make $n$ a power of $2$, while Halton points, which may be a bit larger in discrepancy than the others, have no preferred $n$.
  
  All QMCPy LD generators are randomized by default since this ensures that no points lie on the boundary of the unit cube.  This means that if points are transformed to mimic the Gaussian or other distributions on $\reals^d$, no LD points will be mapped to infinity. 
 
 
-\subsubsection{\textup{\mintinline{python}{TrueMeasure}}} 
-To construct good points that mimic distributions other than standard uniform, one must make a transformation, often the inverse cumulative distribution.  The \mintinline{python}{TrueMeasure} class takes care of that transformation automatically.
+\subsubsection{\textup{\pyinline{TrueMeasure}}} 
+To construct good points that mimic distributions other than standard uniform, one must make a transformation, often the inverse cumulative distribution.  The \pyinline{TrueMeasure} class takes care of that transformation automatically.
 \begin{pythoncode}
 gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specfiy the distribution parameters 
 points = gaussian_ld.gen_samples(n = 64)  #construct some points
@@ -526,7 +527,7 @@ points = gaussian_ld.gen_samples(n = 64)  #construct some points
 
 Fig.\ \ref{fig:ld_Gauss} displays  lattice and Sobol' points that have been transformed to mimic the Gaussian distribution with mean $\begin{pmatrix} 3 \\ 2 \end{pmatrix}$ and covariance matrix $\begin{pmatrix} 9 & 5 \\ 5 & 4 \end{pmatrix}$.  A set of transformed low discrepancy points may or may not be low discrepancy with respect to the new distribution, depending on how one defines the discrepancy \cite{LiKanHic20a}.  But, transformed low discrepancy points often outperform IID points in Monte Carlo calculations.
 
-\subsubsection{\textup{\mintinline{python}{Integrand}}} 
+\subsubsection{\textup{\pyinline{Integrand}}} 
 For computing expectations and multivariate integration as described in \eqref{eq:mean}, one must specify the integrand.  Sometimes original form of the problem is not the one most convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with independent marginals of zero mean and variance $1/2$:
 \begin{equation} \label{eq:KeisterAlt}
 \mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)} 
