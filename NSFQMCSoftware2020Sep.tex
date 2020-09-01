@@ -480,7 +480,7 @@ FH gave a tutorial on QMC software---with a focus on QMCPy at MCQMC 2020 \cite{M
 
 
 
-\subsection{The Architecture of QMCPy}
+\subsection{QMCPy Architecture}
 
 Arising from discussions with Dirk Nuyens, Mike Giles, Art Owen, and others in the summer of 2018, it was decided that QMCPy should have four major abstract classes:
 \begin{itemize}
@@ -491,7 +491,7 @@ Arising from discussions with Dirk Nuyens, Mike Giles, Art Owen, and others in t
 \end{itemize}
 There is also an \pyinline{AccumulateData} class to keep track of intermediate results.
 
-\subsubsection{\textup{\pyinline{DiscreteDistribution}}} LD sequences are constructed by creating the object and then generating the points.  The code below illustrates how to generate the points shown in the center panel of Fig.\ \ref{fig:iid_vs_ld}.
+\subsubsection{\textup{\pyinline{DiscreteDistribution} and \pyinline{TrueMeasure}}} LD sequences are constructed by creating the object and then generating the points.  The code below illustrates how to generate the points shown in the center panel of Fig.\ \ref{fig:iid_vs_ld}.
 \begin{pythoncode}
 ld = qmcpy.Lattice(dimension = 2)  #define a discrete LD distribution 
 points = lattice.gen_samples(n = 64)  #construct points
@@ -509,8 +509,6 @@ points = lattice.gen_samples(n = 64)  #construct points
  
  All QMCPy LD generators are randomized by default since this ensures that no points lie on the boundary of the unit cube.  This means that if points are transformed to mimic the Gaussian or other distributions on $\reals^d$, no LD points will be mapped to infinity. 
 
-
-\subsubsection{\textup{\pyinline{TrueMeasure}}} 
 To construct good points that mimic distributions other than standard uniform, one must make a transformation, often the inverse cumulative distribution.  The \pyinline{TrueMeasure} class takes care of that transformation automatically.
 \begin{pythoncode}
 gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specify the distribution parameters 
@@ -529,13 +527,14 @@ Fig.\ \ref{fig:ld_Gauss} displays  lattice and Sobol' points that have been tran
 
 \subsubsection{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}} 
 For computing expectations and multivariate integration as described in \eqref{eq:mean}, one must specify the integrand.  Sometimes original form of the problem is not the one most convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with independent marginals of zero mean and variance $1/2$:
-\begin{equation} \label{eq:KeisterAlt}
+\begin{multline} \label{eq:KeisterAlt}
 \mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)} 
-= \int_{\reals^d} \underbrace{\cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2)}_{h(\bt)}  \, \underbrace{\dif \bt}_{\text{Lebesgue}} .
-\end{equation}
-Alternatively, it can be thought of as an integral of $h$ with respect to Lebesgue measure.  QMCPy can compute the integral either way.
+= \int_{\reals^d} \underbrace{\cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2)}_{h(\bt)}  \, \underbrace{\dif \bt}_{\text{Lebesgue}} \\
+=   \int_{[0,1]^d} f(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
+\end{multline}
+Alternatively, $\mu$ can be thought of as an integral of $h$ with respect to Lebesgue measure.  QMCPy can compute the integral either way.
 
-The first way constructs the Gaussian transformed LD \pyinline{TrueMeasure} instance \pyinline{gs} as discussed in the previous section.  One defines the function $g$ as in \eqref{eq:KeisterAlt} above, and then uses \pyinline{CustomFun} to construct an integrand $f$ such that the integral can be written in terms of the uniform distribution, which the LD sequence mimics, i.e., $\mu = \int_{[0,1]^d} f(\bx) \, \dif \bx$.  The statement below involving \pyinline{CustomFun} makes that transformation.
+The first way constructs the Gaussian transformed LD \pyinline{TrueMeasure} instance \pyinline{gs} as discussed in the previous section.  One defines the function $g$ as in \eqref{eq:KeisterAlt} above, and then uses \pyinline{CustomFun} to construct an integrand $f$ such that the integral can be written in terms of the uniform distribution, which the LD sequence mimics.  The statement below involving \pyinline{CustomFun} constructs the transformation $\bT$ in \eqref{eq:KeisterAlt}.
 \begin{pythoncode}
 def g(t):  #your desired integrand, calculations must be vectorized
 	d = t.shape[1]
@@ -548,7 +547,13 @@ sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)   #stopping criterion must match  poi
 solution = sc.integrate()
 \end{pythoncode}
 
+The final stage of the computation requires the construction of a \pyinline{StoppingCriterion} instance, \pyinline{sc}.  This one is from \cite{HicJim16a}, and his based on Walsh transformations of the sampled integrand data.  Invoking the \pyinline{integrate} method \pyinline{sc} computes $\hmu_n$ satisfying
+\begin{equation} \label{eq:error_crit}
+	\abs{\mu -\hmu_n} \le \varepsilon
+\end{equation}
+where $\varepsilon$ is the absolute error tolerance.
 
+Another way to compute the Keister integral, \eqref{eq:Keister}, is to think of it as an integral with respect to the Lebesgue mesaure.  Again \pyinline{CustomFun} makes the proper variable transformation, and the answer is the same as the first way.  This second way takes about $0.45$ s, whereas the first way takes about $0.25$ s.
 
  \begin{pythoncode}
  def h(t):  #your desired integrand, calculations must be vectorized
@@ -562,7 +567,9 @@ solution = sc.integrate()
  solution = sc.integrate()
  \end{pythoncode}
  
+ \subsection{QMCPy Options}
  
+ \subsection{QMCPy Support}
  
  
  
