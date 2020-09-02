@@ -364,12 +364,11 @@ QMCPy: Quasi-Monte Carlo Community Software\\
 
 \vspace{-6ex}
 
-\section{Overview of QMC and LD Sampling}
 
 Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to achieve substantial efficiency gains.  We, Fred Hickernell (FH, PI from Illinois Tech), Simon Mak (SM, PI from Duke U), and Sou-Cheng Terrya Choi (SCTC, Senior Personnel) propose to grow QMCPy \cite{QMCPy2020a}, a Python QMC software library, which will be embraced by QMC researchers and benefit an expanding base of QMC users.  QMCPy will become
 \begin{enumerate}
 \renewcommand{\labelenumi}{\arabic{enumi}.}
-    \item A structured collection of the best QMC software, including
+    \item A tightly-connected collection of the best QMC software, including
     \begin{enumerate}
     \renewcommand{\labelenumii}{\alph{enumii}.}
         \item LD sequence generators,
@@ -381,20 +380,23 @@ Quasi-Monte Carlo (QMC) methods replace independent and identically distributed 
     \item Owned and cultivated by our QMC community, and
     \item An easy on-ramp for those who are new to QMC.
 \end{enumerate}
+Here we provide an overview of QMC, a description of our early QMCPy efforts, our plans to grow QMCPy, the benefits of QMCPy to the larger community, and why our team is best equipped to carry out this effort.
 
-\subsection{Applications of (Q)MC}  Many situations are best understood by building randomness into the mathematical model.  Examples include statistical inference \cite{}, financial risk \cite{Gla03}, light transport \cite{}, uncertainty quantification \cite{}, and particle physics \cite{}.  Simulations using random vectors or discrete stochastic processes to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages), quantiles, and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process---IID sampling for simple MC and LD sampling for QMC.
+\section{Overview of QMC and LD Sampling}
 
-(Q)MC simulation is efficient for computing multivariate integrals since it avoids the curse of dimensionality inherent in tensor product cubature rules.  Cubature based on grid sampling has a cost that increases exponentially with the number of variables.
+\subsection{Applications of (Q)MC}  Many situations are best understood by building randomness into the mathematical model.  Examples include Bayesian statistical inference \cite{}, financial risk \cite{Gla03}, photon transport \cite{}, and uncertainty quantification \cite{}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages), quantiles, and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
 
-In construction of surrogate models for computer experiments (multivariate function approximation), one often wishes to evenly sample the domain to search for regions where the function changes more sharply.  IID and LD sampling again proves advantageous over grid sampling.
+Cubatures for approximating multivariate integrals based on grid sampling have computational costs that increase exponentially with the number of variables, $d$.  (Q)MC simulation avoids this curse of dimensionality with computational costs that are often only weakly dimension dependent.
 
-\subsection{LD Versus IID Sampling}
+In constructing surrogate models for computer experiments (multivariate function approximation), one may wish to evenly sample the domain to search for regions where the function changes more sharply.  IID and LD sampling again prove advantageous over grid sampling.
 
-The quantity of interest, $Y$ (option payoff, pixel intensity, time to failure), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  We assume that $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form, the population mean (multivariate integral), 
+\subsection{LD Versus IID Sampling} \label{sec:LDvsIID}
+
+The quantity of interest, $Y$ (option payoff, pixel intensity, pressure at certain location), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  We assume that $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form, the population mean (multivariate integral), 
 \begin{equation} \label{eq:mean}
     \mu = \bbE(Y) = \int_{\cx} f(\bx) \, \dif F(\bx),
 \end{equation} 
-cannot be computed analytically but may be estimated the sample mean,
+cannot be computed analytically.  But, it may be estimated the sample mean,
 \begin{equation} \label{eq:sample mean}
 \hmu_n = \frac 1n \sum_{i=1}^n Y_i = \frac 1n  \sum_{i=1}^n f(\bX_i).
 \end{equation}
@@ -403,30 +405,30 @@ How should $\bX_1, \bX_2, \ldots $ be chosen to make $\abs{\mu - \hmu_n}$ small?
 Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The points on the left, $\bX_1, \bX_2,  \ldots \IIDSim \calu[0,1]^2$, are random and do not know about each other.  Since these points are IID, the multivariate distribution of $\bX_1, \ldots \bX_n$ is a product of the bivariate marginals:  $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
 \cdots F(\bx_n) = x_{11}x_{12} x_{21} \cdots x_{n2}$, where $F(\bx)  = x_1x_2$ is the bivariate uniform distribution.
 
-\begin{figure}
+\begin{figure}[H]
 	\centering
 	\includegraphics[height = 5cm]{ProgramsImages/iid_scatter.eps} \quad
 	\includegraphics[height = 5cm]{ProgramsImages/lattice_scatter.eps} \quad
 	\includegraphics[height = 5cm]{ProgramsImages/grid_scatter.eps}
-	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points. \label{fig:iid_vs_ld}}
+	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points that either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{figure}
 
-The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated with one another.  They might be deterministic or random.  They are designed to mimic the distribution $F$  in the sense that the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---is close to $F$.  (The empirical distribution for $n$  points assigns probability $1/n$ to each of point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$, and LD points make the discrepancy small.  Discrepancies are explained further in the next subsection.
+The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated with one another.  They might be deterministic or random.  They are designed to mimic the distribution $F$  in the sense that the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---is close to $F$.  (The empirical distribution for $n$  points assigns probability $1/n$ to each of point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$, and LD points make the discrepancy small.  Discrepancies are explained further in the next subsection and in Sect. \ref{}.
 
-The points on the right in Fig.\ \ref{fig:iid_vs_ld} are grid points. While they may look even, they lack evenness in low dimensional projections.  Specifically, the grid points have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  For $d$-dimensional grids, there are only $n^{1/d}$ values in each coordinate direction, which is a weakness especially for large $d$.
+The points on the right in Fig.\ \ref{fig:iid_vs_ld} are grid points. While they may look even, they lack evenness in low dimensional projections.  Specifically, the grid points have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  For $d$-dimensional grids, there are only $n^{1/d}$ values in each coordinate direction, which is disastrous for  large $d$.
 
 \subsection{Efficiency Benefits from LD Sampling}
 The root mean squared error of the sample mean, $\hmu_n$ in approximating the population mean, $\mu$, when IID samples are used is 
 \begin{equation}
     \sqrt{\bbE\bigl[\abs{\mu - \hmu_n}^2\bigr]} = \frac{\std(Y)}{\sqrt{n}},  \quad \std(Y) = \sqrt{\int_{\cx} \abs{f(\bx) - \mu}^2 \, \dif F(\bx)}, \qquad \bX_1, \bX_2, \ldots \text{IID}.
 \end{equation}
-The smoothness requirement is minimal, and the error bound may be free from the curse of dimensionality (assuming that $\std(Y)$ does not explode with dimension), but the convergence rate is modest.  
+The smoothness requirement on $f$ is minimal, and the error bound is free from the curse of dimensionality (assuming that $\std(Y)$ does not explode with dimension), but the convergence rate is modest.  
 
 For LD sampling the absolute error has an upper bound of
 \begin{equation}
     \abs{\mu - \hmu_n}^2 \le D(\{\bX_i\}_{i=1}^n, F) \norm[\calf]{f},  \qquad \bX_1, \bX_2, \ldots \text{LD}.
 \end{equation}
-Here the Banach space $\calf$ typically requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., integrable mixed partial derivatives up to order one in each direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n, F)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$ for well-chosen LD sequences, where $\delta$ may be an arbitrarily small, positive number.
+The Banach space $\calf$ typically requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., integrable mixed partial derivatives up to order one in each direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n, F)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$ for well-chosen LD sequences, where $\delta$ may be an arbitrarily small, positive number.
 
 Fig.\ \ref{fig:KeisterTimes} displays the results of approximating an integral from a computational physics example of Keister \cite{Kei96},
 \begin{equation} \label{eq:Keister}
