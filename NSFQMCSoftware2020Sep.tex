@@ -570,11 +570,11 @@ def h(t):  #your desired integrand, calculations must be vectorized
  \subsection{QMCPy Options}
  QMCPy has several options for users:
  \begin{itemize}
- 	\item Backends for \pyinline{Sobol} from PyTorch \cite{PyTorch} and MPS \cite{Nuy17a}, in addition to the default from \pyinline{qrng} \cite{QRNG2020};
+ 	\item \pyinline{backends} for \pyinline{Sobol} from PyTorch \cite{PyTorch} and MPS \cite{Nuy17a}, in addition to the default from qrng \cite{QRNG2020};
  	
- 	\item Backends for \pyinline{Lattice} from MPS \cite{Nuy17a}, in addition to the default from GAIL \cite{ChoEtal20a}, and generating vectors from LatNet Builder \cite{LatNet};
+ 	\item \pyinline{backends} for \pyinline{Lattice} from MPS \cite{Nuy17a}, in addition to the default from GAIL \cite{ChoEtal20a}, and generating vectors from LatNet Builder \cite{LatNet};
  	
- 	\item Stopping criteria based on the Central Limit Theorem (CLT) for IID sampling and random replications of LD sampling;  a more rigorous stopping criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  stopping criteria based on Fast Fourier/Walsh Transforms via tracking the decay of the series coefficients \cite{HicJim16a, JimHic16a} and using a Bayesian perspective \cite{RatHic19a};
+ 	\item \pyinline{SoppingCriteria} based on the Central Limit Theorem (CLT) for IID sampling and random replications of LD sampling;  a more rigorous stopping criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  stopping criteria based on Fast Fourier/Walsh Transforms via tracking the decay of the series coefficients \cite{HicJim16a, JimHic16a} and using a Bayesian perspective \cite{RatHic19a};
  	
  	\item Specification of relative error tolerances as well as absolute error tolerances;
  	
@@ -584,37 +584,29 @@ def h(t):  #your desired integrand, calculations must be vectorized
  \end{itemize}
  
 \subsection{QMCPy Support}
-QMCPy is hosted on Github \cite{QMCPy2020a}, where it may be downloaded, where issues can be submitted, and where pull requests can be made by those who wish to add features.  New features require documentation \cite{QMCPyDocs}, which is  produced by ReadtheDocs.  Doctests are required to ensure that features work as expected. All features are illustrated by Jupyter notebooks.
-
-A tutorial presented at MCQMC 2020 is presented at 
+QMCPy is hosted on Github \cite{QMCPy2020a}, where it may be downloaded, where issues can be submitted, and where pull requests can be made by those who wish to add features.  New features require documentation \cite{QMCPyDocs}, which is  produced by ReadtheDocs.  Doctests are required to ensure that features work as expected. All features are illustrated by Jupyter notebooks.  A QMC Software tutorial presented at MCQMC 2020 \cite{QMCPyTut2020, https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_2k12mwiw} includes a Google Colaboratory Notebook \cite{QMCPyTutColab2020}.
  
  
  
 
 
 
-\cite{BinSur13}
+
 
 
 \section{What QMCPy Should Become}
+QMCPy has made a good start.  Yet, there is much to be done to establish the critical mass of algorithms and collaborators for QMCPy to become a self-sustaining community-owned software.  Here is our plan.
+
+The overall vision is that QMCPy aggregates the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case comes arises, it should be a simple matter to swap out the new for the old and measure the performance improvement.
+
+\subsection{Feature Rich LD Sequence Generators}
+Although QMCPy already includes the most popular LD sequences, there is lack of flexibility, and some more recent sequences are missing.
+
+Presently, the digital shifting and scrambling  recommended for Sobol' sequences must be built in by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and qrng \cite{QRNG2020}  However, the generating matrices (direction vectors) for the Sobol' sequence should be able to be specified independently of the algorithm the part of the algorithm that digitally scrambles and shifts.  We aim to rectify this, which will allow folks to try the BRODA generators \cite{BRODA20a} with scrambling, which is not yet possible.
+
+Sobol' sequences are a member of the digital sequence family.  LatNet Builder \cite{LatNet} can construct the generating vectors for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the the generating matrices to be specified independently of the digital scrambling and shifting, we will be able to allow users to explore whether 
 
 
-\begin{figure}[H]
-	\centering
-	%\includegraphics[height = 5cm]{ProgramsImages/sample_data.eps} \quad
-	\includegraphics[height = 5cm]{ProgramsImages/qEI_cost_comp_time.eps}
-	%\includegraphics[height = 5cm]{ProgramsImages/qEI_cost_comp_n.eps} 
-	\caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister} using QMCPy.  LD sampling is much more efficient than IID sampling, especially as the error tolerance decreases.}
-	\label{fig:qei}
-\end{figure}
-
-QMCPy as an aggregator
-
-**parallel computing
-
-**GPUs
-
-MLQMC
 
 CUD
 
@@ -622,17 +614,15 @@ custom LD points
 
 Plug and play nets
 
-more use cases
-
-alternatives to discrepancy
-
-Sobol' indices
-
 higher order nets
 
 %quantiles
 
+alternatives to discrepancy
+\subsection{Stronger Algorithms}
+
 **kernel density estimation
+
 \iffalse
 Pierre L'Ecuyer's talk
 https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_r1x3xmle
@@ -641,9 +631,17 @@ https://drive.google.com/file/d/1uztn18UimvdIo3hyYXywUaOxj_wqPJ7N/edit
 
 \fi
 
+MLQMC
+
+\subsection{A Broader Spectrum of Use Cases}
+
+Sobol' indices
+
+more use cases
+
 SM **sampling from large data
-  Thinning samples
-  
+Thinning samples
+
 SM Bayesian inference ??
 
 SM importance sampling/control variates
@@ -654,6 +652,42 @@ https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_jkdkrau0
 https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 
 \fi
+
+\cite{BinSur13}
+
+\begin{figure}[H]
+	\centering
+	%\includegraphics[height = 5cm]{ProgramsImages/sample_data.eps} \quad
+	\includegraphics[height = 5cm]{ProgramsImages/qEI_cost_comp_time.eps}
+	%\includegraphics[height = 5cm]{ProgramsImages/qEI_cost_comp_n.eps} 
+	\caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister} using QMCPy.  LD sampling is much more efficient than IID sampling, especially as the error tolerance decreases.}
+	\label{fig:qei}
+\end{figure}
+
+
+
+\subsection{Enhanced Performance}
+**parallel computing
+
+**GPUs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
