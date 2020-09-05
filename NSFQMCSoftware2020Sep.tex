@@ -600,26 +600,28 @@ QMCPy has made a good start.  Yet, there is much to be done to establish the cri
 The overall vision is that QMCPy aggregates the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case comes arises, it should be a simple matter to swap out the new for the old and measure the performance improvement.
 
 \subsection{Feature Rich LD Sequence Generators}
-Although QMCPy already includes the most popular LD sequences, there is lack of flexibility, and some more recent sequences are missing.
+Although QMCPy already includes the most popular LD sequences, there is lack of flexibility in their implementation.  Some more recent sequences are missing.
 
-Presently, the digital shifting and scrambling  recommended for Sobol' sequences must be built in by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and qrng \cite{QRNG2020}  However, the generating matrices (direction vectors) for the Sobol' sequence should be able to be specified independently of the algorithm the part of the algorithm that digitally scrambles and shifts.  We aim to rectify this, which will allow folks to try the BRODA generators \cite{BRODA20a} with scrambling, which is not yet possible.
+At present, the digital shifting and scrambling  recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and qrng \cite{QRNG2020}.  However, for flexibility, the generating matrices (direction vectors) for the Sobol' sequence should be specified independently of the part of the generator that digitally scrambles and shifts.  We will rectify this, which will allow folks to try scrambled BRODA generators \cite{BRODA20a}.  This is not yet possible.
 
-Sobol' sequences are a member of the digital sequence family.  LatNet Builder \cite{LatNet} can construct the generating vectors for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the the generating matrices to be specified independently of the digital scrambling and shifting, we will be able to allow users to explore whether 
+Sobol' sequences are a member of the digital sequence family \cite{DicPil10a}.  LatNet Builder \cite{LatNet} can construct the generating matrices for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the the generating matrices to be specified independently of the digital scrambling and shifting, users can explore whether polynomial lattices have any advantages over Sobol' sequences.
 
-
+For integrands with higher orders smoothness, higher order digital sequences \cite{Dic09a, Dic11a} can provide faster convergence rates as $n \to \infty$, which translate into slower computational cost rates as  $\varepsilon \to 0$.
 
 CUD
 
 custom LD points
-
-Plug and play nets
 
 higher order nets
 
 %quantiles
 
 alternatives to discrepancy
+
+
 \subsection{Stronger Algorithms}
+
+SM importance sampling/control variates
 
 **kernel density estimation
 
@@ -644,7 +646,6 @@ Thinning samples
 
 SM Bayesian inference ??
 
-SM importance sampling/control variates
 
 \iffalse
 https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_jkdkrau0
@@ -708,7 +709,7 @@ grant
 include 
 \cite{ala_augmented_2017, 
 	ChoEtal17a,
-	ChoEtal19a,
+	ChoEtal20a,
 	Din15a, 
 	DinHic20a,
 	GilEtal16a,
