@@ -262,6 +262,7 @@
 \newcommand{\calhk}{\calh_d(K)}
 \newcommand{\calg}{{\mathcal{G}}}
 \newcommand{\calgd}{{\calg_d}}
+\newcommand{\calM}{{\mathcal{M}}}
 \newcommand{\caln}{{\mathcal{N}}}
 \newcommand{\calp}{{\mathcal{P}}}
 \newcommand{\cals}{{\mathcal{S}}}
@@ -432,8 +433,8 @@ The root mean squared error of the sample mean, $\hmu_n$ in approximating the po
 The smoothness requirement on $f$ is minimal, and the error bound is free from the curse of dimensionality (assuming that $\std(Y)$ does not explode with dimension), but the convergence rate is modest.  
 
 For LD sampling the absolute error has an upper bound of
-\begin{equation}
-    \abs{\mu - \hmu_n}^2 \le D(\{\bX_i\}_{i=1}^n, F) \norm[\calf]{f},  \qquad \bX_1, \bX_2, \ldots \text{LD}.
+\begin{equation} \label{eq:KH}
+    \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n, F) \norm[\calf]{f},  \qquad \bX_1, \bX_2, \ldots \text{LD}.
 \end{equation}
 The Banach space $\calf$ typically requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., $L^2$ mixed partial derivatives of up to order one in each coordinate direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n, F)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$ for well-chosen LD sequences, where $\delta$ is arbitrarily small and positive.
 
@@ -621,17 +622,37 @@ The overall vision is that QMCPy aggregates the best QMC software with a clear s
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Although QMCPy already includes the most popular LD sequences, there is lack of flexibility in their implementation.  Some more recent sequences are missing.
 
-At present, the digital shifting and scrambling  recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and qrng \cite{QRNG2020}.  However, for flexibility, the generating matrices (direction vectors) for the Sobol' sequence should be specified independently of the part of the generator that digitally scrambles and shifts.  We will rectify this, which will allow folks to try scrambled BRODA generators \cite{BRODA20a}.  This is not yet possible.
+At present, the digital shifting and scrambling  recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and qrng \cite{QRNG2020}.  However, for flexibility, the generating matrices (direction vectors) for the Sobol' sequence should be specified independently of the part of the generator that digitally scrambles and shifts.  \emph{We will rectify this}, which will allow folks to try scrambled BRODA generators \cite{BRODA20a}.  This is not yet possible.
 
-Sobol' sequences are a member of the digital sequence family \cite{DicPil10a}.  LatNet Builder \cite{LatNet} can construct the generating matrices for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the the generating matrices to be specified independently of the digital scrambling and shifting, users can explore whether polynomial lattices have any advantages over Sobol' sequences.
+Sobol' sequences are a member of the digital sequence family \cite{DicPil10a}.  LatNet Builder \cite{LatNet} can construct the generating matrices for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the the generating matrices to be specified independently of the digital scrambling and shifting, users can explore  \emph{what advantages polynomial lattices have} over Sobol' sequences.
 
-For integrands with higher orders smoothness, higher order digital sequences \cite{Dic09a, Dic11a} can provide faster convergence rates as $n \to \infty$, which translate into slower computational cost rates as  $\varepsilon \to 0$.
+For integrands with higher orders smoothness, higher order digital sequences \cite{Dic09a, Dic11a} can provide faster convergence rates as $n \to \infty$, which translate into slower computational cost rates as  $\varepsilon \to 0$.  Although some QMC applications, such as those in quantitative finance, often have integrands with low order smoothness, other applications, such as computing probabilities over subsets of the sample space  involving smooth densities, have higer order smoothness.  \emph{Higher order digital sequences will be implemented} in QMCPy.
+
+One large family of discrepancies are defined in terms of a symmetric, positive definite kernel, $K$.  If we identify $K(\bt,\bx)$ as some inner product of point distributions, i.e., $K(\bt,\bx) = \ip[\calM]{F_{\{\bt\}}}{F_{\{\bx\}}}$,  then the discrepancy between two distributions can be defined as the norm of the distance between the two \cite{Hic99a}:
+\begin{equation} \label{eq:gen_disc}
+	D^2(F,G) :=  \norm[\calM]{F-G}^2 = \int_{\cx \times \cx } K(\bt,\bx) \, \dif(F(\bt) - G(\bt)) \dif(F(\bx) - G(\bx)) = D^2(G,F)
+\end{equation}
+When $F$ is a continuous distribution and $G$ is the empirical distribution for $\{ \bX_i\}_{i=1}^n$, we have an example of the discrepancy referred to in  \eqref{eq:KH}:
+\begin{multline}
+	D^2(\{ \bX_i\}_{i=1}^n,F) =  D^2\bigl(F_{\{ \bX_i\}_{i=1}^n},F \bigr) =
+	\int_{\cx \times \cx} K(\bt,\bx) \, \dif F(\bt) \dif F(\bx) \\
+	-\frac 2n \sum_{i=1}^n 	\int_{\cx} K(\bt,\bX_i) \, \dif F(\bt) 
+	+ \frac{1}{n^2} \sum_{i,k=1}^n  K(\bX_i,\bX_k).
+\end{multline}
+For error bound \eqref{eq:KH}, $K$ plays the role of a reproducing kernel for the Hilbert space, $\calf$.  There is a Bayesian version of \eqref{eq:KH} for integrands with covariance kernel $K$ \cite{Hic17a}.  
+
+Several popular choices of $K$ exist \cite{Hic97a}.  QMCPy \emph{will implement discrepancies} based on a variety of popular kernels. 
+
+One approach to constructing LD sequences, especially for small $n$ is to apply optimization algorithms to the discrepancy \cite{WinFan97,LiKanHic20a}.  This is non-trivial because of the multimodal nature of the discrepancy as a function $\{ \bX_i\}_{i=1}^n$.  Changing the order of the $\bX_i$ leaves discrepancy unchanged.  
+
+We will \emph{implement some numerical optimization algorithms} for constructing low discrepancy designs.  Since evaluating  $D(\{ \bX_i\}_{i=1}^n,F)$ generally requires $\Order(n^2)$ operations, this numerical optimization effort will be cost effective where $n$ is not too large, and the kernel, $K$ is smooth enough to allow $D(\{ \bX_i\}_{i=1}^n,F)$  to decay quickly to $0$ with $n$.  The corresponding integration problems would be characterized by a smooth $f$ that is expensive to evaluate, hence  $n$ can and must be small.  The discrepancies of typical LD sequences do not decay faster than $\Order(n^{-1})$ (except for lattices and smooth, periodic $K$, which necessitate smooth, periodic $f$).
+
+
+
 
 CUD
 
 custom LD points
-
-higher order nets
 
 %quantiles
 
