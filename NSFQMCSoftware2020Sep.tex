@@ -383,15 +383,22 @@ Quasi-Monte Carlo (QMC) methods replace independent and identically distributed 
 
 Here we provide an overview of QMC, a description of our early efforts, our plans to grow QMCPy, the benefits of QMCPy, and why ours is the right team for this project.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview of QMC and LD Sampling}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Applications of (Q)MC}  Many situations are best understood by building randomness into the mathematical model.  Examples include Bayesian statistical inference \cite{}, financial risk \cite{Gla03}, photon transport \cite{}, and uncertainty quantification \cite{}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages), quantiles, and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Applications of (Q)MC}  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Many situations are best understood by building randomness into the mathematical model.  Examples include Bayesian statistical inference \cite{}, financial risk \cite{Gla03}, photon transport \cite{}, and uncertainty quantification \cite{}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages), quantiles, and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
 
 Cubatures for approximating multivariate integrals based on grid sampling have computational costs that increase exponentially with the number of variables, $d$.  (Q)MC simulation avoids this curse of dimensionality with computational costs that are often only weakly dimension dependent.
 
 In constructing surrogate models for computer experiments (multivariate function approximation), one may wish to evenly sample the domain to search for regions where the function changes more sharply.  IID and LD sampling again prove advantageous over grid sampling.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{LD Versus IID Sampling} \label{sec:LDvsIID}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 The quantity of interest, $Y$ (option payoff, pixel intensity, pressure at certain location), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  We assume that $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form, the population mean (multivariate integral), $\mu$, cannot be computed analytically.  But, it may be estimated the sample mean:
 \begin{equation} \label{eq:mean}
@@ -415,7 +422,9 @@ The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \
 
 The points on the right in Fig.\ \ref{fig:iid_vs_ld} are grid points. While they may look even, they lack evenness in low dimensional projections.  Specifically, the grid points have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  For $d$-dimensional grids, there are only $n^{1/d}$ values in each coordinate direction, which is disastrous for  large $d$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiency Benefits from LD Sampling}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The root mean squared error of the sample mean, $\hmu_n$ in approximating the population mean, $\mu$, when IID samples are used is 
 \begin{equation}
     \sqrt{\bbE\bigl[\abs{\mu - \hmu_n}^2\bigr]} = \frac{\std(Y)}{\sqrt{n}},  \quad \std(Y) = \sqrt{\int_{\cx} \abs{f(\bx) - \mu}^2 \, \dif F(\bx)}, \qquad \bX_1, \bX_2, \ldots \text{IID}.
@@ -451,9 +460,13 @@ The computational cost rates of increase as $\varepsilon$ decreases for IID and 
 
 To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a proving ground for their latest developments.  This is why we need QMCPy.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{QMCPy Now}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Start of QMCPy}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 During the summer of 2018 Fred Hickernell (FH) began discussing with other QMC researchers, including Dirk Nuyens, Frances Kuo, and Art Owen (AO) how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
 \begin{description}[format=\textup]
 	\item[MATLAB] Sobol' and Halton sequences in their Statistics and Machine Learning Toolbox, commercial \cite{MAT9.8}
@@ -480,7 +493,9 @@ FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{QMCPy Architecture}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Arising from the aforementioned discussions, it was decided that QMCPy should have four major abstract classes:
 \begin{itemize}
@@ -527,7 +542,9 @@ points = gaussian_ld.gen_samples(n = 64)  #construct points
 
 Fig.\ \ref{fig:ld_Gauss} displays  lattice and Sobol' points that have been transformed to mimic the Gaussian distribution with mean $\begin{pmatrix} 3 \\ 2 \end{pmatrix}$ and covariance matrix $\begin{pmatrix} 9 & 5 \\ 5 & 4 \end{pmatrix}$.  A set of transformed low discrepancy points may or may not be low discrepancy with respect to the new distribution, depending on how one defines the discrepancy \cite{LiKanHic20a}.  But, transformed low discrepancy points often outperform IID points in Monte Carlo calculations.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 For computing expectations and multivariate integration as described in \eqref{eq:mean}, one must specify the integrand.  Sometimes original form of the problem is not convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with independent marginals of zero mean and variance $1/2$:
 \begin{multline} \label{eq:KeisterAlt}
 \mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)} 
@@ -567,7 +584,9 @@ def h(t):  #your desired integrand, calculations must be vectorized
  solution = sc.integrate()
  \end{pythoncode}
  
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  \subsection{QMCPy Options}
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  QMCPy has several options for users:
  \begin{itemize}
  	\item \pyinline{backends} for \pyinline{Sobol} from PyTorch \cite{PyTorch} and MPS \cite{Nuy17a}, in addition to the default from qrng \cite{QRNG2020};
@@ -583,23 +602,23 @@ def h(t):  #your desired integrand, calculations must be vectorized
  	\item A few use cases, i.e., pre-programmed \pyinline{Integrand} instances.
  \end{itemize}
  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{QMCPy Support}
-QMCPy is hosted on Github \cite{QMCPy2020a}, where it may be downloaded, where issues can be submitted, and where pull requests can be made by those who wish to add features.  New features require documentation \cite{QMCPyDocs}, which is  produced by ReadtheDocs.  Doctests are required to ensure that features work as expected. All features are illustrated by Jupyter notebooks.  A QMC Software tutorial presented at MCQMC 2020 \cite{QMCPyTut2020, https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_2k12mwiw} includes a Google Colaboratory Notebook \cite{QMCPyTutColab2020}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+QMCPy is hosted on Github \cite{QMCPy2020a}, where it may be downloaded, where issues can be submitted, and where pull requests can be made by those who wish to add features.  New features require documentation \cite{QMCPyDocs}, which is  produced by ReadtheDocs.  Doctests are required to ensure that features work as expected. All features are illustrated by Jupyter notebooks.  A QMC Software tutorial presented at MCQMC 2020 \cite{QMCPyTutMovie2020} includes a Google Colaboratory Notebook \cite{QMCPyTutColab2020}.
  
  
- 
 
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{What QMCPy Should Become}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 QMCPy has made a good start.  Yet, there is much to be done to establish the critical mass of algorithms and collaborators for QMCPy to become a self-sustaining community-owned software.  Here is our plan.
 
 The overall vision is that QMCPy aggregates the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case comes arises, it should be a simple matter to swap out the new for the old and measure the performance improvement.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature Rich LD Sequence Generators}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Although QMCPy already includes the most popular LD sequences, there is lack of flexibility in their implementation.  Some more recent sequences are missing.
 
 At present, the digital shifting and scrambling  recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and qrng \cite{QRNG2020}.  However, for flexibility, the generating matrices (direction vectors) for the Sobol' sequence should be specified independently of the part of the generator that digitally scrambles and shifts.  We will rectify this, which will allow folks to try scrambled BRODA generators \cite{BRODA20a}.  This is not yet possible.
@@ -619,7 +638,9 @@ higher order nets
 alternatives to discrepancy
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Stronger Algorithms}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 SM importance sampling/control variates
 
@@ -635,7 +656,9 @@ https://drive.google.com/file/d/1uztn18UimvdIo3hyYXywUaOxj_wqPJ7N/edit
 
 MLQMC
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A Broader Spectrum of Use Cases}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Sobol' indices
 
@@ -667,7 +690,9 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Enhanced Performance}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 **parallel computing
 
 **GPUs
