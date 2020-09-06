@@ -395,7 +395,9 @@ Many situations are best understood by building randomness into the mathematical
 
 Cubatures for approximating multivariate integrals based on grid sampling have computational costs that increase exponentially with the number of variables, $d$.  (Q)MC simulation avoids this curse of dimensionality with computational costs that are often only weakly dimension dependent.
 
+\iffalse
 In constructing surrogate models for computer experiments (multivariate function approximation), one may wish to evenly sample the domain to search for regions where the function changes more sharply.  IID and LD sampling again prove advantageous over grid sampling.
+\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{LD Versus IID Sampling} \label{sec:LDvsIID}
@@ -715,6 +717,8 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 \subsection{Enhanced Performance}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 **parallel computing
+
+%https://wiki.python.org/moin/ParallelProcessing
 
 **GPUs
 
