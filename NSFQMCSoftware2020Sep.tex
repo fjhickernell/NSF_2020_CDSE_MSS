@@ -366,17 +366,17 @@ QMCPy: Quasi-Monte Carlo Community Software\\
 \vspace{-6ex}
 
 
-Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve efficiency.  We, Fred Hickernell (FH, PI from Illinois Tech), Simon Mak (SM, PI from Duke U), and Sou-Cheng Terrya Choi (SCTC, Senior Personnel) propose to grow QMCPy \cite{QMCPy2020a}, a Python QMC software library, which will be embraced by the community of QMC researchers and benefit an expanding base of QMC users.  QMCPy will become
+Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, Fred Hickernell (FH, PI from Illinois Tech), Simon Mak (SM, PI from Duke U), and Sou-Cheng Terrya Choi (SCTC, Senior Personnel) propose to grow the seedling Python QMC software library QMCPy \cite{QMCPy2020a} into a sapling, which will be embraced by the community of QMC researchers and benefit an expanding base of QMC users.  QMCPy will become
 \begin{enumerate}
 \renewcommand{\labelenumi}{\arabic{enumi}.}
     \item A tightly-connected collection of the best QMC software, including
     \begin{enumerate}
     \renewcommand{\labelenumii}{\alph{enumii}.}
         \item LD sequence generators,
-        \item QMC algorithms, such as multi-level algorithms, automatic stopping criteria, and variance/variation reduction, and
+        \item QMC algorithms, such as multi-level algorithms, automatic stopping criteria, variance/variation reduction, density estimation, and
         \item Illuminating use cases,
     \end{enumerate}
-    \item A user-friendly, consistent interface to the contributions of many,
+    \item A user-friendly, consistent interface to the contributions of many scholars,
     \item A proving ground for new QMC ideas,
     \item Owned and cultivated by our QMC community, and
     \item An easy on-ramp for those who are new to QMC.
@@ -391,7 +391,7 @@ Here we provide an overview of QMC, a description of our early efforts, our plan
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Applications of (Q)MC}  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Many situations are best understood by building randomness into the mathematical model.  Examples include Bayesian statistical inference \cite{}, financial risk \cite{Gla03}, photon transport \cite{}, and uncertainty quantification \cite{}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages), quantiles, and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
+Many situations are best understood by building randomness into the mathematical model.  Examples include Bayesian statistical inference \cite{GelEtal13, EfrHas16}, financial risk \cite{Gla03,LEc09}, particle transport \cite{Hag14,Spa95,Vea97}, and uncertainty quantification \cite{Smi14a,HerSch20a}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages), quantiles, and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
 
 Cubatures for approximating multivariate integrals based on grid sampling have computational costs that increase exponentially with the number of variables, $d$.  (Q)MC simulation avoids this curse of dimensionality with computational costs that are often only weakly dimension dependent.
 
@@ -611,7 +611,7 @@ QMCPy is hosted on Github \cite{QMCPy2020a}, where it may be downloaded, where i
  
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{What QMCPy Should Become}
+\section{QMCPy in the Future}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 QMCPy has made a good start.  Yet, there is much to be done to establish the critical mass of algorithms and collaborators for QMCPy to become a self-sustaining community-owned software.  Here is our plan.
 
@@ -630,7 +630,7 @@ For integrands with higher orders smoothness, higher order digital sequences \ci
 
 One large family of discrepancies are defined in terms of a symmetric, positive definite kernel, $K$.  If we identify $K(\bt,\bx)$ as some inner product of point distributions, i.e., $K(\bt,\bx) = \ip[\calM]{F_{\{\bt\}}}{F_{\{\bx\}}}$,  then the discrepancy between two distributions can be defined as the norm of the distance between the two \cite{Hic99a}:
 \begin{equation} \label{eq:gen_disc}
-	D^2(F,G) :=  \norm[\calM]{F-G}^2 = \int_{\cx \times \cx } K(\bt,\bx) \, \dif(F(\bt) - G(\bt)) \dif(F(\bx) - G(\bx)) = D^2(G,F)
+	D^2(F,G) :=  \norm[\calM]{F-G}^2 = \int_{\cx \times \cx } K(\bt,\bx) \, \dif(F(\bt) - G(\bt)) \dif(F(\bx) - G(\bx)) = D^2(G,F).
 \end{equation}
 When $F$ is a continuous distribution and $G$ is the empirical distribution for $\{ \bX_i\}_{i=1}^n$, we have an example of the discrepancy referred to in  \eqref{eq:KH}:
 \begin{multline}
@@ -723,7 +723,17 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 
 
 
+\section{Broader Impacts}
 
+Proper handling of LD sequences 
+
+Educating a wider user base
+
+Branching into new applications
+
+those who
+
+QMCPy is proving ground
 
 
 
@@ -864,17 +874,7 @@ Dr.\ Mike McCourt (SigOpt) convinced his company to fund the early development o
 
 Dr.\ Tim Sullivan (University of Warwick, UK) provides expertise on two application domains for the QMC software developed in this project.  The first area is probabilistic numerics, a Bayesian statistical approach to numerical tasks such as quadrature and the solution of differential equations, in which the solution object is a statistical posterior distribution over the value of the integral or solution to the differential equation and reflects the discretisation uncertainty inherited from the finite computational budget.  QMC methods offer an attractive way to interrogate these PN distributions at significantly lower cost than traditional MC or MCMC sampling.  The second are is the use of QMC methods in the training of metamodels for heterogeneous (i.e. mixed atomistic-continuum) systems, which is an area of particular interest in Warwick's EPSRC Centre for Doctoral Training in Modelling of Heterogeneous Systems (HetSys).
 
-\section{Broader Impacts}
 
-Proper handling of LD sequences 
-
-Educating a wider user base
-
-Branching into new applications
-
-those who
-
-QMCPy is proving ground
 
 
 \newpage
