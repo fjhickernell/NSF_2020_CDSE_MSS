@@ -34,7 +34,7 @@
 \algnewcommand\RETURN{\State \textbf{Return }}
 
 %\usepackage{showlabels}
-\newcommand{\Upara}[1]{\noindent{\itshape #1}:}
+\newcommand{\Upara}[1]{\noindent\underline{#1}:\xspace}
 
 \newcommand{\myshade}{60}
 \colorlet{mylinkcolor}{violet}
@@ -351,6 +351,45 @@
 \newif\ifnotesw \noteswtrue
 \newcommand{\notes}[1]{\ifnotesw \textcolor{red}{  $\clubsuit$\ {\sf \bf \it  #1}\ $\clubsuit$  }\fi}
 %\noteswfalse   % comment this line out to turn on style notes 
+
+
+
+
+\iffalse
+All NSF proposals are evaluated through use of two National Science Board approved merit review criteria. In some instances, however, NSF will employ additional criteria as required to highlight the specific objectives of certain programs and activities.
+The two merit review criteria are listed below. Both criteria are to be given full consideration during the review and decision-making processes; each criterion is necessary but neither, by itself, is sufficient. Therefore, proposers must fully address both criteria. (Chapter II.C.2.d(i) contains additional information for use by proposers in development of the Project Description section of the proposal.) Reviewers are strongly encouraged to review the criteria, including Chapter II.C.2.d(i), prior to the review of a proposal.
+
+When evaluating NSF proposals, reviewers will be asked to consider what the proposers want to do, why they want to do it, how they plan to do it, how they will know if they succeed, and what benefits could accrue if the project is successful. These issues apply both to the technical aspects of the proposal and the way in which the project may make broader contributions. To that end, reviewers will be asked to evaluate all proposals against two criteria:
+• Intellectual Merit: The Intellectual Merit criterion encompasses the potential to advance knowledge; and
+• Broader Impacts: The Broader Impacts criterion encompasses the potential to benefit society and contribute to the achievement of specific, desired societal outcomes.
+
+The following elements should be considered in the review for both criteria:
+1. What is the potential for the proposed activity to:
+	a. Advance knowledge and understanding within its own field or across different fields (Intellectual Merit); and
+	b. Benefit society or advance desired societal outcomes (Broader Impacts)?
+2. To what extent do the proposed activities suggest and explore creative, original, or potentially transformative concepts?
+3. Is the plan for carrying out the proposed activities well-reasoned, well-organized, and based on a sound rationale? Does the plan incorporate a mechanism to assess success?
+4. How well qualified is the individual, team, or organization to conduct the proposed activities?
+5. Are there adequate resources available to the PI (either at the home organization or through
+collaborations) to carry out the proposed activities?
+
+Chapter II.C.2.d(i)
+The Project Description should provide a clear statement of the work to be undertaken and must include the objectives for the period of the proposed work and expected significance; the relationship of this work to the present state of knowledge in the field, as well as to work in progress by the PI under other support.
+
+The Project Description should outline the general plan of work, including the broad design of activities to be undertaken, and, where appropriate, provide a clear description of experimental methods and procedures. Proposers should address what they want to do, why they want to do it, how they plan to do it, how they will know if they succeed, and what benefits could accrue if the project is successful. The project activities may be based on previously established and/or innovative methods and approaches, but in either case must be well justified. These issues apply to both the technical aspects of the proposal and the way in which the project may make broader contributions.
+
+The Project Description also must contain, as a separate section within the narrative, a section labeled “Broader Impacts”. This section should provide a discussion of the broader impacts of the proposed activities. Broader impacts may be accomplished through the research itself, through the activities that are directly related to specific research projects, or through activities that are supported by, but are complementary to the project. NSF values the advancement of scientific knowledge and activities that contribute to the achievement of societally relevant outcomes. Such outcomes include, but are not limited to: full participation of women, persons with disabilities, and underrepresented minorities in science, technology, engineering, and mathematics (STEM); improved STEM education and educator development at any level; increased public scientific literacy and public engagement with science and technology; improved well-being of individuals in society; development of a diverse, globally competitive STEM workforce; increased partnerships between academia, industry, and others; improved national security; increased economic competitiveness of the U.S.; use of science and technology to inform public policy; and enhanced infrastructure for research and education. These examples of societally relevant outcomes should not be considered either comprehensive or prescriptive. Proposers may include appropriate outcomes not covered by these examples.
+
+Plans for data management and sharing of the products of research, including preservation, documentation, and sharing of data, samples, physical collections, curriculum materials and other related research and education products should be described in the Special Information and Supplementary Documentation section of the proposal (see Chapter II.C.2.j for additional instructions for preparation of this section).
+
+For proposals that include funding to an International Branch Campus of a U.S. IHE or to a foreign organization (including through use of a subaward or consultant arrangement), the proposer must provide the requisite explanation/justification in the project description. See Chapter I.E for additional information on the content requirements.
+
+\fi
+
+
+
+
+
 \begin{document}
 %\setlength{\leftmargini}{2.5ex}
 
@@ -627,6 +666,8 @@ At present, the digital shifting and scrambling recommended for Sobol' sequences
 
 Sobol' sequences are a kind of digital sequence \cite{DicPil10a}.  LatNet Builder \cite{LatNet} can construct the generating matrices for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the the generating matrices to be specified independently of the digital scrambling and shifting, users will be able to explore  \emph{what advantages polynomial lattices may have} over Sobol' sequences.
 
+NUS
+
 Higher order digital sequences \cite{Dic09a, Dic11a}  provide faster convergence rates as $n \to \infty$  for integrands with higher orders smoothness, which translate into slower computational cost rates as  $\varepsilon \to 0$.  An example of an application with higher order smoothness is computing probabilities over subsets of the sample space  involving smooth densities.  \emph{Higher order digital sequences will be implemented} in QMCPy.
 
 One large family of discrepancies are defined in terms of a symmetric, positive definite kernel, $K$.  If we identify $K(\bt,\bx)$ as some inner product of point distributions, i.e., $K(\bt,\bx) = \ip[\calM]{F_{\{\bt\}}}{F_{\{\bx\}}}$ for all $\bt, \bx \in \cx$,  then the discrepancy between two distributions can be defined as the norm of the distance between the two \cite{Hic99a}:
@@ -823,23 +864,15 @@ include
 \end{wrapfigure}
 \fi
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Adaptive Algorithms for Univariate Problems} \label{sec:localadpat}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Upara{Adaptive Algorithms for Univariate Problems}
 FH, STSC, YD, XT, YZ and collaborators developed several adaptive algorithms for univariate integration, function approximation, and optimization \cite{ChoEtal17a,HicEtal14b,  Din15a, Ton14a, Zha18a}.  Most of these algorithms are \emph{globally adaptive}---the sampling density is constant. However, the function approximation and integration algorithms constructed by FH, SCTC, YD, and XT in \cite{ChoEtal17a} are \emph{locally adaptive}, meaning that the sampling density is non-uniform and influenced by the function data.  For function approximation, the adaptive sample is denser where $\abs{f''}$ is larger.  This locally adaptive function approximation algorithm has a computational cost of $\Order\left(\sqrt{\norm[1/2]{f''}/\varepsilon} \right)$, where $\varepsilon$ is the error tolerance, and is essentially optimal.  An intriguing aspect is the appearance of the $1/2$-quasinorm $\norm[1/2]{f''}$, which may be much smaller than 
 $\norm[\infty]{f''}$ for peaky functions.
 
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Globally Adaptive Cubature Based on LD Sequences} \hypertarget{QMClink}{}
-\label{sec:QMC}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Upara{Globally Adaptive Cubature Based on LD Sequences}
 FH, LlAJR, DL, and JR developed globally adaptive algorithms for approximating $d$-dimensional integrals,  $\int_{[0,1]^d} f(\bx) \, \dif \bx$, based on LD sequences \cite{HicJim16a,HicEtal17a,JimHic16a}.  After the conclusion of this project, these stopping criteria are implemented in QMCPy. Two common LD sequences are integration lattice nodes and digital sequences \cite{DicEtal14a}, LD .  The error bounds underlying the adaptive cubatures developed by FH, LlAJR, DL are based on tracking the  Fourier coefficients of the sampled function values on these LD sequences.  FH and JR base their automatic Bayesian cubature on credible intervals, where the hyper-parameters of the priors are treated by empirical Bayes (maximum likelihood estimation), full Bayes, and/or cross-validation.   FH and JR chose covariance kernels that matched the LD sequences and reduced the computational cost to $\Order(n \log(n))$, making Bayesian cubature practical. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph{Multivariate Function Approximation} \label{sec:PrevFunAppx}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Upara{Multivariate Function Approximation}
 FH, YD, and LlAJR and collaborators investigated function approximation problems for Banach spaces, $\calf$, defined by general series representations \cite{DinHic20a,DinEtal20a}.  For example, the bases can be general multivariate polynomials.  Three different definitions of cone, $\calc$, of functions were defined, all describing a reasonable behavior of the series coefficients.  Adaptive function approximation algorithms were constructed for these three cones shown to be essentially optimal.  The shortcoming of this research is that the algorithms use series coefficients as data rather than function values. 
 
 
@@ -876,8 +909,13 @@ these students have learned how to conduct theoretical and/or practical computat
 
 \section{Strengths of This Team and Collaboration Plan}
 
+\subsection{Senior Personnel}
 
-\subsection{Collaborations}
+
+\subsection{Students}
+
+
+\subsection{Collaborators}
 Prof.\ Art B. Owen (Stanford University) has engaged with the PIs in conversations about QMC for many years.  Prof.\ Owen is particularly expert in randomized QMC and the use of low discrepancy points for Markov chain Monte Carlo.  He has taken a keen interest in QMCPy and will put forward new QMC use cases, advise on software features to be included, and possibly collaborate on joint publications with the PIs.  Prof.\ Owen will also encourage his student to help out with the implementation of Sobol' indices.
 
 Dr.\ Mike McCourt (SigOpt) convinced his company to fund the early development of QMCPy.  He was convinced of the advantages of low discrepancy sampling and wanted to spread these ideas to the tech industry.  During the first year of QMCPy's development, Mike advised us what we should prioritize for the benefit of tech practitioners.  Although SigOpt is not in a position to  fund SigOpt further, Mike will advise us on the continued development of SigOpt.  He will also help us spread the word among his network in the machine learning community.
