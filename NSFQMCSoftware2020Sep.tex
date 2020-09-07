@@ -65,6 +65,29 @@
 %\headsep-0.45in
 
 %%list of acronyms with links
+\newcommand{\FH}{\hyperlink{FHlink}{FH}\xspace}
+\newcommand{\SM}{\hyperlink{SMlink}{SM}\xspace}
+\newcommand{\SCTC}{\hyperlink{SCTClink}{SCTC}\xspace}
+\newcommand{\AO}{\hyperlink{AOlink}{AO}\xspace}
+\newcommand{\MM}{\hyperlink{MMlink}{MM}\xspace}
+\newcommand{\TS}{\hyperlink{TSlink}{TS}\xspace}
+\newcommand{\GEF}{\hyperlink{GEFlink}{GEF}\xspace}
+\newcommand{\YD}{\hyperlink{YDlink}{YD}\xspace}
+\newcommand{\JR}{\hyperlink{JRlink}{JR}\xspace}
+\newcommand{\LlAJR}{\hyperlink{LlAJRlink}{LlAJR}\xspace}
+\newcommand{\LJ}{\hyperlink{LJlink}{LJ}\xspace}
+\newcommand{\XT}{\hyperlink{XTlink}{XT}\xspace}
+\newcommand{\KZ}{\hyperlink{KZlink}{KZ}\xspace}
+\newcommand{\DL}{\hyperlink{DLlink}{DL}\xspace}
+\newcommand{\XZ}{\hyperlink{XZlink}{KZ}\xspace}
+\newcommand{\JL}{\hyperlink{JLlink}{JL}\xspace}
+\newcommand{\YZ}{\hyperlink{YZlink}{YZ}\xspace}
+
+
+
+
+
+
 \newcommand{\QMCSoft}{QMCSoft\xspace}
 \newcommand{\GAIL}{GAIL\xspace}
 \newcommand{\QMC}{QMC\xspace}
@@ -408,7 +431,7 @@ QMCPy: Quasi-Monte Carlo Community Software\\
 \vspace{-6ex}
 
 
-Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, Fred Hickernell (FH, PI from Illinois Tech), Simon Mak (SM, PI from Duke U), and Sou-Cheng Terrya Choi (SCTC, Senior Personnel) propose to grow the seedling Python QMC software library QMCPy \cite{QMCPy2020a} into a sapling, which will be embraced by the community of QMC researchers and benefit an expanding base of QMC practitioners.  QMCPy will grow to become
+Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, \hypertarget{FHlink}{Fred Hickernell} (FH, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (SM, PI from Duke U), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (SCTC, Senior Personnel) propose to grow the seedling Python QMC software library QMCPy \cite{QMCPy2020a} into a sapling, which will be embraced by the community of QMC researchers and benefit an expanding base of QMC practitioners.  QMCPy will grow to become
 \begin{enumerate}
 \renewcommand{\labelenumi}{\arabic{enumi}.}
     \item A tightly-connected collection of the best QMC software, including
@@ -423,6 +446,7 @@ Quasi-Monte Carlo (QMC) methods replace independent and identically distributed 
     \item Owned and cultivated by our QMC community, and
     \item An easy on-ramp for those who are new to QMC.
 \end{enumerate}
+We will be assisted by our collaborators, \hypertarget{MMllink}{Mike McCourt} (MM, SigOpt), \hypertarget{AOlink}{Art Owen} (AO, Stanford University), and \hypertarget{TSlink}{Tim Sullivan} (TS, Warwick University), as well as our students and friends.
 
 Here we provide an overview of QMC, a description of our early efforts, our plans to grow QMCPy, the benefits of QMCPy, and why our team is the right for this project.
 
@@ -514,7 +538,7 @@ To harness the efficiency of LD sampling via QMC methods, practitioners need qua
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Start of QMCPy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-During the summer of 2018 FH began discussing with other QMC researchers, including Dirk Nuyens, Frances Kuo, and Art Owen (AO, a collaborator on this proposal), how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
+During the summer of 2018 \FH began discussing with other QMC researchers, including Dirk Nuyens, Frances Kuo, and \AO, how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
 \begin{description}[format=\textup]
 	\item[MATLAB] Sobol' and Halton sequences in their Statistics and Machine Learning Toolbox, commercial \cite{MAT9.8}
 	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}
@@ -534,7 +558,7 @@ During the summer of 2018 FH began discussing with other QMC researchers, includ
 \end{description}
 Each software package above  focuses on just certain aspects of QMC.  Some packages focus on the generation of LD sequences, some packages focus on fundamental QMC algorithms, and other packages focus on particular applications of QMC.  The software packages listed above are primarily the initiatives of individual research groups.  They are not a shared community effort.
 
-Fruitful discussions in 2018 carried into further talks with Mike McCourt (MM, a collaborator on this proposal) in early 2019.  MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  Also, Python supports C libraries to speed up crucial code.  Aleksei Sorokin (AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
+Fruitful discussions in 2018 carried into further talks with \MM in early 2019.  \MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  Also, Python supports C libraries to speed up crucial code.  Aleksei Sorokin (AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
 
 
 
@@ -637,7 +661,8 @@ def h(t):  #your desired integrand, calculations must be vectorized
  	
  	\item \pyinline{backends} for \pyinline{Lattice} from MPS \cite{Nuy17a}, in addition to the default from GAIL \cite{ChoEtal20a}, and generating vectors from LatNet Builder \cite{LatNet};
  	
- 	\item \pyinline{StoppingCriteria} based on the Central Limit Theorem (CLT) for IID sampling and random replications of LD sampling;  a more rigorous stopping criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  stopping criteria based on Fast Fourier/Walsh Transforms via tracking the decay of the series coefficients \cite{HicJim16a, JimHic16a} and using a Bayesian perspective \cite{RatHic19a}; most of these stopping criteria have arisen from the NSF-supported research of FH and his collaborators.
+ 	\item \pyinline{StoppingCriteria} based on the Central Limit Theorem (CLT) for IID sampling and random replications of LD sampling;  a more rigorous stopping criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  stopping criteria based on Fast Fourier/Walsh Transforms via tracking the decay of the series coefficients \cite{HicJim16a, JimHic16a} and using a Bayesian perspective \cite{RatHic19a}; most of these stopping criteria have arisen from the NSF-supported research of \FH and his collaborators, \AO, \hypertarget{LJlink}{Lan Jiang} (LJ), 
+ 	\hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (LlAJR), \hypertarget{JRlink}{Jagadeeswaran Rathinavel} (JR).
  	
  	\item Specification of relative error tolerances as well as absolute error tolerances;
  	
@@ -649,7 +674,7 @@ def h(t):  #your desired integrand, calculations must be vectorized
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{QMCPy Support}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-QMCPy is hosted on Github \cite{QMCPy2020a}. Bugs acn be reported and features can be requested at the issues page.  Pull requests can be made by those who wish to add features.  New features require documentation \cite{QMCPyDocs}, which is  produced by ReadtheDocs.  Doctests are required to ensure that features work as expected. All features are illustrated by Jupyter notebooks.  FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory Notebook \cite{QMCPyTutColab2020} is available so that those watching  can try out QMCPy themselves in real time.  FH, SCTC, AO, AS, and MM wrote a series of blogs \cite{QMCBlog} to introduce QMC to the broader community to QMC..
+QMCPy is hosted on Github \cite{QMCPy2020a}. Bugs acn be reported and features can be requested at the issues page.  Pull requests can be made by those who wish to add features.  New features require documentation \cite{QMCPyDocs}, which is  produced by ReadtheDocs.  Doctests are required to ensure that features work as expected. All features are illustrated by Jupyter notebooks.  \FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory Notebook \cite{QMCPyTutColab2020} is available so that those watching  can try out QMCPy themselves in real time.  \FH, \SCTC, \AO, AS, and \MM wrote a series of blogs \cite{QMCBlog} to introduce QMC to the broader community to QMC..
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{QMCPy in the Future}
@@ -667,7 +692,7 @@ At present, the digital shifting and scrambling recommended for Sobol' sequences
 
 Sobol' sequences are a kind of digital sequence \cite{DicPil10a}.  LatNet Builder \cite{LatNet} can construct the generating matrices for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the the generating matrices to be specified independently of the digital scrambling and shifting, users will be able to explore  \emph{what advantages polynomial lattices may have} over Sobol' sequences.
 
-The usual method for scrambling and shifting digital sequences, such as the Sobol' sequence is linear scrambling, proposed in \cite{Mat98} and implemented in \cite{HonHic00a}.  A richer scrambling is the original nested uniform scrambling (NUS) proposed by AO \cite{Owe95}.  The disadvantage of NUS is that the coding is more complex and the time required is longer, but the advantage is that it has a CLT  \cite{Loh01}.  We will \emph{implement NUS} in QMCPy.
+The usual method for scrambling and shifting digital sequences, such as the Sobol' sequence is linear scrambling, proposed in \cite{Mat98} and implemented in \cite{HonHic00a}.  A richer scrambling is the original nested uniform scrambling (NUS) proposed by \AO \cite{Owe95}.  The disadvantage of NUS is that the coding is more complex and the time required is longer, but the advantage is that it has a CLT  \cite{Loh01}.  We will \emph{implement NUS} in QMCPy.
 
 Higher order digital sequences \cite{Dic09a, Dic11a}  provide faster convergence rates as $n \to \infty$  for integrands with higher orders smoothness, which translate into slower computational cost rates as  $\varepsilon \to 0$.  An example of an application with higher order smoothness is computing probabilities over subsets of the sample space  involving smooth densities.  \emph{Higher order digital sequences will be implemented} in QMCPy.
 
@@ -704,7 +729,7 @@ From the definition, CUD  sequences must satisfy much stronger conditions than L
 
 
 
-SM importance sampling/control variates
+\SM importance sampling/control variates
 - Huling and Mak (2020)
 
 **kernel density estimation
@@ -756,6 +781,9 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 % more use cases, \cite{BinSur13}
 
 \subsubsection{Probabilistic Numerics}
+Probabilistic numerics assumes that the input function or solution of a mathematical problem arise as an instance of a random process.  This allows one to apply a probabilistic approach to construct credible intervals for the solution.  \FH along with his former PhD student \JR developed a fast Bayesian cubature method \cite{RatHic19a} using lattice LD sampling.
+
+Bayesian optimization applies this probabilistic numerics perspective to finding the minimum of an objective function.  The next location for can be posed as the 
 
 \begin{figure}[H]
 	\centering
@@ -814,9 +842,8 @@ QMCPy is proving ground
 } \label{sec:Previous}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Gregory E.\ Fasshauer (GEF, co-PI) and FH (PI) led this project, and SCTC contributed as senior personnel.  Other major contributors were FH's research students Yuhan Ding (YD, PhD 2015), Lan Jiang (LJ, PhD 2016), 
-Llu\'is Antoni Jim\'enez Rugama (LlAJR, PhD 2016), Da Li (DL, MS 2016), Jiazhen Liu (JL, MS 2018), Jagadeeswaran Rathinavel (JR, 
-PhD 2019), Xin Tong (XT, MS 2014, PhD 2020 @ University of Illinois at Chicago), Kan Zhang (KZ, PhD student), Yizhi Zhang (YZ, PhD 2018), and Xuan Zhou (XZ, PhD 2015).  Articles, theses,  
+\hypertarget{GEFlink}{Gregory E.\ Fasshauer} (GEF, co-PI) and \FH (PI) led this project, and \SCTC contributed as senior personnel.  Other major contributors were \FH's research students \hypertarget{YDlink}{Yuhan Ding} (YD, PhD 2015), \LJ (PhD 2016), 
+\LlAJR (PhD 2016), \hypertarget{DLlink}{Da Li} (DL, MS 2016), \hypertarget{JLlink}{Jiazhen Liu} (JL, MS 2018), JR (PhD 2019), \hypertarget{XTlink}{Xin Tong} (XT, MS 2014, PhD 2020 @ University of Illinois at Chicago), \hypertarget{KZlink}{Kan Zhang} (KZ, PhD student), \hypertarget{YZlink}{Yizhi Zhang} (YZ, PhD 2018), and \hypertarget{XZlink}{Xuan Zhou} (XZ, PhD 2015).  Articles, theses,  
 software, and preprints supported in 
 part by this 
 grant 
@@ -872,15 +899,15 @@ include
 \fi
 
 \Upara{Adaptive Algorithms for Univariate Problems}
-FH, STSC, YD, XT, YZ and collaborators developed several adaptive algorithms for univariate integration, function approximation, and optimization \cite{ChoEtal17a,HicEtal14b,  Din15a, Ton14a, Zha18a}.  Most of these algorithms are \emph{globally adaptive}---the sampling density is constant. However, the function approximation and integration algorithms constructed by FH, SCTC, YD, and XT in \cite{ChoEtal17a} are \emph{locally adaptive}, meaning that the sampling density is non-uniform and influenced by the function data.  For function approximation, the adaptive sample is denser where $\abs{f''}$ is larger.  This locally adaptive function approximation algorithm has a computational cost of $\Order\left(\sqrt{\norm[1/2]{f''}/\varepsilon} \right)$, where $\varepsilon$ is the error tolerance, and is essentially optimal.  An intriguing aspect is the appearance of the $1/2$-quasinorm $\norm[1/2]{f''}$, which may be much smaller than 
+\FH, \SCTC, \YD, \XT, \YZ and collaborators developed several adaptive algorithms for univariate integration, function approximation, and optimization \cite{ChoEtal17a,HicEtal14b,  Din15a, Ton14a, Zha18a}.  Most of these algorithms are \emph{globally adaptive}---the sampling density is constant. However, the function approximation and integration algorithms constructed by \FH, \SCTC, \YD, and \XT in \cite{ChoEtal17a} are \emph{locally adaptive}, meaning that the sampling density is non-uniform and influenced by the function data.  For function approximation, the adaptive sample is denser where $\abs{f''}$ is larger.  This locally adaptive function approximation algorithm has a computational cost of $\Order\left(\sqrt{\norm[1/2]{f''}/\varepsilon} \right)$, where $\varepsilon$ is the error tolerance, and is essentially optimal.  An intriguing aspect is the appearance of the $1/2$-quasinorm $\norm[1/2]{f''}$, which may be much smaller than 
 $\norm[\infty]{f''}$ for peaky functions.
 
 
 \Upara{Globally Adaptive Cubature Based on LD Sequences}
-FH, LlAJR, DL, and JR developed globally adaptive algorithms for approximating $d$-dimensional integrals,  $\int_{[0,1]^d} f(\bx) \, \dif \bx$, based on LD sequences \cite{HicJim16a,HicEtal17a,JimHic16a}.  After the conclusion of this project, these stopping criteria are implemented in QMCPy. Two common LD sequences are integration lattice nodes and digital sequences \cite{DicEtal14a}, LD .  The error bounds underlying the adaptive cubatures developed by FH, LlAJR, DL are based on tracking the  Fourier coefficients of the sampled function values on these LD sequences.  FH and JR base their automatic Bayesian cubature on credible intervals, where the hyper-parameters of the priors are treated by empirical Bayes (maximum likelihood estimation), full Bayes, and/or cross-validation.   FH and JR chose covariance kernels that matched the LD sequences and reduced the computational cost to $\Order(n \log(n))$, making Bayesian cubature practical. 
+\FH, \LlAJR, DL, and \JR developed globally adaptive algorithms for approximating $d$-dimensional integrals,  $\int_{[0,1]^d} f(\bx) \, \dif \bx$, based on LD sequences \cite{HicJim16a,HicEtal17a,JimHic16a}.  After the conclusion of this project, these stopping criteria are implemented in QMCPy. Two common LD sequences are integration lattice nodes and digital sequences \cite{DicEtal14a}, LD .  The error bounds underlying the adaptive cubatures developed by \FH, \LlAJR, DL are based on tracking the  Fourier coefficients of the sampled function values on these LD sequences.  \FH and \JR base their automatic Bayesian cubature on credible intervals, where the hyper-parameters of the priors are treated by empirical Bayes (maximum likelihood estimation), full Bayes, and/or cross-validation.   \FH and \JR chose covariance kernels that matched the LD sequences and reduced the computational cost to $\Order(n \log(n))$, making Bayesian cubature practical. 
 
 \Upara{Multivariate Function Approximation}
-FH, YD, and LlAJR and collaborators investigated function approximation problems for Banach spaces, $\calf$, defined by general series representations \cite{DinHic20a,DinEtal20a}.  For example, the bases can be general multivariate polynomials.  Three different definitions of cone, $\calc$, of functions were defined, all describing a reasonable behavior of the series coefficients.  Adaptive function approximation algorithms were constructed for these three cones shown to be essentially optimal.  The shortcoming of this research is that the algorithms use series coefficients as data rather than function values. 
+\FH, \YD, and \LlAJR and collaborators investigated function approximation problems for Banach spaces, $\calf$, defined by general series representations \cite{DinHic20a,DinEtal20a}.  For example, the bases can be general multivariate polynomials.  Three different definitions of cone, $\calc$, of functions were defined, all describing a reasonable behavior of the series coefficients.  Adaptive function approximation algorithms were constructed for these three cones shown to be essentially optimal.  The shortcoming of this research is that the algorithms use series coefficients as data rather than function values. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -888,25 +915,25 @@ FH, YD, and LlAJR and collaborators investigated function approximation problems
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \phantom{a}
 
-\Upara{Publications, Conference Participation, Conference Organization, and Leadership} Publications by GEF, FH,  SCTC, students, and collaborators are listed at the beginning of this section.  We have spoken at many applied mathematics, statistics, 
+\Upara{Publications, Conference Participation, Conference Organization, and Leadership} Publications by \GEF, \FH,  \SCTC, students, and collaborators are listed at the beginning of this section.  We have spoken at many applied mathematics, statistics, 
 and computational science conferences and given colloquium/seminar talks to mathematics and 
-statistics departments.  FH co-organized the 
+statistics departments.  \FH co-organized the 
 2016 Spring Research 
-Conference, a long-running annual industrial statistics conference.   FH gave an invited tutorial
+Conference, a long-running annual industrial statistics conference.   \FH gave an invited tutorial
 at MCQMC 2016
-\cite{Hic17a}, a biennial conference for which he serves on the steering committee.  FH 
-was a program leader for the SAMSI 2017--18 Quasi-Monte Carlo (QMC) Program.   FH received the 2016 Joseph F.\ Traub Prize for Achievement in Information-Based Complexity. In recognition of his research leadership, FH was appointed the director of Illinois Tech's new Center for Interdisciplinary 
-Scientific Computation in 2017.  In 2018, FH was appointed Vice Provost for Research.
+\cite{Hic17a}, a biennial conference for which he serves on the steering committee.  \FH 
+was a program leader for the SAMSI 2017--18 Quasi-Monte Carlo (QMC) Program.   \FH received the 2016 Joseph F.\ Traub Prize for Achievement in Information-Based Complexity. In recognition of his research leadership, \FH was appointed the director of Illinois Tech's new Center for Interdisciplinary 
+Scientific Computation in 2017.  In 2018, \FH was appointed Vice Provost for Research.
 
 \Upara{\GAIL Software} The results of this research have been implemented in 
 \GAIL, our open source \MATLAB library hosted on
 Github. This software 
 has been implemented with input parsing, input validation, unit tests, inline documentation, and 
-demonstrations.  \GAIL makes it easier for practitioners to try our new adaptive algorithms.  SCTC has been key in this effort.  \GAIL has been used in the yearly graduate course in Monte Carlo methods taught by FH and YD.  
+demonstrations.  \GAIL makes it easier for practitioners to try our new adaptive algorithms.  \SCTC has been key in this effort.  \GAIL has been used in the yearly graduate course in Monte Carlo methods taught by \FH and \YD.  
 %With the help of students, we are starting to port GAIL to Python and \Rlang.
 
-\Upara{Boosting the STEM Workforce} GEF, FH, and SCTC mentored a number of 
-research students associated with this project.  Female students mentored include YD, LJ, JL, XT, and Xiaoyang Zhao (MS 2017).   GEF, FH,  and SCTC have mentored many undergraduate students including more than a dozen 
+\Upara{Boosting the STEM Workforce} \GEF, \FH, and \SCTC mentored a number of 
+research students associated with this project.  Female students mentored include \YD, \LJ, \JL, \XT, and Xiaoyang Zhao (MS 2017).   \GEF, \FH,  and \SCTC have mentored many undergraduate students including more than a dozen 
 Brazilian Science Mobility Program students in the summers of 2015 and 2016, plus eight other students (two female) from Illinois Tech, Biola U, U Minnesota, Macalester U, NUS, Colorado School of Mines.  All but one have enrolled in graduate programs.   As part of our team, all of
 these students have learned how to conduct theoretical and/or practical computational mathematics research.
 
