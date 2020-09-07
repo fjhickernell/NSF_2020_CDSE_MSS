@@ -534,7 +534,7 @@ Our LD generators are extensible, meaning that one may generate additional point
 \fi
 All QMCPy LD generators are randomized by default to ensure that no points lie on the boundary of the unit cube.  If points are transformed to mimic the Gaussian or other distributions on $\reals^d$, then no LD points will be mapped to infinity.  Randomizing Sobol' points can improve the rate of convergence of $\hmu_n$ to $\mu$ \cite{Owe97}.
 
-To construct good points that mimic distributions other than standard uniform, one must transform the original points.  The  inverse cumulative distribution is typically used.  The \pyinline{TrueMeasure} class automates that transformation.
+To construct good points that mimic distributions other than standard uniform, one must transform the original points.  The  inverse cumulative distribution is often used.  The \pyinline{TrueMeasure} class automates that transformation.
 \begin{pythoncode}
 gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specify the distribution parameters 
 points = gaussian_ld.gen_samples(n = 64)  #construct points
@@ -616,7 +616,7 @@ QMCPy is hosted on Github \cite{QMCPy2020a}, where issues can be submitted and w
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 QMCPy has made a good start.  Yet, there is much to be done to establish the critical mass of algorithms and collaborators for QMCPy to become a self-sustaining community-owned software.  Here is our plan.
 
-The overall vision is that QMCPy aggregates the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case  arises, it should be a simple matter to swap out the new for the old and measure the performance improvement.
+The overall vision is that QMCPy aggregates the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it should be a simple matter to swap out the new for the old and measure the performance improvement.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature Rich LD Sequence Generators} \label{sec:richLD}
@@ -663,8 +663,10 @@ From the definition, CUD  sequences must satisfy much stronger conditions than L
 
 
 SM importance sampling/control variates
+- Huling and Mak (2020)
 
 **kernel density estimation
+- uncertainty propagation
 
 \iffalse
 Pierre L'Ecuyer's talk
@@ -680,14 +682,21 @@ MLQMC
 \subsection{A Broader Spectrum of Use Cases}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Sobol' indices
+\subsubsection{Sobol' indices}
 
-more use cases
+\subsubsection{LD Subsampling of Big Data}
 
-SM **sampling from large data
-Thinning samples
+Explosion of big data in virtually every scientific field, due to advances in sensing technology, mathematical modeling, and computing architecture (cite some papers). Such data must be coupled with efficient learning algorithms for scientific inference and predictive modeling to be useful in practice. The development of scalable algorithms for big data is a key topic in statistical learning and computer science.
 
-SM Bayesian inference ??
+An effective technique explored in the literature is to randomly subsample the data in small batches at each iteration, then use the subsampled data to learn the trained model. This stochastic subsampling approach is used to scale-up a wide range of machine learning algorithms for big data, e.g., stochastic gradient descent (SGD), stochastic gradient boosting, etc. Consider SGD as an illustrating example. Let $L(\theta;\mathcal{X},\mathcal{Y})$ be the loss function to be minimized, where $\mathcal{X}$ denotes ... and $\mathcal{Y}$ denotes .... Standard gradient descent performs the iterative updates, but this full gradient can be very expensive when data size large. (Batch) SGD approximates this gradient with a small batch subsample from the data, giving the update... . Batch SGD is widely used for scalable training of neural networks and deep learning models with big data \citep{srivastava2014dropout}.
+
+Inherent limitations of SGD: convergence rate and noise ball. this can be improved if we have an efficient way of drawing a LD subsample from the big data, giving us the updates ... .
+
+We will explore... . Theory: existence of a LD subsample from any dataset. Preliminary work on FFT data kernel. We will develop ... and implement this within the QMCPy framework.
+
+\subsubsection{LD Bayesian sampling}
+
+
 
 
 \iffalse
@@ -697,7 +706,7 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 
 \fi
 
-\cite{BinSur13}
+% more use cases, \cite{BinSur13}
 
 \begin{figure}[H]
 	\centering
@@ -891,5 +900,5 @@ Dr.\ Tim Sullivan (University of Warwick, UK) provides expertise on two applicat
 \renewcommand{\refname}{{\Large\textbf{References Cited}}}                   %%
 \renewcommand{\bibliofont}{\normalsize}
 
-\bibliography{FJH23,FJHown23}}
+\bibliography{FJH23,FJHown23,simon}}
 \end{document}
