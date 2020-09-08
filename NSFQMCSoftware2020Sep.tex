@@ -492,7 +492,7 @@ The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \
 The points on the right in Fig.\ \ref{fig:iid_vs_ld} are grid points. They may look even, but they lack evenness in low dimensional projections.  The grid points have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  For $d$-dimensional grids, there are only $n^{1/d}$ values in each coordinate direction, which is disastrous for  large $d$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Efficiency Benefits from LD Sampling}
+\subsection{Efficiency Benefits from LD Sampling} \label{sec:eff_benefits}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The root mean squared error of the sample mean, $\hmu_n$, in approximating the population mean, $\mu$, when IID samples are used is 
 \begin{equation}
@@ -749,7 +749,7 @@ MLQMC
 \subsection{A Broader Spectrum of Use Cases}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Sobol' indices}
+\subsubsection{Sobol' Indices}
 
 \subsubsection{LD Subsampling of Big Data}
 
@@ -761,7 +761,7 @@ Inherent limitations of SGD: convergence rate and noise ball. this can be improv
 
 We will explore..., also implement existing methods (find references). Theory: existence of a LD subsample from any dataset. Preliminary work on FFT data kernel. We will develop ... and implement this within the QMCPy framework.
 
-\subsubsection{LD Bayesian sampling}
+\subsubsection{LD Bayesian Sampling}
 
 Bayesian methodology, which is widely used in (references), have traditionally relied on MCMC sampling for posterior exploration of the parameter space. MCMC makes use of a correlated sample chain 
 
@@ -783,16 +783,18 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 \subsubsection{Probabilistic Numerics}
 Probabilistic numerics assumes that the input function or solution of a mathematical problem arise as an instance of a random process.  This allows one to apply a probabilistic approach to construct credible intervals for the solution.  \FH along with his former PhD student \JR developed a fast Bayesian cubature method \cite{RatHic19a} using lattice LD sampling.
 
-Bayesian optimization applies this probabilistic numerics perspective to finding the minimum of an objective function.  The next location for can be posed as the 
+Bayesian optimization applies this probabilistic numerics perspective to finding the minimum of an objective function.  The next locations to sample the objective function are chosen as the optimum of an acquisition function, which in the Bayesian context takes the form of a $d$-variate integral, where $d$ is the number of future points to be sampled times the dimension of those points.  MM illustrates the advantages of LD sampling for computing an acquisition function in his blog \cite[qEI with QMCPy]{QMCBlog}.  The observed function values are noisy.  As in the Keister example in Sect.\ \ref{sec:eff_benefits}, LD sampling shows a substantial advantage over IID sampling.
 
 \begin{figure}[H]
 	\centering
 	%\includegraphics[height = 5cm]{ProgramsImages/sample_data.eps} \quad
 	\includegraphics[height = 5cm]{ProgramsImages/qEI_cost_comp_time.eps}
 	%\includegraphics[height = 5cm]{ProgramsImages/qEI_cost_comp_n.eps} 
-	\caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister} using QMCPy.  LD sampling is much more efficient than IID sampling, especially as the error tolerance decreases.}
+	\caption{A one dimensional objective function (left) and the run time (center), and number of function values (right) required to compute the acquisition function in \cite[qEI with QMCPy]{QMCBlog} to the desired tolerance, $\varepsilon$.  LD sampling is much more efficient than IID sampling, especially as the error tolerance decreases.}
 	\label{fig:qei}
 \end{figure}
+
+Bayesian optimization is a relatively unexplored QMC application area.  We will explore the \emph{efficacy of LD sampling} in Bayesian optimization and other probabilistic numerics problems.
 
 
 
@@ -834,7 +836,7 @@ QMCPy is proving ground
 
 
 
-\section{Results from NSF Support} \label{sec:prior_work}
+\section{Results from Prior NSF Support} \label{sec:prior_work}
 
 \subsection{NSF-DMS-1522687\except{toc}{, \emph{Stable, Efficient, Adaptive Algorithms for 
 			Approximation and Integration},
@@ -879,7 +881,7 @@ include
 	ZhoHic15a}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Intellectual Merit from Previous NSF Funding}
+\subsubsection{Intellectual Merit from Prior NSF Support}
 \label{previousmeritsubsec}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \phantom{a}
@@ -904,14 +906,14 @@ $\norm[\infty]{f''}$ for peaky functions.
 
 
 \Upara{Globally Adaptive Cubature Based on LD Sequences}
-\FH, \LlAJR, DL, and \JR developed globally adaptive algorithms for approximating $d$-dimensional integrals,  $\int_{[0,1]^d} f(\bx) \, \dif \bx$, based on LD sequences \cite{HicJim16a,HicEtal17a,JimHic16a}.  After the conclusion of this project, these stopping criteria are implemented in QMCPy. Two common LD sequences are integration lattice nodes and digital sequences \cite{DicEtal14a}, LD .  The error bounds underlying the adaptive cubatures developed by \FH, \LlAJR, DL are based on tracking the  Fourier coefficients of the sampled function values on these LD sequences.  \FH and \JR base their automatic Bayesian cubature on credible intervals, where the hyper-parameters of the priors are treated by empirical Bayes (maximum likelihood estimation), full Bayes, and/or cross-validation.   \FH and \JR chose covariance kernels that matched the LD sequences and reduced the computational cost to $\Order(n \log(n))$, making Bayesian cubature practical. 
+\FH, \LlAJR, \DL, and \JR developed globally adaptive algorithms for approximating $d$-dimensional integrals,  $\int_{[0,1]^d} f(\bx) \, \dif \bx$, based on LD sequences \cite{HicJim16a,HicEtal17a,JimHic16a}.  After the conclusion of this project, these stopping criteria are implemented in QMCPy. Two common LD sequences are integration lattice nodes and digital sequences \cite{DicEtal14a}, LD .  The error bounds underlying the adaptive cubatures developed by \FH, \LlAJR, \DL are based on tracking the  Fourier coefficients of the sampled function values on these LD sequences.  \FH and \JR base their automatic Bayesian cubature on credible intervals, where the hyper-parameters of the priors are treated by empirical Bayes (maximum likelihood estimation), full Bayes, and/or cross-validation.   \FH and \JR chose covariance kernels that matched the LD sequences and reduced the computational cost to $\Order(n \log(n))$, making Bayesian cubature practical. 
 
 \Upara{Multivariate Function Approximation}
 \FH, \YD, and \LlAJR and collaborators investigated function approximation problems for Banach spaces, $\calf$, defined by general series representations \cite{DinHic20a,DinEtal20a}.  For example, the bases can be general multivariate polynomials.  Three different definitions of cone, $\calc$, of functions were defined, all describing a reasonable behavior of the series coefficients.  Adaptive function approximation algorithms were constructed for these three cones shown to be essentially optimal.  The shortcoming of this research is that the algorithms use series coefficients as data rather than function values. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Broader Impacts from Previous NSF Funding} \label{prevBIsect}
+\subsubsection{Broader Impacts from Prior NSF Support} \label{prevBIsect}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \phantom{a}
 
@@ -950,7 +952,7 @@ these students have learned how to conduct theoretical and/or practical computat
 
 
 \subsection{Collaborators}
-Prof.\ Art B. Owen (Stanford University) has engaged with the PIs in conversations about QMC for many years.  Prof.\ Owen is particularly expert in randomized QMC and the use of low discrepancy points for Markov chain Monte Carlo.  He has taken a keen interest in QMCPy and will put forward new QMC use cases, advise on software features to be included, and possibly collaborate on joint publications with the PIs.  Prof.\ Owen will also encourage his student to help out with the implementation of Sobol' indices.
+\AO has engaged with the PIs in conversations about QMC for many years.  Prof.\ Owen is particularly expert in randomized QMC and the use of low discrepancy points for Markov chain Monte Carlo.  He has taken a keen interest in QMCPy and will put forward new QMC use cases, advise on software features to be included, and possibly collaborate on joint publications with the PIs.  Prof.\ Owen will also encourage his student to help out with the implementation of Sobol' indices.
 
 Dr.\ Mike McCourt (SigOpt) convinced his company to fund the early development of QMCPy.  He was convinced of the advantages of low discrepancy sampling and wanted to spread these ideas to the tech industry.  During the first year of QMCPy's development, Mike advised us what we should prioritize for the benefit of tech practitioners.  Although SigOpt is not in a position to  fund SigOpt further, Mike will advise us on the continued development of SigOpt.  He will also help us spread the word among his network in the machine learning community.
 
