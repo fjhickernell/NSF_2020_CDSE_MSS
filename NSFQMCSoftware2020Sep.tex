@@ -761,11 +761,13 @@ Inherent limitations of SGD: convergence rate and noise ball. this can be improv
 
 We will explore..., also implement existing methods (find references). Theory: existence of a LD subsample from any dataset. Preliminary work on FFT data kernel. We will develop ... and implement this within the QMCPy framework.
 
-\subsubsection{LD posterior sampling for Bayesian learning}
+\subsubsection{LD Posterior Sampling for Expensive Bayesian Models}
 
 Bayesian methodology, which is widely used in (references), have traditionally relied on MCMC sampling for exploration of a complex posterior distribution $\pi$. MCMC makes use of evaluations from the posterior distribution to guide a Markov chain sampler  which generate correlated samples from $\pi$. When the posterior is expensive to compute (examples in engineering, big data, bayes rule), we have limited evaluations on the desired distribution, and MCMC can be inefficient. While the QMC Metropolis method by \cite{OweTri05a} speeds up the convergence of samples, it still requires many posterior evaluations. We want method which can provide LD sampling with limited posterior evaluations here.
 
-One possible approach is to use the kernel discrepancy (8) to generate 
+One approach is to directly minimize the kernel discrepancy (8) to generate sample points, i.e., ... . The idea is to minimize the worst-case upper bound for integration error. Problem is the middle term in (8), which depends on the normalizing constant of the posterior distribution. This constant is notoriously hard to compute \citep{kass1995bayes}. 
+
+Stein points \citep{chen2018stein}
 
 \iffalse
 https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_jkdkrau0
@@ -794,7 +796,7 @@ Bayesian optimization applies this probabilistic numerics perspective to finding
 	\label{fig:qei}
 \end{figure}
 
-Bayesian optimization is a relatively unexplored QMC application area.  We will explore the \emph{efficacy of LD sampling} in Bayesian optimization and other probabilistic numerics problems.
+Bayesian optimization is a relatively unexplored QMC application area. Add \cite{chen2019hierarchical} reference. We will explore the \emph{efficacy of LD sampling} in Bayesian optimization and other probabilistic numerics problems.
 
 
 
