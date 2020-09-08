@@ -753,7 +753,7 @@ MLQMC
 
 \subsubsection{LD Subsampling of Big Data}
 
-Explosion of big data in virtually every scientific field, due to advances in sensing technology, mathematical modeling, and computing architecture (cite some papers). Such data must be coupled with efficient learning algorithms for scientific inference and predictive modeling to be useful in practice. The development of scalable algorithms for big data is a key topic in statistical learning and computer science.
+With significant advances in experimental technology, mathematical modeling, and computing power, big data is ubiquitous in nearly every scientific field. To use such data for real-time decision-making, efficient learning algorithms for scientific inference and predictive modeling. The development of scalable algorithms for big data is a key topic in statistical learning and computer science.
 
 An effective technique explored in the literature is to randomly subsample the data in small batches at each iteration, then use the subsampled data to learn the trained model. This stochastic subsampling approach is used to scale-up a wide range of machine learning algorithms for big data, e.g., stochastic gradient descent (SGD), stochastic gradient boosting, etc. Consider SGD as an illustrating example. Let $L(\theta;\mathcal{X},\mathcal{Y})$ be the loss function to be minimized, where $\mathcal{X}$ denotes ... and $\mathcal{Y}$ denotes .... Standard gradient descent performs the iterative updates, but this full gradient can be very expensive when data size large. (Batch) SGD approximates this gradient with a small batch subsample from the data, giving the update... . Batch SGD is widely used for scalable training of neural networks and deep learning models with big data \citep{srivastava2014dropout}.
 
@@ -767,7 +767,7 @@ Bayesian methodology, which is widely used in (references), have traditionally r
 
 One approach is to directly minimize the kernel discrepancy (8) to generate sample points, i.e., ... . The idea is to minimize the worst-case upper bound for integration error. Problem is the middle term in (8), which depends on the normalizing constant of the posterior distribution. This constant is notoriously hard to compute \citep{kass1995bayes}. 
 
-Stein points \citep{chen2018stein}
+Stein points \citep{chen2018stein}: Stein's identity, gets rid of dependency on normalizing constant. Minimum energy points, weighted Reisz points, Damelin paper. We will implement this in QMCPy and explore the effectiveness of these methods for complex Bayesian learning problems.
 
 \iffalse
 https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_jkdkrau0
