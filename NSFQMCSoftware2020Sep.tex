@@ -761,11 +761,11 @@ Inherent limitations of SGD: convergence rate and noise ball. this can be improv
 
 We will explore..., also implement existing methods (find references). Theory: existence of a LD subsample from any dataset. Preliminary work on FFT data kernel. We will develop ... and implement this within the QMCPy framework.
 
-\subsubsection{LD Bayesian Sampling}
+\subsubsection{LD posterior sampling for Bayesian learning}
 
-Bayesian methodology, which is widely used in (references), have traditionally relied on MCMC sampling for posterior exploration of the parameter space. MCMC makes use of a correlated sample chain 
+Bayesian methodology, which is widely used in (references), have traditionally relied on MCMC sampling for exploration of a complex posterior distribution $\pi$. MCMC makes use of evaluations from the posterior distribution to guide a Markov chain sampler  which generate correlated samples from $\pi$. When the posterior is expensive to compute (examples in engineering, big data, bayes rule), we have limited evaluations on the desired distribution, and MCMC can be inefficient. While the QMC Metropolis method by \cite{OweTri05a} speeds up the convergence of samples, it still requires many posterior evaluations. We want method which can provide LD sampling with limited posterior evaluations here.
 
-
+One possible approach is to use the kernel discrepancy (8) to generate 
 
 \iffalse
 https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_jkdkrau0
