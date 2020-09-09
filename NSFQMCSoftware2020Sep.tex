@@ -673,7 +673,7 @@ QMCPy will aggregate the best QMC software with a clear structure and a consiste
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Although QMCPy already includes the most popular LD sequences, their implementation is rather rigid.  Also, some newer sequences are missing.
 
-At present, the digital shifting and scrambling recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and qrng \cite{QRNG2020}.  However, for flexibility, the generating matrices (direction vectors) for the Sobol' sequence should be specified independently of the digitally scrambling and shifting.  \emph{We will rectify this}, which will allow folks to try scrambled BRODA generators \cite{BRODA20a}.  This is not yet possible.
+At present, the digital shifting and scrambling recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and \pyinline{qrng} \cite{QRNG2020}.  However, for flexibility, the generating matrices (direction vectors) for the Sobol' sequence should be specified independently of the digitally scrambling and shifting.  \emph{We will rectify this}, which will allow folks to try scrambled BRODA generators \cite{BRODA20a}.  This is not yet possible.
 
 Sobol' sequences are a kind of digital sequence \cite{DicPil10a}.  LatNet Builder \cite{LatNet} can construct the generating matrices for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the  generating matrices to be specified independently of the randomization, users will be able to explore  \emph{what advantages polynomial lattices may have} over Sobol' sequences.
 
@@ -782,6 +782,7 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 \fi
 
 \subsubsection{Uncertainty Quantification}
+
 
 \subsubsection{Ray Tracing}
 
@@ -948,7 +949,7 @@ research students associated with this project.  Female students mentored includ
 Brazilian Science Mobility Program students in the summers of 2015 and 2016, plus eight other students (two female) from Illinois Tech, Biola U, U Minnesota, Macalester U, NUS, Colorado School of Mines.  All but one have enrolled in graduate programs.   As part of our team, all of
 these students have learned how to conduct theoretical and/or practical computational mathematics research.
 
-\subsection{NSF \SMNote{need number}. \textit{CSSI: Frameworks: X-Ion Collisions with a Statistically and Computationally Advanced Program Envelope (X-SCAPE),} \$696,442, July 2020 -- June 2014.} High-energy colliders study the interaction between a variety of subatomic particles and environments produced in the collision of protons with protons, with nuclei, or between two nuclei. The study of such interactions requires an elaborate statistical and computational framework, which integrates volumes of data from diverse experiments with computer simulations from candidate theories. The X-SCAPE (previously JETSCAPE) collaboration is a multi-disciplinary team of physicists, computer scientists and statisticians, is engaged in the construction of such an open-source framework. \SM is a Duke co-PI in this ongoing collaboration (which started in the summer of 2020), and is responsible for leading the statistical developments on the project.
+\subsection{NSF CSSI Frameworks 2004571 (Subaward WSU20076). \textit{X-Ion Collisions with a Statistically and Computationally Advanced Program Envelope (X-SCAPE),} \$696,442, July 2020 -- June 2014.} High-energy colliders study the interaction between a variety of subatomic particles and environments produced in the collision of protons with protons, with nuclei, or between two nuclei. The study of such interactions requires an elaborate statistical and computational framework, which integrates volumes of data from diverse experiments with computer simulations from candidate theories. The X-SCAPE (previously JETSCAPE) collaboration is a multi-disciplinary team of physicists, computer scientists and statisticians, is engaged in the construction of such an open-source framework. \SM is a Duke co-PI in this ongoing collaboration (which started in the summer of 2020), and is responsible for leading the statistical developments on the project.
 
 \subsubsection{Intellectual Merit from Prior NSF Support}
 
