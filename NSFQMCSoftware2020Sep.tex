@@ -457,11 +457,11 @@ Here we provide an overview of QMC, a description of our early efforts, our plan
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Applications of (Q)MC and of IID and LD Sampling}  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Many situations are best understood by building randomness into the mathematical model.  Examples include Bayesian statistical inference \cite{GelEtal13, EfrHas16}, financial risk \cite{Gla03,LEc09}, particle transport \cite{Hag14,Spa95,Vea97}, and uncertainty quantification \cite{Smi14a,HerSch20a}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages), quantiles, and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
-
-Cubatures (approximatioin of multivariate integrals) based on grid sampling have computational costs that increase exponentially with the number of variables, $d$.  (Q)MC cubature avoids this curse of dimensionality with computational costs that are often only weakly dimension dependent.
+Many situations are best understood by building randomness into the mathematical model.  Examples include Bayesian statistical inference \cite{GelEtal13, EfrHas16}, financial risk \cite{Gla03,LEc09}, particle transport \cite{Hag14,Spa95,Vea97}, and uncertainty quantification \cite{Smi14a,HerSch20a}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages) and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
 
 \iffalse
+Cubatures (approximation of multivariate integrals) based on grid sampling have computational costs that increase exponentially with the number of variables, $d$.  (Q)MC cubature avoids this curse of dimensionality with computational costs that are often only weakly dimension dependent.
+
 In constructing surrogate models for computer experiments (multivariate function approximation), one may wish to evenly sample the domain to search for regions where the function changes more sharply.  IID and LD sampling again prove advantageous over grid sampling.
 \fi
 
@@ -476,7 +476,7 @@ The quantity of interest, $Y$ (option payoff, pixel intensity, flow velocity at 
 \end{equation}
 One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.
 
-Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The points on the left, $\bX_1, \bX_2, \ldots \IIDSim \calu[0,1]^2$, are random and do not know about each other.  Since these points are IID, the multivariate distribution of $\bX_1, \ldots \bX_n$ is a product of the bivariate marginals:  $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
+Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The points on the left, $\bX_1, \bX_2, \ldots \IIDSim \calu[0,1]^2$, are random and do not know about each other.  The multivariate distribution of $\bX_1, \ldots \bX_n$ is $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
 \cdots F(\bx_n) = x_{11}x_{12} x_{21} \cdots x_{n2}$, where $F(\bx)  = x_1x_2$ is the bivariate uniform distribution.
 
 \begin{figure}[H]
@@ -487,9 +487,9 @@ Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to m
 	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points that either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{figure}
 
-The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated with one another.  They might be deterministic or random.  They are designed to mimic the distribution $F$  in the sense that the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---is close to $F$.  (The empirical distribution for $n$  points assigns probability $1/n$ to each of point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$, and LD points make the discrepancy small.  Discrepancies are explained further in the next subsection and in Sect.\ \ref{sec:richLD}.
+The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  They mimic the distribution $F$  in the sense that the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---is close to $F$.  (The empirical distribution for $n$  points assigns probability $1/n$ to each of point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$, and LD points make the discrepancy small.
 
-The points on the right in Fig.\ \ref{fig:iid_vs_ld} are grid points. They may look even, but they lack evenness in low dimensional projections.  The grid points have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  For $d$-dimensional grids, there are only $n^{1/d}$ values in each coordinate direction, which is disastrous for  large $d$.
+The points on the right in Fig.\ \ref{fig:iid_vs_ld} are grid points. The grid points have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  Grids in large dimension $d$, have disastrously few, $n^{1/d}$, values in each coordinate direction.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiency Benefits from LD Sampling} \label{sec:eff_benefits}
@@ -498,7 +498,7 @@ The root mean squared error of the sample mean, $\hmu_n$, in approximating the p
 \begin{equation}
     \sqrt{\bbE\bigl[\abs{\mu - \hmu_n}^2\bigr]} = \frac{\std(Y)}{\sqrt{n}},  \quad \std(Y) = \sqrt{\int_{\cx} \abs{f(\bx) - \mu}^2 \, \dif F(\bx)}, \qquad \bX_1, \bX_2, \ldots \text{IID}.
 \end{equation}
-The smoothness requirement on $f$ is minimal, and the error bound is free from the curse of dimensionality (assuming that $\std(Y)$ does not explode with dimension), but the convergence rate is modest.  
+The smoothness required of $f$ is minimal, and the error bound has no curse of dimensionality (assuming that $\std(Y)$ does not explode with dimension), but the convergence rate is modest.  
 
 For LD sampling the absolute error has an upper bound of
 \begin{equation} \label{eq:KH}
@@ -506,7 +506,7 @@ For LD sampling the absolute error has an upper bound of
 \end{equation}
 The Banach space $\calf$ requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., $L^2$ mixed partial derivatives of up to order one in each coordinate direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n, F)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$ for well-chosen LD sequences, where $\delta$ is arbitrarily small and positive.
 
-Fig.\ \ref{fig:KeisterTimes} displays the numerical results from QMCPy for approximating  a computational physics example of Keister \cite{Kei96},
+Fig.\ \ref{fig:KeisterTimes} displays results from QMCPy for  a computational physics example of Keister \cite{Kei96},
 \begin{equation} \label{eq:Keister}
 \mu = \int_{\reals^d} \cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2) \, \dif \bt,
 \end{equation}
@@ -525,11 +525,11 @@ Both the number of function values and the computation time increase like $\Orde
 	\label{fig:KeisterTimes}
 \end{wrapfigure}
 
-The advantage of LD sampling is illustrated by the sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = 0.01$ there is already a hundredfold contrast between the number of function values and amount of time required for IID versus LD.
+The advantage of LD sampling is illustrated by the sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = 0.01$ there is already a hundredfold contrast between the $n$ and time required for IID versus LD.
 
-The computational cost rates of increase as $\varepsilon$ decreases for IID and LD sampling are essentially \emph{independent of $d$}.  This is not the case for tensor product rules, which employ grid sampling.  If the derivatives of $f$ up to total order $rd$ exist, then there exist tensor product rules that provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a cost (time or function values) of $\Order(\varepsilon^{-d/r})$.  While increased smoothness, $r$, helps, it cannot overcome the exponential growth of the cost with $d$.
+The orders of the computational cost dependence on $\varepsilon$ for IID and LD sampling are essentially \emph{independent of $d$}.  This is not the case for tensor product rules and grid sampling.  If the derivatives of $f$ up to total order $rd$ exist, then tensor product rules may provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a computational cost of $\Order(\varepsilon^{-d/r})$.   Increased smoothness, $r$, helps, but it cannot overcome the exponential growth of the cost with $d$.
 
-To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a proving ground for their latest developments.  This is why we need QMCPy.
+To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a showcase  for their latest work.  So,  we need QMCPy.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{QMCPy Now}
@@ -540,7 +540,7 @@ To harness the efficiency of LD sampling via QMC methods, practitioners need qua
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 During the summer of 2018 \FH began discussing with other QMC researchers, including Dirk Nuyens, Frances Kuo, and \AO, how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
 \begin{description}[format=\textup]
-	\item[MATLAB] Sobol' and Halton sequences in their Statistics and Machine Learning Toolbox, commercial \cite{MAT9.8}
+	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.8}
 	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}
 	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a}
 	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch}
@@ -558,7 +558,7 @@ During the summer of 2018 \FH began discussing with other QMC researchers, inclu
 \end{description}
 Each software package above  focuses on just certain aspects of QMC.  Some packages focus on the generation of LD sequences, some packages focus on fundamental QMC algorithms, and other packages focus on particular applications of QMC.  The software packages listed above are primarily the initiatives of individual research groups.  They are not a shared community effort.
 
-Fruitful discussions in 2018 carried into further talks with \MM in early 2019.  \MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  Also, Python supports C libraries to speed up crucial code.  Aleksei Sorokin (AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
+Fruitful discussions in 2018 led to further talks with \MM in early 2019.  \MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  Aleksei Sorokin (AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
 
 
 
@@ -569,41 +569,18 @@ Fruitful discussions in 2018 carried into further talks with \MM in early 2019. 
 
 The aforementioned discussions produced a skeleton for QMCPy consisting of four major abstract classes:
 \begin{itemize}
-	\item \pyinline{DiscreteDistribution} for generating LD and IID sequences according to their original probability distributions,
+	\item \pyinline{DiscreteDistribution} for generating LD and IID sequences,
 	\item \pyinline{TrueMeasure} to accommodate problems defined for more general distributions or measures,
 	\item \pyinline{Integrand} to define the particular function, $f$, of interest, and
 	\item \pyinline{StippingCriterion} to determine when to stop the simulation.
 \end{itemize}
 An \pyinline{AccumulateData} class keeps track of intermediate results.
 
-\subsubsection{\textup{\pyinline{DiscreteDistribution} and \pyinline{TrueMeasure}}} LD sequences are constructed by creating the object and then generating the points.  The code below illustrates how to generate the points plotted in the center panel of Fig.\ \ref{fig:iid_vs_ld}.
+\subsubsection{\textup{\pyinline{DiscreteDistribution} and \pyinline{TrueMeasure}}} LD sequences are constructed by creating the object and then generating points.  The code below gives the points in the center panel of Fig.\ \ref{fig:iid_vs_ld}.
 \begin{pythoncode}
 ld = qmcpy.Lattice(dimension = 2)  #define a discrete LD distribution 
 points = lattice.gen_samples(n = 64)  #construct points
 \end{pythoncode}
-
-All LD generators provide points designed to mimic the distribution $\calu[0,1]^d$.  QMCPy also has \pyinline{Sobol} \cite{DicPil10a} and \pyinline{Halton} \cite{Hal60} LD generators whose syntax are comparable.  
-%Fig.\ \ref{fig:sobol_halton} illustrates these LD points.  
-For comparison purposes, QMCPy also has standard uniform and normal psuedo-random generators adopted from \pyinline{numpy}.  
- 
-Our LD generators are extensible, meaning that one may generate additional points while reusing the original ones.  For lattice and Sobol' points it is preferable that $n$ be a power of $2$.  Halton points have no preferred $n$.
- 
-\iffalse
-\begin{wrapfigure}{r}{0.65\textwidth}
-	\centering
-	\includegraphics[height = 5cm]{ProgramsImages/sobol_scatter.eps} 
-	\includegraphics[height = 5cm]{ProgramsImages/halton_scatter.eps}
-	\caption{LD Sobol' (left) and Halton points (right).  These points also have fewer gaps and clusters than IID points. \label{fig:sobol_halton}}
-\end{wrapfigure}
-\fi
-All QMCPy LD generators are randomized by default to ensure that no points lie on the boundary of the unit cube.  If points are transformed to mimic the Gaussian or other distributions on $\reals^d$, then no LD points will be mapped to infinity.  Randomizing Sobol' points can improve the order of convergence of $\hmu_n$ to $\mu$ \cite{Owe97}.
-
-To construct good points that mimic distributions other than standard uniform, one must transform the original points.  The  inverse cumulative distribution is often used.  The \pyinline{TrueMeasure} class automates that transformation.
-\begin{pythoncode}
-gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specify the distribution parameters 
-points = gaussian_ld.gen_samples(n = 64)  #construct points
-\end{pythoncode}
-
 
 \begin{wrapfigure}{r}{0.65\textwidth}
 	\centering
@@ -612,7 +589,17 @@ points = gaussian_ld.gen_samples(n = 64)  #construct points
 	\caption{IID Gaussian (left) and Sobol'  points transformed to mimic a Gaussian distribution (right).  The LD points better represent the Gaussian distribution than the IID points. \label{fig:ld_Gauss}}
 \end{wrapfigure}
 
-Fig.\ \ref{fig:ld_Gauss} displays  lattice and Sobol' points that have been transformed to mimic the Gaussian distribution with mean $\begin{pmatrix} 3 \\ 2 \end{pmatrix}$ and covariance matrix $\begin{pmatrix} 9 & 5 \\ 5 & 4 \end{pmatrix}$.  A set of transformed low discrepancy points may or may not be low discrepancy with respect to the new distribution, depending on how one defines the discrepancy \cite{LiKanHic20a}.  But, transformed low discrepancy points often outperform IID points in Monte Carlo calculations.
+All LD generators provide points designed to mimic the distribution $\calu[0,1]^d$.  QMCPy also has \pyinline{Sobol} \cite{DicPil10a} and \pyinline{Halton} \cite{Hal60} LD generators whose syntax are comparable.  
+%Fig.\ \ref{fig:sobol_halton} illustrates these LD points.  
+For comparison purposes, QMCPy also has standard uniform and normal psuedo-random generators adopted from \pyinline{numpy}.  Our LD generators are extensible, meaning that one may generate additional points while reusing the original ones.  For lattice and Sobol' points it is preferable that $n$ be a power of $2$.  QMCPy LD generators are randomized by default to ensure that no points lie on the boundary of the unit cube and to improve the the order of convergence of $\hmu_n$ to $\mu$ \cite{Owe97}.
+
+The \pyinline{TrueMeasure} class automates the transformation required to construct good points that mimic distributions other than standard uniform.  The  inverse  distribution is often used.  
+\begin{pythoncode}
+gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specify the distribution parameters 
+points = gaussian_ld.gen_samples(n = 64)  #construct points
+\end{pythoncode}
+
+Fig.\ \ref{fig:ld_Gauss} displays  IID and Sobol' points  transformed to mimic the Gaussian distribution with mean $\begin{pmatrix} 3 \\ 2 \end{pmatrix}$ and covariance matrix $\begin{pmatrix} 9 & 5 \\ 5 & 4 \end{pmatrix}$.  Transformed low discrepancy points may or may not be low discrepancy with respect to the new distribution, depending on how one defines the discrepancy \cite{LiKanHic20a}.  But, transformed low discrepancy points often outperform IID points in Monte Carlo calculations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}} 
@@ -774,7 +761,7 @@ Bayesian methods have gained much popularity in the last decades, primarily due 
 
 One approach for LD posterior sampling is to minimize the kernel discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ in \eqref{eq:KH} for samples $\{\bX_i\}_{i=1}^n$, where $F$ is the posterior distribution. This is known as \textit{kernel herding} \citep{chen2012super} in the literature. Kernel herding has a key weakness for posterior sampling: the discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ to be optimized requires an analytic expression for the integral $\int K(t,\bX_i) dF(t)$ (see \eqref{eq:KHterms}), which is not attainable for complex posteriors $F$. To address this, a recent work \cite{chen2018stein} proposes a new \textit{Stein reproducing kernel}:
 \begin{equation} \label{eq:stein}
-
+a
 \end{equation}
 Promising solution.
 
@@ -822,8 +809,6 @@ We will \emph{implement LD sequences taking advantage of multiple cores} of the 
 
 
 
-
-
 \section{Broader Impacts}
 \subsection{QMCPy as a Proving Ground}
 QMCPy will \emph{stand in the breach} between research code form individual research groups and broad scope software projects.  Research groups need a place to compare their new ideas with the best available.  Those who develop LD generators need to test them on a variety of use cases and as key components of various QMC algorithms.  Those with new QMC algorithms need to test them with the best generators.  Those with juicy use cases want to try the best that QMC has to offer.  Broad scope software projects like \pyinline{scipy}, PyTorch, or MATLAB, do not offer the options that QMCPy does.
@@ -848,6 +833,10 @@ Computational mathematics and statistics these days nearly always requires the u
 As with past NSF projects, in seeking summer undergraduate students and graduate students we will give preference to underrepresented minorities, women, and students from colleges where research experiences are rare.  As noted in Sect.\ \ref{sec:PreviousFred}, we have had significant success in mentoring students.  Many undergraduates have enrolled in graduate programs.  Five out of \FH's fifteen students earning PhDs are women, three of whom have entered academia.
 
 The senior personnel on this project include one woman (\SCTC) and one early-career scholar (\SM).  Also, \TS is early-career.  The backgrounds of our senior personnel and collaborators include folks with backgrounds in mathematics, statistics, and computer science.  The students  that we mentor will also learn to think from these different perspectives.
+
+\subsection{Disseminating Our Work}
+
+
 
 \section{Results from Prior NSF Support} \label{sec:prior_work}
 
@@ -957,19 +946,28 @@ these students have learned how to conduct theoretical and/or practical computat
 
 
 \section{Strengths of This Team and Collaboration Plan}
+We have a well-constructed  team that combines senior personnel with diverse academic backgrounds, career stages, and institutions.  Together with our students, collaborators, and friends, we will grow QMCPy into what it should become while providing new theory to underpin our new algorithms.
+
+
 
 \subsection{Senior Personnel}
+\FH has been the lead PI on the GAIL \cite{ChoEtal20a} MATLAB software project that contains many of the stopping criteria incorporated into GAIL.  His expertise is in the numerical analysis of QMC and other algorithms for multivariate problems.  He has also developed several theoretically justified adaptive numerical algorithms.  As a former editorial board member for major computational mathematics journals, a Fellow of the Institute of Mathematical Statistics, and a co-leader of SAMSI's program on QMC in 2017-18, \FH understands the interface between computational mathematics and statistics.  \FH will lead the activities at Illinois Tech and oversee QMCPy's architecture.  He will also lead the development of higher order nets, net scrambling, and multilevel methods.
+
+\SM is a statistician who became quite familiar with QMC through the aforementioned SAMSI program.  He is a tenure track assistant professor of statistics.  \SM will lead the activities at Duke and oversee the big data learning and Bayesian inference efforts. \FJHNote{Simon please add more}
+
+\SCTC is a computer scientist and Chief Data Scientist at Kamakura Securities.  She co-led the GAIL project with \FH and was particularly responsible for educating the team in best software engineering practices for numerical software.  \SCTC will lead the effort to ensure that QMCPy is well-tested, well-documented, and meets the needs of the business world.  \FJHNote{Sou-Cheng please add more}
+
+The senior personnel---together with our students---will have regular video conference meetings to share our progress and brainstorm next steps.
 
 
-\subsection{Students}
-
+\subsection{Students}  The PhD students supported by this project will work with the senior personnel to address major algorithmic and theoretical issues.  Promising QMCPy simulations may suggest open theoretical questions.  Alternatively, new theoretical insights may be incorporated as new features in QMCPy.  Our goal is to have theoretically justified, practically impactful algorithms.  Undergraduate students will focus on new features or use cases that can be implemented mostly over the course of a summer.  They will be mentored by the senior personnel and the PhD students.  All students will learn good practices for contributing to a long term software project.
 
 \subsection{Collaborators}
-\AO has engaged with the PIs in conversations about QMC for many years.  Prof.\ Owen is particularly expert in randomized QMC and the use of low discrepancy points for Markov chain Monte Carlo.  He has taken a keen interest in QMCPy and will put forward new QMC use cases, advise on software features to be included, and possibly collaborate on joint publications with the PIs.  Prof.\ Owen will also encourage his student to help out with the implementation of Sobol' indices.
+\AO has engaged with the PIs in conversations about QMC for many years.  He is particularly expert in randomized QMC and the use of low discrepancy points for Markov chain Monte Carlo.  \AO has taken a keen interest in QMCPy and will put forward new QMC use cases, advise on software features to be included, and possibly collaborate on joint publications with the PIs.  \AO will also encourage his student to help out with the implementation of Sobol' indices.
 
-Dr.\ Mike McCourt (SigOpt) convinced his company to fund the early development of QMCPy.  He was convinced of the advantages of low discrepancy sampling and wanted to spread these ideas to the tech industry.  During the first year of QMCPy's development, Mike advised us what we should prioritize for the benefit of tech practitioners.  Although SigOpt is not in a position to  fund SigOpt further, Mike will advise us on the continued development of SigOpt.  He will also help us spread the word among his network in the machine learning community.
+\MM convinced his company to fund the early development of QMCPy.  He was convinced of the advantages of low discrepancy sampling and wanted to spread these ideas to the tech industry.  During the first year of QMCPy's development, \MM advised us what we should prioritize for the benefit of tech practitioners.  Although SigOpt is not in a position to  fund QMCPy further, \MM will advise us on the continued development of SigOpt.  He will also help us spread the word among his network in the machine learning community.
 
-Dr.\ Tim Sullivan (University of Warwick, UK) provides expertise on two application domains for the QMC software developed in this project.  The first area is probabilistic numerics, a Bayesian statistical approach to numerical tasks such as quadrature and the solution of differential equations, in which the solution object is a statistical posterior distribution over the value of the integral or solution to the differential equation and reflects the discretisation uncertainty inherited from the finite computational budget.  QMC methods offer an attractive way to interrogate these PN distributions at significantly lower cost than traditional MC or MCMC sampling.  The second are is the use of QMC methods in the training of metamodels for heterogeneous (i.e. mixed atomistic-continuum) systems, which is an area of particular interest in Warwick's EPSRC Centre for Doctoral Training in Modelling of Heterogeneous Systems (HetSys).
+\TS will provide expertise on two application domains for QMCPy.  The first area is probabilistic numerics (PN), a Bayesian statistical approach to numerical tasks such as quadrature and the solution of differential equations, in which the solution object is a statistical posterior distribution over the value of the integral or solution to the differential equation and reflects the discretisation uncertainty inherited from the finite computational budget.  QMC methods offer an attractive way to interrogate these PN distributions at significantly lower cost than traditional MC or MCMC sampling.  The second are is the use of QMC methods in the training of metamodels for heterogeneous (i.e. mixed atomistic-continuum) systems, which is an area of particular interest in Warwick's EPSRC Centre for Doctoral Training in Modelling of Heterogeneous Systems (HetSys).
 
 
 
