@@ -366,7 +366,7 @@
 
 \newcommand{\FJHNote}[1]{{\color{blue}Fred: #1}}
 \newcommand{\SMNote}[1]{{\color{blue}Simon: #1}}
-\newcommand{\JMHNote}[1]{{\color{green}Mac: #1}}
+\newcommand{\SCTCNote}[1]{{\color{green}Sou-Cheng: #1}}
 
 % Notes on the paper for communicating with coauthors
 \newif\ifnotesw \noteswtrue
@@ -717,9 +717,9 @@ Importance sampling (see, e.g., \cite{owen2000safe}) gives a simple yet powerful
 \begin{equation}\label{eq:imp}
 \mathbb{E}[f(\bX)] = \int f(\bx) dF(\bx) = \int \frac{f(\bx)dF(\bx)}{dQ(\bx)} dQ(\bx).
 \end{equation}
-Importance sampling ... . Optimal measure, but hard to estimate. Key methods we want to implement? cite \cite{huling2020energy} for recent application in causal inference.
+Importance sampling ... . Optimal measure, but hard to estimate. Key methods we want to implement? cite \cite{huling2020energy} for recent application in causal inference. interesting application.
 
-Control variates: review, methods.
+Control variates: review, methods. machine learning method for finding control variates. art wrote a paper.
 
 We will implement ... .
 
@@ -730,7 +730,7 @@ Image rendering using neural networks for importance sampling and control variat
 
 \subsubsection{Kernel Density Estimation}
 
-\subsubsection{Uncertainty Propagation}
+% \subsubsection{Uncertainty Propagation}
 
 % \iffalse
 % Pierre L'Ecuyer's talk
@@ -750,25 +750,25 @@ Image rendering using neural networks for importance sampling and control variat
 
 \subsubsection{Data Squashing for Big Data Analytics}
 
-With significant advances in experimental technology, mathematical modeling, and computing power, big data is ubiquitous in nearly every scientific field. A key challenge is making use of this rich source of data; learning algorithms need to be highly \textit{efficient} and \textit{scalable} to extract information for real-time decision-making. The development of such algorithms is an important research direction in statistics and computer science.
+With advances in experimental technology, mathematical modeling, and computing power, big data is ubiquitous in nearly every scientific field. A key challenge is making use of this rich source of data; learning algorithms need to be highly \textit{efficient} and \textit{scalable} to extract information for real-time decision-making. The development of such algorithms is an important research direction in statistics and computer science.
 
-One way to make these algorithms scalable for big data is to iteratively train the model on small batches of the data, typically sampled uniformly at random. This ``data subsampling'' approach is widely used to scale-up many powerful machine learning algorithms, e.g., stochastic gradient descent (SGD, \cite{Bot2010}) and stochastic gradient boosting \cite{friedman2002stochastic}. Consider SGD as an illustrating example. The objective is to minimize the loss function $L(\theta;\mathcal{X}) = N^{-1} \sum_{m=1}^N l(\theta;\bX_m)$ over model parameters $\theta \in \mathbb{R}^q$, where $\mathcal{X} = \{\bX_m\}_{m=1}^N \subset \mathbb{R}^d$ is the large training data. Standard gradient descent methods for optimization \cite{nocedal2006numerical} are impractical here, since they require evaluation of the gradient $N^{-1} \sum_{m=1}^N \nabla l(\theta;\bX_m)$, which is very expensive for $N$ large (i.e., for big data). SGD \cite{Bot2010} (more precisely, mini-batch SGD) instead approximates this gradient with $\nabla L(\theta;\mathcal{X}_{s}^{[l]})$, where $\mathcal{X}_{s}^{[l]} \subset \mathcal{X}$ are datasets of size $n \ll N$, sampled IID and uniformly from $\mathcal{X}$. SGD then performs the following descent steps until convergence:
+One way to make these algorithms scalable is to iteratively train the model on small batches of the data, typically sampled uniformly at random. This is widely used to scale-up many powerful machine learning algorithms, e.g., stochastic gradient descent (SGD, \cite{Bot2010}) and stochastic gradient boosting \cite{friedman2002stochastic}. Consider SGD as an illustrating example. The objective is to minimize the loss function $L(\theta;\mathcal{X}) = N^{-1} \sum_{m=1}^N l(\theta;\bX_m)$ over model parameters $\theta \in \mathbb{R}^q$, where $\mathcal{X} = \{\bX_m\}_{m=1}^N \subset \mathbb{R}^d$ is the large training data. Standard gradient descent methods for optimization \cite{nocedal2006numerical} are impractical here, since they require evaluation of the full gradient $N^{-1} \sum_{m=1}^N \nabla l(\theta;\bX_m)$, which is very expensive for $N$ large (i.e., for big data). Mini-batch SGD \cite{Bot2010} approximates this gradient with $\nabla L(\theta;\mathcal{X}_{s}^{[l]})$, where $\mathcal{X}_{s}^{[l]} \subset \mathcal{X}$ are subsamples of size $n \ll N$ taken IID and uniformly from the big data $\mathcal{X}$. The following descent steps are then iterated until convergence:
 \begin{equation}\label{eq:sgdopt}
 \theta^{[l+1]} \leftarrow \theta^{[l]} - \eta \left( \frac{1}{n} \sum_{\bX \in \mathcal{X}_{s}^{[l]}} l(\theta;\bX)\right) , \quad l = 1, 2, \cdots,
 \end{equation}
 where $\eta$ is the gradient descent stepsize. Mini-batch SGD is widely used for scalable training of neural networks and deep learning models with big data \citep{srivastava2014dropout}.
 
-Despite this, SGD has a notable weakness: since its gradients are estimated by random subsampling, one can only show that (under mild conditions) the solution sequence $(\theta^{[l]})_{l=1}^\infty$ converges to a \textit{noise ball} of radius $\mathcal{O}(1/n)$ around the global optimum $\theta^*$. This means that, as the subsample size $n$ decreases, SGD returns parameter estimates which can be very far from the desired solution $\theta^*$. One way to address this is by carefully choosing a small LD dataset which well-represents the big data $\mathcal{X}$. This is referred to as ``data squashing'' \cite{owen2003data} by \hypertarget{AOlink}{AO}. There has been a recent resurgence of interest in data squashing from the statistical learning literature. Leverage-score subsampling was introduced in \cite{ma2015statistical} to scale up linear regression fits for large datasets. A similar idea of \textit{coresets} has been explored in computer science \cite{chan2006faster}, with recent developments in \cite{bachem2017practical} and \cite{huggins2016coresets} for cluster analysis and logistic regression. The PI \hypertarget{SMlink}{SM} has also done work in this area \cite{mak2018support,mak2018minimax,mak2017projected,krishna2019distributional}, most notably on the notion of \textit{support points}, which has been applied to mechanical engineering \cite{fernandez2018estimating}, computer simulations \citep{pronzato2020bayesian}, and experimental design \cite{krishna2020robust}.
+Despite this, SGD has a notable weakness: since its gradients are estimated by random subsampling, one can only show that (under mild conditions) the solution sequence $(\theta^{[l]})_{l=1}^\infty$ converges to a \textit{noise ball} of radius $\mathcal{O}(1/n)$ around the global optimum $\theta^*$. This means that, as the subsample size $n$ decreases, SGD returns parameter estimates which can be very far from the desired solution $\theta^*$. One way to address this is by carefully choosing a small LD dataset which well-represents the big data $\mathcal{X}$. This is referred to as ``data squashing'' \cite{owen2003data} by \AO, and has garnered attention in recent years. Leverage-score subsampling was introduced in \cite{ma2015statistical} to scale up linear regression for large datasets. A similar idea of \textit{coresets} has been explored in computer science \cite{chan2006faster}, with recent developments in \cite{bachem2017practical} and \cite{huggins2016coresets} for cluster analysis and logistic regression. The PI \SM has also done work in this area \cite{mak2018support,mak2018minimax,mak2017projected,krishna2019distributional}, most notably on the notion of \textit{support points}, which has been applied to mechanical engineering \cite{fernandez2018estimating}, computer simulations \citep{pronzato2020bayesian}, and experimental design \cite{krishna2020robust}.
 
-\textit{We will implement these existing data squashing methods} in QMCPy, and explore their effectiveness in a suite of big data problems. There is also little work on which squashing procedure are most appropriate for SGD optimization, e.g., in reducing noise ball radius. Our preliminary results show that a LD subsample exists in \textit{any} big dataset $\mathcal{X} \subset \mathbb{R}^d$, which achieves a noise ball radius of $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$. We will investigate this further and implement this in QMCPy.
+\textit{We will implement these existing data squashing methods} in QMCPy, and explore their effectiveness in a suite of big data problems. There is also little work on which squashing procedure are most appropriate for SGD optimization, e.g., in reducing noise ball radius. Our preliminary results show that a LD subsample exists in \textit{any} big dataset $\mathcal{X} \subset \mathbb{R}^d$, which achieves a noise ball radius of $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$ (this is smaller than the $\mathcal{O}(1/n)$ for random subsampling). We will investigate this further and implement this in QMCPy.
 
 \subsubsection{Posterior Sampling for Complex Bayesian Models}
 
-Bayesian methods have gained much popularity in the last decades, primarily due to its ability to fit complicated statistical models via sampling \cite{gelman2013bayesian}. Such methods have largely relied on MCMC sampling for exploration of the posterior distribution $F$, which captures information on model parameters. However, with the prevalence of big data and the popularity of complex machine learning models, the posterior distribution $\pi$ can be expensive to evaluate, which makes MCMC sampling very time-consuming \cite{joseph2015sequential}. This is further compounded by the highly correlated nature of MCMC samples, which reduces the information provided by each sample \citep{link2012thinning}. For such problems, a LD posterior sampling method can greatly improve model learning given a time budget.
+Bayesian methods have gained much popularity in the last decades, primarily due to its ability to fit complicated models via sampling \cite{gelman2013bayesian}. Such methods have largely relied on MCMC sampling for exploration of the posterior distribution $F$, which captures information on model parameters. However, with the rise of big data and complex machine learning models, the posterior distribution $\pi$ can be expensive to evaluate, which makes MCMC sampling very time-consuming \cite{joseph2015sequential}. This is compounded by the highly correlated nature of MCMC samples, which reduces the information provided by each sample \citep{link2012thinning}. For such problems, a LD posterior sampling method can greatly improve model learning given a time budget.
 
 % While the QMC Metropolis method by \cite{OweTri05a} speeds up the convergence of samples, it still requires many posterior evaluations. We want method which can provide LD sampling with limited posterior evaluations here.
 
-One approach for LD posterior sampling is to minimize the kernel discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ in \eqref{eq:KH} for samples $\{\bX_i\}_{i=1}^n$, where $F$ is the posterior distribution. This is known as \textit{kernel herding} \citep{chen2012super} in the literature. Kernel herding has a key weakness for posterior sampling: the discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ to be optimized requires an analytic expression for the integral $\int K(t,\bX_i) dF(t)$ (see \eqref{eq:KHterms}), which is not attainable for complex posteriors $F$. To address this, a recent work \cite{chen2018stein} proposes a new \textit{Stein reproducing kernel}:
+One approach for LD posterior sampling is to minimize the kernel discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ in \eqref{eq:KH} for samples $\{\bX_i\}_{i=1}^n$. This is known as \textit{kernel herding} \citep{chen2012super}. Kernel herding has a key weakness for posterior sampling: the discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ to be optimized requires an analytic expression for the integral $\int K(t,\bX_i) dF(t)$ (see \eqref{eq:KHterms}), which is not attainable for complex posteriors $F$. To address this, a recent work \cite{chen2018stein} proposes a new \textit{Stein reproducing kernel}:
 \begin{align}\begin{split} \label{eq:stein}
 K_{st}(\bt,\bx) &= \nabla_\bt \cdot \nabla_\bx K(\bt,\bx) + \nabla_\bt K(\bt,\bx) \cdot \nabla_\bx \log dF(\bx)\\
 & \quad + \nabla_\bx K(\bt,\bx) \nabla_\bt \log dF(\bt) + K(\bt,\bx) \nabla_\bt \log dF(\bt) \cdot \nabla_\bx \log dF(\bx),
@@ -788,7 +788,7 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 A recent application of QMC is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}.  An example is Darcy's flow through rock with random porosity.  QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package.
 
 \subsubsection{Ray Tracing}
-Image rendering is a visually stunning application of QMC\cite{Keller2013a}.  QMCPy will implement a simple example to showcase the advantage of LD over IID sampling.
+Image rendering is a visually stunning application of QMC \cite{Keller2013a}.  QMCPy will implement a simple example to showcase the advantage of LD over IID sampling.
 
 % more use cases, \cite{BinSur13}
 
