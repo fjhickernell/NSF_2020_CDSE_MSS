@@ -723,6 +723,9 @@ Control variates: review, methods.
 
 We will implement ... .
 
+Image rendering using neural networks for importance sampling and control variates
+\cite{mueller20neural,mueller2019neural}
+
 % - Huling and Mak (2020)
 
 \subsubsection{Kernel Density Estimation}
@@ -772,7 +775,7 @@ K_{st}(\bt,\bx) &= \nabla_\bt \cdot \nabla_\bx K(\bt,\bx) + \nabla_\bt K(\bt,\bx
 \end{split}\end{align}
 where $K$ is a base symmetric, positive definite kernel, and $\nabla$ and $\nabla \cdot$ are the gradient and divergence operators. The key advantage is that the integral in question $\int K_{st}(t,\bX) dF(t)$ evaluates to 0 for all $\bX$, which allows one to optimize the discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ to generate LD posterior samples. This is a promising method which can speed-up learning of complex Bayesian models.
 
-\textit{We will implement Stein points} in QMCPy. The PI \hypertarget{SMlink}{SM} has worked on a variety of complex Bayesian modeling problems, from climatology \cite{mak2016regional} to aerospace engineering \cite{mak2018efficient,chang2019kernel,yeh2018common}, and we will explore the effectiveness of Stein points for such problems. We will also explore further extensions of Stein points for approximate Bayesian computation, a popular class of Bayesian methods for population genetics and epidemiology.
+\textit{We will implement Stein points} in QMCPy. The PI \SM has worked on a variety of complex Bayesian modeling problems, from climatology \cite{mak2016regional} to aerospace engineering \cite{mak2018efficient,chang2019kernel,yeh2018common}, and we will explore the effectiveness of Stein points for such problems. We will also explore further extensions of Stein points for approximate Bayesian computation, a popular class of Bayesian methods for population genetics and epidemiology.
 
 \iffalse
 https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_jkdkrau0
@@ -782,9 +785,10 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 \fi
 
 \subsubsection{Uncertainty Quantification}
-
+A recent application of QMC is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}.  An example is Darcy's flow through rock with random porosity.  QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package.
 
 \subsubsection{Ray Tracing}
+Image rendering is a visually stunning application of QMC\cite{Keller2013a}.  QMCPy will implement a simple example to showcase the advantage of LD over IID sampling.
 
 % more use cases, \cite{BinSur13}
 
