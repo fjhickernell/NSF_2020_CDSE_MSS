@@ -717,21 +717,22 @@ From the definition, CUD  sequences must satisfy much stronger conditions than L
 
 
 
-\SM importance sampling/control variates
+\subsubsection{Importance Sampling and Control Variates}
 - Huling and Mak (2020)
 
-**kernel density estimation
-- uncertainty propagation
+\subsubsection{Kernel Density Estimation}
 
-\iffalse
-Pierre L'Ecuyer's talk
-https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_r1x3xmle
+\subsubsection{Uncertainty Propagation}
 
-https://drive.google.com/file/d/1uztn18UimvdIo3hyYXywUaOxj_wqPJ7N/edit
+% \iffalse
+% Pierre L'Ecuyer's talk
+% https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_r1x3xmle
 
-\fi
+% https://drive.google.com/file/d/1uztn18UimvdIo3hyYXywUaOxj_wqPJ7N/edit
 
-MLQMC
+% \fi
+
+% MLQMC
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{A Broader Spectrum of Use Cases}
@@ -739,7 +740,7 @@ MLQMC
 
 \subsubsection{Sobol' Indices}
 
-\subsubsection{LD Data Squashing for Big Data Learning}
+\subsubsection{Data Squashing for Big Data Analytics}
 
 With significant advances in experimental technology, mathematical modeling, and computing power, big data is ubiquitous in nearly every scientific field. A key challenge is making use of this rich source of data; learning algorithms need to be highly \textit{efficient} and \textit{scalable} to extract information for real-time decision-making. The development of such algorithms is an important research direction in statistics and computer science.
 
@@ -751,21 +752,22 @@ where $\eta$ is the gradient descent stepsize. Mini-batch SGD is widely used for
 
 Despite this, SGD has a notable weakness: since its gradients are estimated by random subsampling, one can only show that (under mild conditions) the solution sequence $(\theta^{[l]})_{l=1}^\infty$ converges to a \textit{noise ball} of radius $\mathcal{O}(1/n)$ around the global optimum $\theta^*$. This means that, as the subsample size $n$ decreases, SGD returns parameter estimates which can be very far from the desired solution $\theta^*$. One way to address this is by carefully choosing a small LD dataset which well-represents the big data $\mathcal{X}$. This is referred to as ``data squashing'' \cite{owen2003data} by \hypertarget{AOlink}{AO}. There has been a recent resurgence of interest in data squashing from the statistical learning literature. Leverage-score subsampling was introduced in \cite{ma2015statistical} to scale up linear regression fits for large datasets. A similar idea of \textit{coresets} has been explored in computer science \cite{chan2006faster}, with recent developments in \cite{bachem2017practical} and \cite{huggins2016coresets} for cluster analysis and logistic regression. The PI \hypertarget{SMlink}{SM} has also done work in this area \cite{mak2018support,mak2018minimax,mak2017projected,krishna2019distributional}, most notably on the notion of \textit{support points}, which has been applied to mechanical engineering \cite{fernandez2018estimating}, computer simulations \citep{pronzato2020bayesian}, and experimental design \cite{krishna2020robust}.
 
-\textit{We will implement these existing data squashing methods in QMCPy}, and explore their effectiveness in a suite of big data problems. There is also little work on which squashing procedure are most appropriate for SGD optimization, e.g., in reducing noise ball radius. Our preliminary results show that a LD subsample exists in \textit{any} big dataset $\mathcal{X} \subset \mathbb{R}^d$, which achieves a noise ball radius of $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$. We will investigate this further and implement this in QMCPy.
+\textit{We will implement these existing data squashing methods} in QMCPy, and explore their effectiveness in a suite of big data problems. There is also little work on which squashing procedure are most appropriate for SGD optimization, e.g., in reducing noise ball radius. Our preliminary results show that a LD subsample exists in \textit{any} big dataset $\mathcal{X} \subset \mathbb{R}^d$, which achieves a noise ball radius of $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$. We will investigate this further and implement this in QMCPy.
 
-\subsubsection{LD Posterior Sampling for Complex Bayesian Models}
+\subsubsection{Posterior Sampling for Complex Bayesian Models}
 
 Bayesian methods have gained much popularity in the last decades, primarily due to its ability to fit complicated statistical models via sampling \cite{gelman2013bayesian}. Such methods have largely relied on MCMC sampling for exploration of the posterior distribution $F$, which captures information on model parameters. However, with the prevalence of big data and the popularity of complex machine learning models, the posterior distribution $\pi$ can be expensive to evaluate, which makes MCMC sampling very time-consuming \cite{joseph2015sequential}. This is further compounded by the highly correlated nature of MCMC samples, which reduces the information provided by each sample \citep{link2012thinning}. For such problems, a LD posterior sampling method can greatly improve model learning given a time budget.
 
 % While the QMC Metropolis method by \cite{OweTri05a} speeds up the convergence of samples, it still requires many posterior evaluations. We want method which can provide LD sampling with limited posterior evaluations here.
 
 One approach for LD posterior sampling is to minimize the kernel discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ in \eqref{eq:KH} for samples $\{\bX_i\}_{i=1}^n$, where $F$ is the posterior distribution. This is known as \textit{kernel herding} \citep{chen2012super} in the literature. Kernel herding has a key weakness for posterior sampling: the discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ to be optimized requires an analytic expression for the integral $\int K(t,\bX_i) dF(t)$ (see \eqref{eq:KHterms}), which is not attainable for complex posteriors $F$. To address this, a recent work \cite{chen2018stein} proposes a new \textit{Stein reproducing kernel}:
-\begin{equation} \label{eq:stein}
-a
-\end{equation}
-Promising solution.
+\begin{align}\begin{split} \label{eq:stein}
+K_{st}(\bt,\bx) &= \nabla_\bt \cdot \nabla_\bx K(\bt,\bx) + \nabla_\bt K(\bt,\bx) \cdot \nabla_\bx \log dF(\bx)\\
+& \quad + \nabla_\bx K(\bt,\bx) \nabla_\bt \log dF(\bt) + K(\bt,\bx) \nabla_\bt \log dF(\bt) \cdot \nabla_\bx \log dF(\bx),
+\end{split}\end{align}
+where $K$ is a base symmetric, positive definite kernel, and $\nabla$ and $\nabla \cdot$ are the gradient and divergence operators. The key advantage is that the integral in question $\int K_{st}(t,\bX) dF(t)$ evaluates to 0 for all $\bX$, which allows one to optimize the discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ to generate LD posterior samples. This is a promising method which can speed-up learning of complex Bayesian models.
 
-Stein points \citep{chen2018stein}: Stein's identity, gets rid of dependency on normalizing constant. Minimum energy points, weighted Reisz points, Damelin paper. PI has also worked on expensive Bayesian problems (bingham, ae papers). We will implement this in QMCPy and explore the effectiveness of these methods for complex Bayesian learning problems.
+\textit{We will implement Stein points} in QMCPy. The PI \hypertarget{SMlink}{SM} has worked on a variety of complex Bayesian modeling problems, from climatology \cite{mak2016regional} to aerospace engineering \cite{mak2018efficient,chang2019kernel,yeh2018common}, and we will explore the effectiveness of Stein points for such problems. We will also explore further extensions of Stein points for approximate Bayesian computation, a popular class of Bayesian methods for population genetics and epidemiology.
 
 \iffalse
 https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_jkdkrau0
