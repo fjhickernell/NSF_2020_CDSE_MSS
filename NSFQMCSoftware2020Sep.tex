@@ -673,7 +673,7 @@ QMCPy will aggregate the best QMC software with a clear structure and a consiste
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Although QMCPy already includes the most popular LD sequences, their implementation is rather rigid.  Also, some newer sequences are missing.
 
-At present, the digital shifting and scrambling recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and qrng \cite{QRNG2020}.  However, for flexibility, the generating matrices (direction vectors) for the Sobol' sequence should be specified independently of the digitally scrambling and shifting.  \emph{We will rectify this}, which will allow folks to try scrambled BRODA generators \cite{BRODA20a}.  This is not yet possible.
+At present, the digital shifting and scrambling recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and \pyinline{qrng} \cite{QRNG2020}.  However, for flexibility, the generating matrices (direction vectors) for the Sobol' sequence should be specified independently of the digitally scrambling and shifting.  \emph{We will rectify this}, which will allow folks to try scrambled BRODA generators \cite{BRODA20a}.  This is not yet possible.
 
 Sobol' sequences are a kind of digital sequence \cite{DicPil10a}.  LatNet Builder \cite{LatNet} can construct the generating matrices for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the  generating matrices to be specified independently of the randomization, users will be able to explore  \emph{what advantages polynomial lattices may have} over Sobol' sequences.
 
@@ -782,6 +782,7 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 \fi
 
 \subsubsection{Uncertainty Quantification}
+
 
 \subsubsection{Ray Tracing}
 
