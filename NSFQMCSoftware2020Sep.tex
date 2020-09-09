@@ -368,6 +368,7 @@
 
 
 \newcommand{\FJHNote}[1]{{\color{blue}Fred: #1}}
+\newcommand{\SMNote}[1]{{\color{blue}Simon: #1}}
 \newcommand{\JMHNote}[1]{{\color{green}Mac: #1}}
 
 % Notes on the paper for communicating with coauthors
@@ -712,13 +713,20 @@ From the definition, CUD  sequences must satisfy much stronger conditions than L
 \subsection{A Broader Array of Algorithms}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-
-
-
-
 \subsubsection{Importance Sampling and Control Variates}
-- Huling and Mak (2020)
+So far we have discussed the estimation of the integral $\mathbb{E}[f(\bX)] = \int f(\bx) dF(\bx)$ using samples on distribution $F$. However, if we knew a priori that the integrand $f$ is nearly zero outside a region $A$ where $\mathbb{P}(\bX \in A)$ is small, both IID or LD sampling on $F$ would place few points within the important region $A$. The resulting sample mean can then be very far from the population mean. Such problems are common in many applications, such as rare event modeling \cite{rubino2009rare} and Bayesian inference \cite{salmeron2000importance}.
+
+Importance sampling (see, e.g., \cite{owen2000safe}) gives a simple yet powerful solution. The idea is to use samples from a \textit{new} distribution (called the importance distribution) which places greater weight on the importance region $A$. Let $Q$ be such a distribution defined on the same sample space $\Omega$. Then the desired integral can be written as:
+\begin{equation}\label{eq:imp}
+\mathbb{E}[f(\bX)] = \int f(\bx) dF(\bx) = \int \frac{f(\bx)dF(\bx)}{dQ(\bx)} dQ(\bx).
+\end{equation}
+Importance sampling ... . Optimal measure, but hard to estimate. Key methods we want to implement? cite \cite{huling2020energy} for recent application in causal inference.
+
+Control variates: review, methods.
+
+We will implement ... .
+
+% - Huling and Mak (2020)
 
 \subsubsection{Kernel Density Estimation}
 
@@ -943,13 +951,15 @@ research students associated with this project.  Female students mentored includ
 Brazilian Science Mobility Program students in the summers of 2015 and 2016, plus eight other students (two female) from Illinois Tech, Biola U, U Minnesota, Macalester U, NUS, Colorado School of Mines.  All but one have enrolled in graduate programs.   As part of our team, all of
 these students have learned how to conduct theoretical and/or practical computational mathematics research.
 
-\subsection{NSF (need number). \textit{CSSI: Frameworks: X-Ion Collisions with a Statistically and Computationally Advanced Program Envelope (X-SCAPE),} \$696,442, July 2020 -- June 2014.} Co-PI.
+\subsection{NSF \SMNote{need number}. \textit{CSSI: Frameworks: X-Ion Collisions with a Statistically and Computationally Advanced Program Envelope (X-SCAPE),} \$696,442, July 2020 -- June 2014.} High-energy colliders study the interaction between a variety of subatomic particles and environments produced in the collision of protons with protons, with nuclei, or between two nuclei. The study of such interactions requires an elaborate statistical and computational framework, which integrates volumes of data from diverse experiments with computer simulations from candidate theories. The X-SCAPE (previously JETSCAPE) collaboration is a multi-disciplinary team of physicists, computer scientists and statisticians, is engaged in the construction of such an open-source framework. \SM is a Duke co-PI in this ongoing collaboration (which started in the summer of 2020), and is responsible for leading the statistical developments on the project.
 
 \subsubsection{Intellectual Merit from Prior NSF Support}
 
+The JETSCAPE/X-SCAPE collaboration has developed the first open-source, end-to-end, modular simulation framework for the high energy sector of heavy-ion and p-p collisions and a Bayesian statistical framework to rigorously compare any similar, complex event generator with extensive experimental data. The development of several state-of-the-art modules that implemented each successive stage of a heavy-ion collision: the initial state of two nuclei, the pre-equilibrium stage, the fluid-dynamical evolution, modules to generate high momentum partons, several modules that describe the shower of these partons in the viscous medium, the conversion of
+the quark-gluon plasma into an interacting gas of hadrons, the conversion of partonic jets into jets of hadrons. The development of the JETSCAPE framework and event generator led to several firsts: the calculation of the suppression of jets, high momentum hadrons from jets, and high momentum heavy hadrons from jets. It is only in the JETSCAPE analysis that the theory prediction is encapsulated by the data driven approach. This calibration of the soft sector will be released shortly as a part of the calibration paper of the JETSCAPE collaboration. The manual has already appeared online \cite{putschke2019jetscape} and been submitted to \textit{Comp. Phys. Comm.}, and two minor papers \cite{cao2017multistage,kumar2019jetscape} and several conference proceedings \cite{soltz2018bayesian,tachibana2018jet,kauder2019jetscape,park2019multi} have also appeared.
+
 \subsubsection{Broader Impacts from Prior NSF Support}
-
-
+The primary broader impacts of the JETSCAPE/X-SCAPE collaboration have been in the training of its graduate students and postdocs. Through regular weekly meetings, collaboration gatherings and joint projects, a multi-disciplinary, multi-institutional environment is fostered between the experimental and theoretical physicists, computer scientists and statisticians. This continuous cross-talk has imposed a far broader scope on the education and training of these individuals than would be possible in any monodisciplinary academic environment. Physicists learn about techniques in computer science and statistical analysis, while computer scientists encounter a unique physical problem requiring extensive software engineering, which in turn presents a difficult challenge in statistical model to data comparison. Beyond its students and postdocs, the collaboration strives to influence the training of the wider US nuclear physics workforce, through its winter school and workshops. Each of these annual gatherings consist of about 30 students and young postdocs drawn predominantly from the US (and some from Europe), who are then trained in the essential components of Monte Carlo event generation, basics of heavy-ion collisions, and extensive hands on tutorials involving the JETSCAPE/X-SCAPE framework. Over its funding period, JETSCAPE/X-SCAPE has supported several REU summer students (2-3 per year), gradually introducing them into the field of computational high energy nuclear physics. Beyond this is the growing awareness in the nuclear physics community of the existence and utility of the JETSCAPE/X-SCAPE framework, as witnessed by the ever growing downloads and views of the JETSCAPE Github site: \url{https://github.com/JETSCAPE}.
 
 \section{Strengths of This Team and Collaboration Plan}
 We have a well-constructed  team that combines senior personnel with diverse academic backgrounds, career stages, and institutions.  Together with our students, collaborators, and friends, we will grow QMCPy into what it should become while providing new theory to underpin our new algorithms.
