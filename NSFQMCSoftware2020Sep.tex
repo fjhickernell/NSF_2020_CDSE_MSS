@@ -446,7 +446,7 @@ Quasi-Monte Carlo (QMC) methods replace independent and identically distributed 
 \end{enumerate}
 We will be assisted by our collaborators, \hypertarget{MMllink}{Mike McCourt} (MM, SigOpt), \hypertarget{AOlink}{Art Owen} (AO, Stanford University), and \hypertarget{TSlink}{Tim Sullivan} (TS, Warwick University), as well as our students and friends.
 
-Here we provide an overview of QMC, a description of our early efforts, our plans to grow QMCPy, the benefits of QMCPy, and why our team is the right for this project.
+Here we provide an overview of QMC, a description of our early efforts, our plans to grow QMCPy, the benefits of QMCPy, and why our team is the right one for this project.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview of QMC and LD Sampling}
@@ -719,16 +719,26 @@ Importance sampling (see, e.g., \cite{owen2000safe}) is a powerful method for re
 \end{equation}
 To estimate $\mathbb{E}[f(\bX)]$, importance sampling uses samples from $Q$ with the modified integrand $\tilde{f}$. The challenge lies in finding a good choice for $Q$, which varies greatly from problem to problem. Important developments include (among many) the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and the safe importance sampler \cite{owen2000safe} by \AO. Recent works include \cite{mueller2019neural}, which use deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where the PI \SM extends importance sampling for covariate balancing in causal inference.
 
-Control variates \cite{glasserman2013monte} is another powerful variance reduction technique. The idea is to use information on errors in estimates of a \textit{known} integral, to improve the estimate of an \textit{unknown} integral. When these two integral estimates are correlated, the control variates estimator incorporates this to reduce the variance of the desired integral estimate. Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the control variates for QMC paper \cite{hickernell2005control} by the PI \FH and \AO. Recently, \cite{mueller20neural} .
+Control variates \cite{glasserman2013monte} is another powerful variance reduction technique. The idea is to use information on errors in estimates of a \textit{known} integral (the control variate), to improve the estimate of an \textit{unknown} integral. When these two integral estimates are correlated, the control variates estimator incorporates this to reduce the variance of the desired integral estimate. Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the control variates for QMC paper \cite{hickernell2005control} by \AO and the PI \FH. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
 
-We will implement ... .
+\textit{We will implement these existing variance reduction methods} into QMCPy. This will provide users with a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications, from financial engineering to computer graphics.
 
-Image rendering using neural networks for importance sampling and control variates
-\cite{mueller20neural,mueller2019neural}
+% Image rendering using neural networks for importance sampling and control variates
+% \cite{mueller20neural,mueller2019neural}
 
 % - Huling and Mak (2020)
 
-\subsubsection{Kernel Density Estimation}
+\subsubsection{Density Estimation}
+
+Much of the literature on QMC focuses on the estimation of the population \textit{mean}. In many problems, however, one may be interested in estimating not only the mean from samples, but also its \textit{density}. This is the problem of \textit{density estimation}. Density estimation was classically studied in statistics under the setting where, given IID samples $\bX_1, \cdots, \bX_n$ from distribution $F$, one wishes to estimate the density of $F$. The state-of-the-art method is kernel density estimation \cite{silverman1986density}, which approximates the density of $F$ as:
+\begin{equation}\label{eq:kerndens}
+\hat{p}_n(\bx) = \frac{1}{n} \sum_{i=1}^n \frac{1}{h}k\left( \frac{\bx - \bX_i}{h} \right),
+\end{equation}
+where $k$ is a symmetric kernel, and $h>0$ is the bandwidth parameter. \SMNote{should we instead use $g$ for integrands, and $f$ for densities?}
+
+Given the improvement that QMC gives for mean estimation, a natural question is whether QMC also provides gains for density estimation. A recent paper \cite{abdellah2018density} by \AO and coauthors explores this by replacing the IID samples $\{\bX_i\}_{i=1}^n$ in \eqref{eq:kerndens} with the LD samples $\{F^{-1}(\mathbf{U}_i)\}_{i=1}^n$, where $\{\mathbf{U}_i\}_{i=1}^n$ are randomized LD points \cite{owen2000monte} on the uniform distribution $F_{\unif}$. The authors showed that this new QMC density estimator enjoys an improved rate of convergence over the standard estimator \eqref{eq:kerndens}, both theoretically and in numerical experiments. 
+
+\textit{We will implement this QMC kernel density estimation method} in QMCPy. This will provide users from a broad range of fields, from engineers to data scientists, a useful tool for accurate density estimation when sample data is limited or expensive to collect.
 
 % \subsubsection{Uncertainty Propagation}
 
@@ -785,7 +795,7 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 \fi
 
 \subsubsection{Uncertainty Quantification}
-A recent application of QMC is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}.  An example is Darcy's flow through rock with random porosity.  QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package.
+A recent application of QMC is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}.  An example is Darcy's flow through rock with random porosity.  QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package. \SMNote{I will add a bit more on this if there's room.}
 
 \subsubsection{Ray Tracing}
 Image rendering is a visually stunning application of QMC \cite{Keller2013a}.  QMCPy will implement a simple example to showcase the advantage of LD over IID sampling.
