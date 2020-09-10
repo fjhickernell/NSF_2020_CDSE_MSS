@@ -429,7 +429,7 @@ QMCPy: Quasi-Monte Carlo Community Software\\
 \vspace{-6ex}
 
 
-Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, \hypertarget{FHlink}{Fred Hickernell} (FH, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (SM, PI from Duke U), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (SCTC, Senior Personnel) propose to grow the seedling Python QMC software library QMCPy \cite{QMCPy2020a} into a sapling, which will be embraced by the community of QMC researchers and benefit an expanding base of QMC practitioners.  QMCPy will grow to become
+Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, \hypertarget{FHlink}{Fred Hickernell} (FH, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (SM, PI from Duke U), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (SCTC, Senior Personnel) propose to grow the seedling QMC software library QMCPy \cite{QMCPy2020a} into a sapling, which will be embraced by the community of QMC researchers and benefit an expanding base of QMC practitioners.  QMCPy will grow to become
 \begin{enumerate}
 \renewcommand{\labelenumi}{\arabic{enumi}.}
     \item A tightly-connected collection of the best QMC software, including
@@ -500,7 +500,7 @@ The smoothness required of $f$ is minimal, and the error bound has no curse of d
 
 For LD sampling the absolute error has an upper bound of
 \begin{equation} \label{eq:KH}
-    \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n, F) \norm[\calf]{f},  \qquad \bX_1, \bX_2, \ldots \text{LD}.
+    \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n, F) \norm[\calf]{f - \mu},  \qquad \bX_1, \bX_2, \ldots \text{LD}.
 \end{equation}
 The Banach space $\calf$ requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., $L^2$ mixed partial derivatives of up to order one in each coordinate direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n, F)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$ for well-chosen LD sequences, where $\delta$ is arbitrarily small and positive.
 
@@ -710,14 +710,15 @@ From the definition, CUD  sequences must satisfy much stronger conditions than L
 \subsection{A Broader Array of Algorithms}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Importance Sampling and Control Variates}
-So far we have discussed the estimation of the integral $\mathbb{E}[f(\bX)] = \int f(\bx) dF(\bx)$ using samples on distribution $F$. However, if we knew that the integrand $f$ is nearly zero outside an importance region $A$ where $\mathbb{P}(\bX \in A)$ is small, both IID or LD sampling on $F$ would place few points within region $A$. The sample mean estimate will then be highly \textit{variable} from the population mean, which is undesirable. Such problems are common in rare event modeling \cite{rubino2009rare}, Bayesian inference \cite{salmeron2000importance}, amont other applications.
 
-Importance sampling (see, e.g., \cite{owen2000safe}) is a powerful method for reducing this estimation variance. The idea is to use samples from a new distribution (the \textit{importance} distribution) which places greater weight on the importance region $A$. Let $Q$ be such a distribution on the same sample space $\Omega$. Then the desired integral can be written as:
+\subsubsection{Variance/Variation Reduction Through Importance Sampling and Control Variates}
+The QMC error bound in \eqref{eq:KH} contains the factor $\norm[\calf]{f - \mu}$, which is sometimes called the \emph{variation} of the integrand.  For randomized QMC, the mean squared error of $\hmu_n$ is its variance.  Substantial error reduction can sometimes be obtained by rewriting the integral to reduce the variation or variance.  Examples include rare event modeling \cite{rubino2009rare}, Bayesian inference \cite{salmeron2000importance}.
+
+Importance sampling (see, e.g., \cite{owen2000safe}) uses samples from a new distribution (the \textit{importance} distribution) to place greater weight where the integrand varies more. Let $Q$ be such a distribution on the same sample space $\Omega$. Then the desired integral can be written as:
 \begin{equation}\label{eq:imp}
-\mathbb{E}[f(\bX)] = \int f(\bx) dF(\bx) = \int \frac{f(\bx)dF(\bx)}{dQ(\bx)} dQ(\bx) =: \int \tilde{f}(\bx) dQ(\bx)
+\mu = \mathbb{E}[f(\bX)] = \int_\Omega f(\bx)  \, \dif F(\bx) = \int_\Omega \frac{f(\bx) \, \dif F(\bx)}{\dif Q(\bx)} \dif Q(\bx) =: \int_\Omega \tilde{f}(\bx)  \dif Q(\bx)
 \end{equation}
-To estimate $\mathbb{E}[f(\bX)]$, importance sampling uses samples from $Q$ with the modified integrand $\tilde{f}$. The challenge lies in finding a good choice for $Q$, which varies greatly from problem to problem. Important developments include (among many) the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and the safe importance sampler \cite{owen2000safe} by \AO. Recent works include \cite{mueller2019neural}, which use deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where the PI \SM extends importance sampling for covariate balancing in causal inference.
+If error bound \eqref{eq:KH} $\tilde{f}$ in terms of $\tilde{f}$, $Q$, and the LD sequence mimicking $Q$ is much smaller than the original error bound, then there will be computational cost savings.   The challenge lies in finding a good choice for $Q$. Important developments include (among many) the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and the safe importance sampler \cite{owen2000safe} by \AO. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where the PI \SM extends importance sampling for covariate balancing in causal inference.
 
 Control variates \cite{glasserman2013monte} is another powerful variance reduction technique. The idea is to use information on errors in estimates of a \textit{known} integral (the control variate), to improve the estimate of an \textit{unknown} integral. When these two integral estimates are correlated, the control variates estimator incorporates this to reduce the variance of the desired integral estimate. Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the control variates for QMC paper \cite{hickernell2005control} by \AO and the PI \FH. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
 
@@ -727,6 +728,9 @@ Control variates \cite{glasserman2013monte} is another powerful variance reducti
 % \cite{mueller20neural,mueller2019neural}
 
 % - Huling and Mak (2020)
+
+\subsection{Multilevel QMC}
+For high or infinite dimensional integration problems, the cost of the integrand is often proportional to $d$, and computing
 
 \subsubsection{Density Estimation}
 
