@@ -298,6 +298,7 @@
 \newcommand{\fF}{\mathfrak{F}}
 \newcommand{\fL}{\mathfrak{L}}
 \newcommand{\fU}{\mathfrak{U}}
+\newcommand{\fK}{{\mathfrak{K}}}
 \newcommand{\hS}{\widehat{S}}
 
 \def\abs#1{\ensuremath{\left \lvert #1 \right \rvert}}
@@ -436,7 +437,7 @@ Quasi-Monte Carlo (QMC) methods replace independent and identically distributed 
     \begin{enumerate}
     \renewcommand{\labelenumii}{\alph{enumii}.}
         \item LD sequence generators,
-        \item QMC algorithms, such as multi-level algorithms, automatic stopping criteria, variance/variation reduction, density estimation, and
+        \item QMC algorithms, such as multilevel algorithms, automatic stopping criteria, variance/variation reduction, density estimation, and
         \item Illuminating use cases,
     \end{enumerate}
     \item A user-friendly, consistent interface to the contributions of many scholars,
@@ -472,22 +473,22 @@ The quantity of interest, $Y$ (option payoff, pixel intensity, flow velocity at 
     \mu = \bbE(Y) = \int_{\cx} f(\bx) \, \dif F(\bx) \approx
 \hmu_n = \frac 1n \sum_{i=1}^n Y_i = \frac 1n  \sum_{i=1}^n f(\bX_i).
 \end{equation}
-One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.
+(In our notation  $f$ denotes an integrand, $F$ denotes a probability distribution, and $\varrho$ denotes a probabilty density.) One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.
 
-Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The points on the left, $\bX_1, \bX_2, \ldots \IIDSim \calu[0,1]^2$, are random and do not know about each other.  The multivariate distribution of $\bX_1, \ldots \bX_n$ is $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
+Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The points on the left are random and do not know about each other.  The multivariate distribution of $\bX_1, \ldots, \bX_n \IIDSim \calu[0,1]^2 $ is $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
 \cdots F(\bx_n) = x_{11}x_{12} x_{21} \cdots x_{n2}$, where $F(\bx)  = x_1x_2$ is the bivariate uniform distribution.
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[height = 5cm]{ProgramsImages/iid_scatter.eps} \quad
-	\includegraphics[height = 5cm]{ProgramsImages/lattice_scatter.eps} \quad
-	\includegraphics[height = 5cm]{ProgramsImages/grid_scatter.eps}
+	\includegraphics[height = 4.5cm]{ProgramsImages/iid_scatter.eps} \quad
+	\includegraphics[height = 4.5cm]{ProgramsImages/lattice_scatter.eps} \quad
+	\includegraphics[height = 4.5cm]{ProgramsImages/grid_scatter.eps}
 	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points that either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{figure}
 
-The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  They mimic the distribution $F$  in the sense that the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---is close to $F$.  (The empirical distribution for $n$  points assigns probability $1/n$ to each of point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$, and LD points make the discrepancy small.
+The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  They mimic the distribution $F$  by making the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---close to $F$.  (The empirical distribution assigns equal probability to each point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$, and LD points make the discrepancy small.
 
-The points on the right in Fig.\ \ref{fig:iid_vs_ld} are grid points. The grid points have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  Grids in large dimension $d$, have disastrously few, $n^{1/d}$, values in each coordinate direction.
+The points on the right in Fig.\ \ref{fig:iid_vs_ld} form a grid with only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  Grids in large dimension $d$, have disastrously few, $n^{1/d}$, values in each coordinate direction.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiency Benefits from LD Sampling} \label{sec:eff_benefits}
@@ -515,10 +516,10 @@ for the case $d =5$ under several absolute error tolerances, $\varepsilon$.  QMC
 is satisfied.
 Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases. 
 
-\begin{wrapfigure}{r}{0.75\textwidth}
+\begin{wrapfigure}{r}{0.63\textwidth}
 	\centering
-	\includegraphics[height =0.35\textwidth]{ProgramsImages/keister_n.eps}
-	\includegraphics[height =0.35\textwidth]{ProgramsImages/keister_timing.eps} 
+	\includegraphics[height =0.32\textwidth]{ProgramsImages/keister_n.eps}
+	\includegraphics[height =0.32\textwidth]{ProgramsImages/keister_timing.eps} 
 	\caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister} using QMCPy.  LD sampling is substantially more efficient than IID sampling, especially as the error tolerance decreases.}
 	\label{fig:KeisterTimes}
 \end{wrapfigure}
@@ -536,7 +537,7 @@ To harness the efficiency of LD sampling via QMC methods, practitioners need qua
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Start of QMCPy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-During the summer of 2018 \FH began discussing with other QMC researchers, including Dirk Nuyens, Frances Kuo, and \AO, how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
+During the summer of 2018 \FH began discussing with other QMC researchers, including \AO, how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
 \begin{description}[format=\textup]
 	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.8}
 	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}
@@ -718,9 +719,9 @@ Importance sampling (see, e.g., \cite{owen2000safe}) uses samples from a new dis
 \begin{equation}\label{eq:imp}
 \mu = \mathbb{E}[f(\bX)] = \int_\Omega f(\bx)  \, \dif F(\bx) = \int_\Omega \frac{f(\bx) \, \dif F(\bx)}{\dif Q(\bx)} \dif Q(\bx) =: \int_\Omega \tilde{f}(\bx)  \dif Q(\bx)
 \end{equation}
-If error bound \eqref{eq:KH} $\tilde{f}$ in terms of $\tilde{f}$, $Q$, and the LD sequence mimicking $Q$ is much smaller than the original error bound, then there will be computational cost savings.   The challenge lies in finding a good choice for $Q$. Important developments include (among many) the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and the safe importance sampler \cite{owen2000safe} by \AO. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where the PI \SM extends importance sampling for covariate balancing in causal inference.
+If error bound \eqref{eq:KH} in terms of $\tilde{f}$, $Q$, and the LD sequence mimicking $Q$ is much smaller than the original error bound, then there will be computational cost savings.   The challenge lies in finding a good choice for $Q$. Important developments include the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and the safe importance sampler \cite{owen2000safe} by \AO. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where PI \SM extends importance sampling for covariate balancing in causal inference.
 
-Control variates \cite{glasserman2013monte} is another powerful variance reduction technique. The idea is to use information on errors in estimates of a \textit{known} integral (the control variate), to improve the estimate of an \textit{unknown} integral. When these two integral estimates are correlated, the control variates estimator incorporates this to reduce the variance of the desired integral estimate. Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the control variates for QMC paper \cite{hickernell2005control} by \AO and the PI \FH. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
+Control variates or de-trending \cite{Gla03} is another powerful variance/variation reduction technique. The idea is to subtract from the original integrand a linear combination of functions (control variates) whose integrals are zero.  If the new integrand, $\tilde{f}$ has smaller variation/variance than the original integrand, $f$, then again substantial cost savings are possible.  Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the control variates for QMC paper \cite{hickernell2005control} by \AO and PI \FH. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
 
 \textit{We will implement these existing variance reduction methods} into QMCPy. This will provide users with a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications, from financial engineering to computer graphics.
 
@@ -729,18 +730,18 @@ Control variates \cite{glasserman2013monte} is another powerful variance reducti
 
 % - Huling and Mak (2020)
 
-\subsection{Multilevel QMC}
-For high or infinite dimensional integration problems, the cost of the integrand is often proportional to $d$, and computing
+\subsubsection{Multilevel QMC (MLQMC)}
+For high or infinite dimensional integration problems, the cost of the integrand is often proportional to $d$, and the sample mean cost $\Order(dn)$ operations to evaluate.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals of different numbers of variables, $d_1, \ldots, d_L$.  When done well, error criterion \eqref{eq:error_crit} can be met by a large number of samples involving few variables and a few number of samples involving many variables, resulting in an overall large cost savings. \emph{We will strengthen} QMCPy's rudimentary MLQMC.
 
 \subsubsection{Density Estimation}
 
-Much of the literature on QMC focuses on the estimation of the population \textit{mean}. In many problems, however, one may be interested in estimating not only the mean from samples, but also its \textit{density}. This is the problem of \textit{density estimation}. Density estimation was classically studied in statistics under the setting where, given IID samples $\bX_1, \cdots, \bX_n$ from distribution $F$, one wishes to estimate the density of $F$. The state-of-the-art method is kernel density estimation \cite{silverman1986density}, which approximates the density of $F$ as:
+Much of the QMC  literature focuses on estimating the population \textit{mean}, $\mathbb{E}(Y)$. In many problems, however, one may be interested in estimating the underlying probability \textit{density} of $Y = f(\bX)$. The state-of-the-art in the classical setting, is kernel density estimation \cite{silverman1986density}, which uses IID samples $Y_1, \dots, Y_n$ to approximate $\varrho$ by:
 \begin{equation}\label{eq:kerndens}
-\hat{p}_n(\bx) = \frac{1}{n} \sum_{i=1}^n \frac{1}{h}k\left( \frac{\bx - \bX_i}{h} \right),
+\hat{\varrho}_n(y) = \frac{1}{n} \sum_{i=1}^n \frac{1}{h} \fK \left( \frac{y - Y_i}{h} \right),
 \end{equation}
-where $k$ is a symmetric kernel, and $h>0$ is the bandwidth parameter. \SMNote{should we instead use $g$ for integrands, and $f$ for densities?}
+where $\fK$ is a symmetric kernel, and $h>0$ is the bandwidth parameter.
 
-Given the improvement that QMC gives for mean estimation, a natural question is whether QMC also provides gains for density estimation. A recent paper \cite{abdellah2018density} by \AO and coauthors explores this by replacing the IID samples $\{\bX_i\}_{i=1}^n$ in \eqref{eq:kerndens} with the LD samples $\{F^{-1}(\mathbf{U}_i)\}_{i=1}^n$, where $\{\mathbf{U}_i\}_{i=1}^n$ are randomized LD points \cite{owen2000monte} on the uniform distribution $F_{\unif}$. The authors showed that this new QMC density estimator enjoys an improved rate of convergence over the standard estimator \eqref{eq:kerndens}, both theoretically and in numerical experiments. 
+Given the improvement that QMC gives for mean estimation, a natural question is whether QMC also provides gains for density estimation. A recent paper \cite{abdellah2018density} by \AO and coauthors explores this by replacing the IID samples $\{\bX_i\}_{i=1}^n$ used to generate $Y_i = f(\bX_i)$ with the randomized LD samples \cite{owen2000monte}. The authors showed that this new QMC density estimator enjoys an improved rate of convergence over the standard estimator \eqref{eq:kerndens}, both theoretically and in numerical experiments. 
 
 \textit{We will implement this QMC kernel density estimation method} in QMCPy. This will provide users from a broad range of fields, from engineers to data scientists, a useful tool for accurate density estimation when sample data is limited or expensive to collect.
 
@@ -764,9 +765,9 @@ Given the improvement that QMC gives for mean estimation, a natural question is 
 
 \subsubsection{Data Squashing for Big Data Analytics}
 
-With advances in experimental technology, mathematical modeling, and computing power, big data is ubiquitous in nearly every scientific field. A key challenge is making use of this rich source of data; learning algorithms need to be highly \textit{efficient} and \textit{scalable} to extract information for real-time decision-making. The development of such algorithms is an important research direction in statistics and computer science.
+With advances in experimental technology, mathematical modeling, and computing power, big data is ubiquitous.  A key challenge is making use of this rich source of data; learning algorithms need to be highly \textit{efficient} and \textit{scalable} to extract information for real-time decision-making. The development of such algorithms is an important research direction in statistics and computer science.
 
-One way to make these algorithms scalable is to iteratively train the model on small batches of the data, typically sampled uniformly at random. This is widely used to scale-up many powerful machine learning algorithms, e.g., stochastic gradient descent (SGD, \cite{Bot2010}) and stochastic gradient boosting \cite{friedman2002stochastic}. Consider SGD as an illustrating example. The objective is to minimize the loss function $L(\theta;\mathcal{X}) = N^{-1} \sum_{m=1}^N l(\theta;\bX_m)$ over model parameters $\theta \in \mathbb{R}^q$, where $\mathcal{X} = \{\bX_m\}_{m=1}^N \subset \mathbb{R}^d$ is the large training data. Standard gradient descent methods for optimization \cite{nocedal2006numerical} are impractical here, since they require evaluation of the full gradient $N^{-1} \sum_{m=1}^N \nabla l(\theta;\bX_m)$, which is very expensive for $N$ large (i.e., for big data). Mini-batch SGD \cite{Bot2010} approximates this gradient with $\nabla L(\theta;\mathcal{X}_{s}^{[l]})$, where $\mathcal{X}_{s}^{[l]} \subset \mathcal{X}$ are subsamples of size $n \ll N$ taken IID and uniformly from the big data $\mathcal{X}$. The following descent steps are then iterated until convergence:
+One way to make these algorithms scalable is to iteratively train the model on small batches of the data, typically sampled uniformly at random. This is widely used to scale-up many powerful machine learning algorithms, e.g., stochastic gradient descent (SGD, \cite{Bot2010}) and stochastic gradient boosting \cite{friedman2002stochastic}. Consider SGD as an illustrative example. The objective is to minimize the loss function $L(\theta;\mathcal{X}) = N^{-1} \sum_{m=1}^N l(\theta;\bX_m)$ over model parameters $\theta \in \mathbb{R}^q$, where $\mathcal{X} = \{\bX_m\}_{m=1}^N \subset \mathbb{R}^d$ is the large training data. Standard gradient descent methods for optimization \cite{nocedal2006numerical} are impractical here, since they require evaluation of the full gradient $N^{-1} \sum_{m=1}^N \nabla l(\theta;\bX_m)$, which is very expensive for $N$ large (i.e., for big data). Mini-batch SGD \cite{Bot2010} approximates this gradient with $\nabla L(\theta;\mathcal{X}_{s}^{[l]})$, where $\mathcal{X}_{s}^{[l]} \subset \mathcal{X}$ are subsamples of size $n \ll N$ taken IID and uniformly from the big data $\mathcal{X}$. The following descent steps are then iterated until convergence:
 \begin{equation}\label{eq:sgdopt}
 \theta^{[l+1]} \leftarrow \theta^{[l]} - \eta \left( \frac{1}{n} \sum_{\bX \in \mathcal{X}_{s}^{[l]}} l(\theta;\bX)\right) , \quad l = 1, 2, \cdots,
 \end{equation}
