@@ -473,7 +473,7 @@ The quantity of interest, $Y$ (option payoff, pixel intensity, flow velocity at 
     \mu = \bbE(Y) = \int_{\cx} f(\bx) \, \dif F(\bx) \approx
 \hmu_n = \frac 1n \sum_{i=1}^n Y_i = \frac 1n  \sum_{i=1}^n f(\bX_i).
 \end{equation}
-(In our notation  $f$ denotes an integrand, $F$ denotes a probability distribution, and $\varrho$ denotes a probabilty density.) One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.
+(In our notation  $f$ denotes an integrand, $F$ denotes a probability distribution, and $\varrho$ denotes a probability density.) One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.
 
 Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The points on the left are random and do not know about each other.  The multivariate distribution of $\bX_1, \ldots, \bX_n \IIDSim \calu[0,1]^2 $ is $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
 \cdots F(\bx_n) = x_{11}x_{12} x_{21} \cdots x_{n2}$, where $F(\bx)  = x_1x_2$ is the bivariate uniform distribution.
