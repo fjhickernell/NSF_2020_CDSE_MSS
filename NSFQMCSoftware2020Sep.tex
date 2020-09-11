@@ -468,7 +468,7 @@ In constructing surrogate models for computer experiments (multivariate function
 \subsection{LD Versus IID Sampling} \label{sec:LDvsIID}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The quantity of interest, $Y$ (option payoff, pixel intensity, flow velocity at certain location), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  We assume that $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form, the population mean (multivariate integral), $\mu$, cannot be computed analytically.  But, it may be estimated the sample mean:
+The quantity of interest, $Y$ (option payoff, pixel intensity, flow velocity at certain location), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  We assume that $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form, the population mean (multivariate integral), $\mu$, cannot be computed analytically.  But, it may be estimated by the sample mean:
 \begin{equation} \label{eq:mean}
     \mu = \bbE(Y) = \int_{\cx} f(\bx) \, \dif F(\bx) \approx
 \hmu_n = \frac 1n \sum_{i=1}^n Y_i = \frac 1n  \sum_{i=1}^n f(\bX_i).
@@ -483,7 +483,7 @@ Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to m
 	\includegraphics[height = 4.5cm]{ProgramsImages/iid_scatter.eps} \quad
 	\includegraphics[height = 4.5cm]{ProgramsImages/lattice_scatter.eps} \quad
 	\includegraphics[height = 4.5cm]{ProgramsImages/grid_scatter.eps}
-	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points that either the IID or grid points. \label{fig:iid_vs_ld}}
+	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{figure}
 
 The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  They mimic the distribution $F$  by making the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---close to $F$.  (The empirical distribution assigns equal probability to each point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$, and LD points make the discrepancy small.
@@ -557,7 +557,7 @@ During the summer of 2018 \FH began discussing with other QMC researchers, inclu
 \end{description}
 Each software package above  focuses on just certain aspects of QMC.  Some packages focus on the generation of LD sequences, some packages focus on fundamental QMC algorithms, and other packages focus on particular applications of QMC.  The software packages listed above are primarily the initiatives of individual research groups.  They are not a shared community effort.
 
-Fruitful discussions in 2018 led to further talks with \MM in early 2019.  \MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  \hypertarget{ASlink}{Aleksei Sorokin} (AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to do create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
+Fruitful discussions in 2018 led to further talks with \MM in early 2019.  \MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  \hypertarget{ASlink}{Aleksei Sorokin} (AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
 
 
 
