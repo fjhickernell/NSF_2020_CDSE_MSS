@@ -445,7 +445,7 @@ Quasi-Monte Carlo (QMC) methods replace independent and identically distributed 
     \item Owned and cultivated by our QMC community, and
     \item An easy on-ramp for those who are new to QMC.
 \end{enumerate}
-We will be assisted by our collaborators, \hypertarget{MMllink}{Mike McCourt} (MM, SigOpt), \hypertarget{AOlink}{Art Owen} (AO, Stanford University), and \hypertarget{TSlink}{Tim Sullivan} (TS, Warwick University), as well as our students and friends.
+We will be assisted by our collaborators, \hypertarget{MMllink}{Mike McCourt} (MM, SigOpt), \hypertarget{AOlink}{Art Owen} (AO, Stanford University), and \hypertarget{TSlink}{Tim Sullivan} (TS, Warwick University), as well as our students, alumni, and friends.
 
 Here we provide an overview of QMC, a description of our early efforts, our plans to grow QMCPy, the benefits of QMCPy, and why our team is the right one for this project.
 
@@ -468,7 +468,7 @@ In constructing surrogate models for computer experiments (multivariate function
 \subsection{LD Versus IID Sampling} \label{sec:LDvsIID}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The quantity of interest, $Y$ (option payoff, pixel intensity, flow velocity at certain location), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  We assume that $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form, the population mean (multivariate integral), $\mu$, cannot be computed analytically.  But, it may be estimated by the sample mean:
+The quantity of interest, $Y$ (e.g., option payoff, pixel intensity, flow velocity at certain location), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  We assume that $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form, the population mean (multivariate integral), $\mu$, cannot be computed analytically.  But, it may be estimated by the sample mean, $\hmu_n$:
 \begin{equation} \label{eq:mean}
     \mu = \bbE(Y) = \int_{\cx} f(\bx) \, \dif F(\bx) \approx
 \hmu_n = \frac 1n \sum_{i=1}^n Y_i = \frac 1n  \sum_{i=1}^n f(\bX_i).
@@ -603,7 +603,7 @@ Fig.\ \ref{fig:ld_Gauss} displays  IID and Sobol' points  transformed to mimic t
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-For computing expectations and multivariate integration as described in \eqref{eq:mean}, one must specify the integrand.  The original form of the problem may not be convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with independent marginals of zero mean and variance $1/2$:
+For computing expectations and multivariate integration as described in \eqref{eq:mean}, one must specify the integrand.  The original form of the problem may not be convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with independent marginals of zero mean and variance $\mI/2$:
 \begin{multline} \label{eq:KeisterAlt}
 \mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)} 
 = \int_{\reals^d} \underbrace{\cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2)}_{h(\bt)}  \, \underbrace{\dif \bt}_{\text{Lebesgue}} \\
@@ -625,7 +625,7 @@ solution = sc.integrate()
 
 The final stage of the computation requires the construction of a \pyinline{StoppingCriterion} instance, \pyinline{sc}.  The one here is from \cite{HicJim16a} and is based on Walsh transformations of the sampled integrand data.  Invoking the \pyinline{integrate} method of \pyinline{sc} yields $\hmu_n$ satisfying \eqref{eq:error_crit}.
 
-Another way to compute the Keister integral, \eqref{eq:Keister}, is to think of it as an integral with respect to the Lebesgue mesaure.  Again \pyinline{CustomFun} makes the proper variable transformation.  The answer returned by QMCPy is the same as the first way, but his second way takes about twice the time.
+Another way to compute the Keister integral, \eqref{eq:Keister}, is to think of it as an integral with respect to the Lebesgue mesaure.  Again \pyinline{CustomFun} makes the proper variable transformation.  The answer returned by QMCPy is the same as the first way, but this second way takes about twice the time.
 
  \begin{pythoncode}
 lb = qmcpy.Lebesgue(qmcpy.Sobol(5), lower_bound=-np.inf, upper_bound=np.inf)   #choose the Lebesgue distribution
@@ -633,7 +633,7 @@ def h(t):  #your desired integrand, calculations must be vectorized
  	norm = np.sqrt((t**2).sum(1))  #
  	h_val = np.cos(norm) * np.exp(-norm**2)
  	return h_val  #size n vector
- f = qmcpy.CustomFun(lebesgue, custom_fun = h)
+ f = qmcpy.CustomFun(lb, custom_fun = h)
  sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)  #stopping criterion must match  points
  solution = sc.integrate()
  \end{pythoncode}
@@ -660,7 +660,7 @@ def h(t):  #your desired integrand, calculations must be vectorized
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{QMCPy Support}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-QMCPy is hosted on Github \cite{QMCPy2020a}. Bugs can be reported and features requested at the issues page.  Pull requests can be made by those who wish to add features.  All features are documented \cite{QMCPyDocs} using ReadtheDocs.  Doctests ensure that features work as expected. Features are illustrated by Jupyter notebooks.  \FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory Notebook \cite{QMCPyTutColab2020} is available so that those watching  can try out QMCPy themselves in real time.  \FH, \SCTC, \AO, \AS, and \MM wrote a series of blogs \cite{QMCBlog} to introduce QMC to the broader community to QMC.
+QMCPy is hosted on Github \cite{QMCPy2020a}. Bugs can be reported and features requested at the issues page.  Pull requests can be made by those who wish to add features.  All features are documented \cite{QMCPyDocs} using ReadtheDocs.  Doctests ensure that features work as expected. Features are illustrated by Jupyter notebooks.  \FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory Notebook \cite{QMCPyTutColab2020} is available so that those watching  can try out QMCPy themselves in real time.  \FH, \SCTC, \AO, \AS, and \MM wrote a series of blogs \cite{QMCBlog} to introduce QMC to the broader community of QMC.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{QMCPy in the Future}
@@ -680,7 +680,7 @@ Sobol' sequences are a kind of digital sequence \cite{DicPil10a}.  LatNet Builde
 
 The usual method for scrambling and shifting digital sequences, such as the Sobol' sequence is linear scrambling, proposed in \cite{Mat98} and implemented in \cite{HonHic00a}.  A richer scrambling is the original nested uniform scrambling (NUS) proposed by \AO \cite{Owe95}.  The disadvantage of NUS is that the coding is more complex and the time required is longer, but the advantage is that it has a CLT  \cite{Loh01}.  We will \emph{implement NUS} in QMCPy.
 
-Higher order digital sequences \cite{Dic09a, Dic11a}  provide faster convergence rates as $n \to \infty$  for integrands with higher orders smoothness, which translate into slower computational cost rates as  $\varepsilon \to 0$.  An example  with higher order smoothness is computing probabilities over subsets of the sample space  involving smooth densities.  \emph{Higher order digital sequences will be implemented} in QMCPy.
+Higher order digital sequences \cite{Dic09a, Dic11a}  provide faster convergence rates as $n \to \infty$  for integrands with higher order smoothness, which translate into lower computational cost rates as  $\varepsilon \to 0$.  An example  with higher order smoothness is computing probabilities over subsets of the sample space  involving smooth densities.  \emph{Higher order digital sequences will be implemented} in QMCPy.
 
 One large family of discrepancies are defined in terms of a symmetric, positive definite kernel, $K$.  If we identify $K(\bt,\bx)$ as some inner product of point distributions, i.e., $K(\bt,\bx) = \ip[\calM]{F_{\{\bt\}}}{F_{\{\bx\}}}$ for all $\bt, \bx \in \cx$,  then the discrepancy between two distributions can be defined as the norm of the distance between the two \cite{Hic99a}:
 \begin{equation} \label{eq:gen_disc}
@@ -700,9 +700,9 @@ Several popular choices of $K$ exist \cite{Hic97a}.  QMCPy \emph{will implement 
 
 One approach to constructing LD sequences, especially for small $n$ is to optimize numerically \cite{WinFan97a,LiKanHic20a}.  This is non-trivial because the discrepancy as a function $\{ \bX_i\}_{i=1}^n$ is multi-modal.  Changing the order of the $\bX_i$ leaves discrepancy unchanged.  
 
-We will \emph{implement some numerical optimization algorithms} for constructing low discrepancy designs.  Since evaluating  $D(\{ \bX_i\}_{i=1}^n,F)$ generally requires $\Order(n^2)$ operations, this numerical optimization effort will be cost effective when $n$ is not too large, and the kernel, $K$ is smooth enough to allow $D(\{ \bX_i\}_{i=1}^n,F)$  to decay quickly to $0$ with $n$.  The corresponding integration problems would be characterized by a smooth $f$ that is expensive to evaluate, hence  $n$ can and must be small.  The discrepancies of typical LD sequences do not decay faster than $\Order(n^{-1})$ (except for lattices and smooth, periodic $K$, which necessitate smooth, periodic $f$).  Hence we need numerical optimization to construct LD points  for discrepancies defined with smooth kernels.
+We will \emph{implement some numerical optimization algorithms} for constructing low discrepancy designs.  Since evaluating  $D(\{ \bX_i\}_{i=1}^n,F)$ generally requires $\Order(n^2)$ operations, this numerical optimization effort will be cost effective when $n$ is not too large, and the kernel, $K$ is smooth enough to allow $D(\{ \bX_i\}_{i=1}^n,F)$  to decay quickly to $0$ with $n$.  The corresponding integration problems would be characterized by a smooth $f$ that is expensive to evaluate, hence  $n$ must be small.  The discrepancies of typical LD sequences do not decay faster than $\Order(n^{-1})$ (except for lattices and smooth, periodic $K$, which necessitate smooth, periodic $f$).  Hence we need numerical optimization to construct LD points  for discrepancies defined with smooth kernels.
 
-Markov Chain Monte Carlo (MCMC) differs from IID sampling in the since that one often uses one infinite dimensional run, $\bX_{\naturals} = (X_1, X_2, \dots)$, generated by a Markov chain to obtain $X_i$ that approach the desired, very complicated, distribution as $i \to \infty$.  Owen and Tribble \cite{OweTri05a} proposed a QMC variant of the Metropolis algorithm (a popular MCMC method) to speed up the convergence of the $X_i$ to the target distribution.  For QMC Metropolis, one needs completely uniformly distributed (CUD) sequences.  A sequence $\{U_1, U_2, \ldots \} \in [0, 1]^{\naturals}$  is CUD, if for every positive integer $d$, the points $\bZ_i = (U_{i}, \ldots, U_{i+d-1}) \in [0, 1]^d$ satisfy $\lim_{n \to \infty} D(\{ \bZ_i\}_{i=1}^n,F_{\unif}) = 0$, where $F_{\unif}$  is the standard uniform distribution.
+Markov Chain Monte Carlo (MCMC) differs from IID sampling in the sense that one often uses one infinite dimensional run, $\bX_{\naturals} = (X_1, X_2, \dots)$, generated by a Markov chain to obtain $X_i$ that approach the desired, very complicated, distribution as $i \to \infty$.  Owen and Tribble \cite{OweTri05a} proposed a QMC variant of the Metropolis algorithm (a popular MCMC method) to speed up the convergence of the $X_i$ to the target distribution.  For QMC Metropolis, one needs completely uniformly distributed (CUD) sequences.  A sequence $\{U_1, U_2, \ldots \} \in [0, 1]^{\naturals}$  is CUD, if for every positive integer $d$, the points $\bZ_i = (U_{i}, \ldots, U_{i+d-1}) \in [0, 1]^d$ satisfy $\lim_{n \to \infty} D(\{ \bZ_i\}_{i=1}^n,F_{\unif}) = 0$, where $F_{\unif}$  is the standard uniform distribution.
 
 From the definition, CUD  sequences must satisfy much stronger conditions than LD sequences.  We \emph{will implement CUD sequences} in QMCPy.  This will allow further exploration into the situations where QMC-based Markov chain algorithms will outperform ordinary MCMC algorithms.
 
