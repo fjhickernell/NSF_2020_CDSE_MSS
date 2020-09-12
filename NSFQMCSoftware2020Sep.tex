@@ -15,10 +15,13 @@
 
 
 \voffset 0.2in
-\textheight 8.8 in
-\pagestyle{empty}
-\pagestyle{plain}
-\thispagestyle{empty}
+\textheight 9in
+\textwidth6.5in
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\pagestyle{empty} \thispagestyle{empty} %need no page numbrers for NSF
+\pagestyle{plain} %temporary have page numbers on
+
 
 \usepackage{minted}
 \newminted{python}{frame=lines,framerule=1.5pt,breaklines=true}
@@ -83,6 +86,7 @@
 \newcommand{\JL}{\hyperlink{JLlink}{JL}\xspace}
 \newcommand{\YZ}{\hyperlink{YZlink}{YZ}\xspace}
 \newcommand{\AS}{\hyperlink{ASlink}{AS}\xspace}
+\newcommand{\CLT}{\hyperlink{CLTlink}{CLT}\xspace}
 
 
 \newcommand{\QMCSoft}{QMCSoft\xspace}
@@ -99,10 +103,6 @@
 \newcommand{\Julia}{Julia\xspace}
 
 
-\textwidth6.5in
-\setlength{\oddsidemargin}{0in}
-\setlength{\evensidemargin}{0in}
-\textheight9.0in
 %\textheight9.1in
 
 \newtheorem{theorem}{theorem}
@@ -348,8 +348,9 @@
 %\setcounter{page}{1}
 
 
-\setlist[description]{font=\normalfont\itshape, labelindent = 0.5cm}
-\setlist[itemize]{leftmargin=5ex}
+\setlist[description]{font=\normalfont\itshape, labelindent = 0.4cm}
+\setlist[itemize]{leftmargin=3ex}
+\setlist[enumerate]{leftmargin=5ex}
 
 \makeatletter
 \newenvironment{varsubequations}[1]
@@ -430,22 +431,22 @@ QMCPy: Quasi-Monte Carlo Community Software\\
 \vspace{-6ex}
 
 
-Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, \hypertarget{FHlink}{Fred Hickernell} (FH, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (SM, PI from Duke U), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (SCTC, Senior Personnel) propose to grow the seedling QMC software library QMCPy \cite{QMCPy2020a} into a sapling, which will be embraced by the community of QMC researchers and benefit an expanding base of QMC practitioners.  QMCPy will grow to become
+Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, \hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (\SM, PI from Duke U), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (\SCTC, Senior Personnel) propose to grow the seedling QMC software library QMCPy \cite{QMCPy2020a} into a sapling, which will be embraced by the community of QMC researchers and benefit an expanding base of QMC practitioners.  QMCPy will grow to become
 \begin{enumerate}
 \renewcommand{\labelenumi}{\arabic{enumi}.}
-    \item A tightly-connected collection of the best QMC software, including
+    \item A tightly-connected suite of the best QMC software from multiple sources:
     \begin{enumerate}
     \renewcommand{\labelenumii}{\alph{enumii}.}
         \item LD sequence generators,
         \item QMC algorithms, such as multilevel algorithms, automatic stopping criteria, variance/variation reduction, density estimation, and
-        \item Illuminating use cases,
+        \item Illuminating use cases;
     \end{enumerate}
-    \item A user-friendly, consistent interface to the contributions of many scholars,
-    \item A proving ground for new QMC ideas,
-    \item Owned and cultivated by our QMC community, and
+    \item A user-friendly, consistent interface to the contributions of many scholars;
+    \item A proving ground for new QMC ideas, which will migrate to other popular packages;
+    \item Owned and cultivated by our QMC community; and
     \item An easy on-ramp for those who are new to QMC.
 \end{enumerate}
-We will be assisted by our collaborators, \hypertarget{MMllink}{Mike McCourt} (MM, SigOpt), \hypertarget{AOlink}{Art Owen} (AO, Stanford University), and \hypertarget{TSlink}{Tim Sullivan} (TS, Warwick University), as well as our students, alumni, and friends.
+Our partners include  collaborators \hypertarget{MMllink}{Mike McCourt} (\MM, SigOpt), \hypertarget{AOlink}{Art Owen} (\AO, Stanford University), and \hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), as well as students, alumni, and friends.
 
 Here we provide an overview of QMC, a description of our early efforts, our plans to grow QMCPy, the benefits of QMCPy, and why our team is the right one for this project.
 
@@ -458,24 +459,18 @@ Here we provide an overview of QMC, a description of our early efforts, our plan
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Many situations are best understood by building randomness into the mathematical model.  Examples include Bayesian statistical inference \cite{GelEtal13, EfrHas16}, financial risk \cite{Gla03,LEc09}, particle transport \cite{Hag14,Spa95,Vea97}, and uncertainty quantification \cite{Smi14a,HerSch20a}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages) and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
 
-\iffalse
-Cubatures (approximation of multivariate integrals) based on grid sampling have computational costs that increase exponentially with the number of variables, $d$.  (Q)MC cubature avoids this curse of dimensionality with computational costs that are often only weakly dimension dependent.
-
-In constructing surrogate models for computer experiments (multivariate function approximation), one may wish to evenly sample the domain to search for regions where the function changes more sharply.  IID and LD sampling again prove advantageous over grid sampling.
-\fi
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{LD Versus IID Sampling} \label{sec:LDvsIID}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The quantity of interest, $Y$ (e.g., option payoff, pixel intensity, flow velocity at certain location), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  We assume that $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form, the population mean (multivariate integral), $\mu$, cannot be computed analytically.  But, it may be estimated by the sample mean, $\hmu_n$:
+The quantity of interest, $Y$ (e.g., option payoff, pixel intensity, flow velocity at certain location), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  Here, $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form\footnote{In our notation  $f$ denotes an integrand, $F$ denotes a probability distribution, and $\varrho$ denotes a probability density.}, the population mean (multivariate integral), $\mu$, cannot be computed analytically.  But, it may be estimated by the sample mean, $\hmu_n$:
 \begin{equation} \label{eq:mean}
     \mu = \bbE(Y) = \int_{\cx} f(\bx) \, \dif F(\bx) \approx
 \hmu_n = \frac 1n \sum_{i=1}^n Y_i = \frac 1n  \sum_{i=1}^n f(\bX_i).
 \end{equation}
-(In our notation  $f$ denotes an integrand, $F$ denotes a probability distribution, and $\varrho$ denotes a probability density.) One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.
+One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.
 
-Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The points on the left are random and do not know about each other.  The multivariate distribution of $\bX_1, \ldots, \bX_n \IIDSim \calu[0,1]^2 $ is $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
+Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The random points on the left are independent and do not know about each other.  The multivariate distribution of $\bX_1, \ldots, \bX_n \IIDSim \calu[0,1]^2 $ is $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
 \cdots F(\bx_n) = x_{11}x_{12} x_{21} \cdots x_{n2}$, where $F(\bx)  = x_1x_2$ is the bivariate uniform distribution.
 
 \begin{figure}[H]
@@ -486,22 +481,22 @@ Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to m
 	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{figure}
 
-The  points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  They mimic the distribution $F$  by making the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---close to $F$.  (The empirical distribution assigns equal probability to each point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$, and LD points make the discrepancy small.
+The  LD points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  They mimic the target distribution $F$  by making the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---close to $F$.  (The empirical distribution assigns equal probability to each point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$.  LD points make the discrepancy small.
 
-The points on the right in Fig.\ \ref{fig:iid_vs_ld} form a grid with only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  Grids in large dimension $d$, have disastrously few, $n^{1/d}$, values in each coordinate direction.
+The grid points on the right in Fig.\ \ref{fig:iid_vs_ld} have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  Grids in large dimension $d$, have only $n^{1/d}$ values in each coordinate direction.  They clump in lower dimensional projections.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiency Benefits from LD Sampling} \label{sec:eff_benefits}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The root mean squared error of the sample mean, $\hmu_n$, in approximating the population mean, $\mu$, when IID samples are used is 
+The root mean squared error of the sample mean, $\hmu_n$ when IID samples are used is 
 \begin{equation}
-    \sqrt{\bbE\bigl[\abs{\mu - \hmu_n}^2\bigr]} = \frac{\std(Y)}{\sqrt{n}},  \quad \std(Y) = \sqrt{\int_{\cx} \abs{f(\bx) - \mu}^2 \, \dif F(\bx)}, \qquad \bX_1, \bX_2, \ldots \text{IID}.
+    \sqrt{\bbE\bigl[\abs{\mu - \hmu_n}^2\bigr]} = \frac{\std(Y)}{\sqrt{n}},  \quad \std(Y) = \sqrt{\int_{\cx} \abs{f(\bx) - \mu}^2 \, \dif F(\bx)}, \qquad \bX_1, \bX_2, \ldots \IIDSim F.
 \end{equation}
 The smoothness required of $f$ is minimal, and the error bound has no curse of dimensionality (assuming that $\std(Y)$ does not explode with dimension), but the convergence rate is modest.  
 
-For LD sampling the absolute error has an upper bound of
+For LD sampling the absolute error has a deterministic  upper bound of
 \begin{equation} \label{eq:KH}
-    \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n, F) \norm[\calf]{f - \mu},  \qquad \bX_1, \bX_2, \ldots \text{LD}.
+    \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n, F) \norm[\calf]{f - \mu},  \qquad \bX_1, \bX_2, \ldots \LDSim F.
 \end{equation}
 The Banach space $\calf$ requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., $L^2$ mixed partial derivatives of up to order one in each coordinate direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n, F)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$ for well-chosen LD sequences, where $\delta$ is arbitrarily small and positive.
 
@@ -524,11 +519,11 @@ Both the number of function values and the computation time increase like $\Orde
 	\label{fig:KeisterTimes}
 \end{wrapfigure}
 
-The advantage of LD sampling is illustrated by the sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = 0.01$ there is already a hundredfold contrast between the $n$ and time required for IID versus LD.
+The advantage of LD sampling is illustrated by the sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = 0.01$ there is a hundredfold contrast between the $n$ and time required for IID versus LD.
 
-The orders of the computational cost dependence on $\varepsilon$ for IID and LD sampling are essentially \emph{independent of $d$}.  This is not the case for tensor product rules and grid sampling.  If the derivatives of $f$ up to total order $rd$ exist, then tensor product rules may provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a computational cost of $\Order(\varepsilon^{-d/r})$.   Increased smoothness, $r$, helps, but it cannot overcome the exponential growth of the cost with $d$.
+The orders of the computational cost dependence on $\varepsilon$ for IID and LD sampling are \emph{independent of $d$}.  This is not the case for tensor product rules and grid sampling.  If the derivatives of $f$ up to total order $rd$ exist, then tensor product rules may provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a computational cost of $\Order(\varepsilon^{-d/r})$.   Increased smoothness, $r$, helps but cannot overcome the exponential growth of the cost with $d$.
 
-To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a showcase  for their latest work.  So,  we need QMCPy.
+To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a showcase  for their latest work.  We need QMCPy.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{QMCPy Now}
@@ -539,25 +534,25 @@ To harness the efficiency of LD sampling via QMC methods, practitioners need qua
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 During the summer of 2018 \FH began discussing with other QMC researchers, including \AO, how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
 \begin{description}[format=\textup]
-	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.8}
-	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020}
-	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a}
-	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch}
-	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LatNet}
-	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a}
-	\item[Owen] Randomized Halton sequences in R \cite{Owe20a}
-	\item[Robbe] LD Sequences in Julia \cite{Rob20a}
-	\item[Burkhardt] various QMC software in C++, Fortran, MATLAB, \& Python \cite{Bur20a}
-	\item[SSJ] Stochastic Simulation in Java \cite{SSJ}
-	\item[ML(Q)MC] Multi-Level (Quasi-)Monte Carlo routines in C++, MATLAB, Python, and R \cite{GilesSoft}
-	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a}
-	\item[GAIL] Automatic stopping criteria for (Q)MC in MATLAB \cite{ChoEtal20a}
-	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}
+	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.8},
+	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020},
+	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
+	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
+	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LatNet},
+	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a},
+	\item[Owen] Randomized Halton sequences in R \cite{Owe20a},
+	\item[Robbe] LD Sequences in Julia \cite{Rob20a},
+	\item[Burkhardt] various QMC software in C++, Fortran, MATLAB, \& Python \cite{Bur20a},
+	\item[SSJ] Stochastic Simulation in Java \cite{SSJ},
+	\item[ML(Q)MC] Multi-Level (Quasi-)Monte Carlo routines in C++, MATLAB, Python, and R \cite{GilesSoft},
+	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a},
+	\item[GAIL] Automatic stopping criteria for (Q)MC in MATLAB \cite{ChoEtal20a},
+	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}, and
 	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS}
 \end{description}
 Each software package above  focuses on just certain aspects of QMC.  Some packages focus on the generation of LD sequences, some packages focus on fundamental QMC algorithms, and other packages focus on particular applications of QMC.  The software packages listed above are primarily the initiatives of individual research groups.  They are not a shared community effort.
 
-Fruitful discussions in 2018 led to further talks with \MM in early 2019.  \MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  \hypertarget{ASlink}{Aleksei Sorokin} (AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
+Fruitful discussions in 2018 led to further talks with \MM in early 2019.  \MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  \hypertarget{ASlink}{Aleksei Sorokin} (\AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
 
 
 
@@ -569,9 +564,9 @@ Fruitful discussions in 2018 led to further talks with \MM in early 2019.  \MM's
 The aforementioned discussions produced a skeleton for QMCPy consisting of four major abstract classes:
 \begin{itemize}
 	\item \pyinline{DiscreteDistribution} for generating LD and IID sequences,
-	\item \pyinline{TrueMeasure} to accommodate problems defined for more general distributions or measures,
+	\item \pyinline{TrueMeasure} to accommodate more general distributions or measures,
 	\item \pyinline{Integrand} to define the particular function, $f$, of interest, and
-	\item \pyinline{StippingCriterion} to determine when to stop the simulation.
+	\item \pyinline{StoppingCriterion} to determine when to stop the simulation.
 \end{itemize}
 An \pyinline{AccumulateData} class keeps track of intermediate results.
 
@@ -589,8 +584,7 @@ points = lattice.gen_samples(n = 64)  #construct points
 \end{wrapfigure}
 
 All LD generators provide points designed to mimic the distribution $\calu[0,1]^d$.  QMCPy also has \pyinline{Sobol} \cite{DicPil10a} and \pyinline{Halton} \cite{Hal60} LD generators whose syntax are comparable.  
-%Fig.\ \ref{fig:sobol_halton} illustrates these LD points.  
-For comparison purposes, QMCPy also has standard uniform and normal psuedo-random generators adopted from \pyinline{numpy}.  Our LD generators are extensible, meaning that one may generate additional points while reusing the original ones.  For lattice and Sobol' points it is preferable that $n$ be a power of $2$.  QMCPy LD generators are randomized by default to ensure that no points lie on the boundary of the unit cube and to improve the the order of convergence of $\hmu_n$ to $\mu$ \cite{Owe97}.
+For comparison purposes, QMCPy  has standard uniform and normal psuedo-random generators adopted from \pyinline{numpy}.  Our LD generators are extensible, meaning that one may generate additional points while reusing the original ones.  For lattice and Sobol' points it is preferable that $n$ be a power of $2$.  QMCPy LD generators are randomized by default to ensure that no points lie on the boundary of the unit cube and to improve the the order of convergence of $\hmu_n$ to $\mu$ \cite{Owe97}.
 
 The \pyinline{TrueMeasure} class automates the transformation required to construct good points that mimic distributions other than standard uniform.  The  inverse  distribution is often used.  
 \begin{pythoncode}
@@ -603,7 +597,7 @@ Fig.\ \ref{fig:ld_Gauss} displays  IID and Sobol' points  transformed to mimic t
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-For computing expectations and multivariate integration as described in \eqref{eq:mean}, one must specify the integrand.  The original form of the problem may not be convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with independent marginals of zero mean and variance $\mI/2$:
+For computing expectations and multivariate integration as described in \eqref{eq:mean}, one must specify the integrand.  The original form of the problem may not be convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with zero mean and covariance $\mI/2$:
 \begin{multline} \label{eq:KeisterAlt}
 \mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)} 
 = \int_{\reals^d} \underbrace{\cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2)}_{h(\bt)}  \, \underbrace{\dif \bt}_{\text{Lebesgue}} \\
@@ -623,7 +617,7 @@ sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)   #stopping criterion must match  poi
 solution = sc.integrate()
 \end{pythoncode}
 
-The final stage of the computation requires the construction of a \pyinline{StoppingCriterion} instance, \pyinline{sc}.  The one here is from \cite{HicJim16a} and is based on Walsh transformations of the sampled integrand data.  Invoking the \pyinline{integrate} method of \pyinline{sc} yields $\hmu_n$ satisfying \eqref{eq:error_crit}.
+The final stage of the computation requires the construction of a \pyinline{StoppingCriterion} instance, \pyinline{sc}.  The one here is due to PI \FH and \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR) \cite{HicJim16a} and is based on Walsh transformations of the sampled integrand data.  Invoking the \pyinline{integrate} method of \pyinline{sc} yields $\hmu_n$ satisfying \eqref{eq:error_crit}.
 
 Another way to compute the Keister integral, \eqref{eq:Keister}, is to think of it as an integral with respect to the Lebesgue mesaure.  Again \pyinline{CustomFun} makes the proper variable transformation.  The answer returned by QMCPy is the same as the first way, but this second way takes about twice the time.
 
@@ -643,12 +637,12 @@ def h(t):  #your desired integrand, calculations must be vectorized
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  QMCPy has several options that users may choose:
  \begin{itemize}
- 	\item \pyinline{backends} for \pyinline{Sobol} from PyTorch \cite{PyTorch} and MPS \cite{Nuy17a}, in addition to the default from qrng \cite{QRNG2020};
+ 	\item \pyinline{backends} for \pyinline{Sobol} from  qrng \cite{QRNG2020},  PyTorch \cite{PyTorch} and MPS \cite{Nuy17a};
  	
- 	\item \pyinline{backends} for \pyinline{Lattice} from MPS \cite{Nuy17a}, in addition to the default from GAIL \cite{ChoEtal20a}, and generating vectors from LatNet Builder \cite{LatNet};
+ 	\item \pyinline{backends} for \pyinline{Lattice} from GAIL \cite{ChoEtal20a} and MPS \cite{Nuy17a}, and generators  from LatNet Builder \cite{LatNet};
  	
- 	\item \pyinline{StoppingCriteria} based on the Central Limit Theorem (CLT) for IID sampling and random replications of LD sampling;  a more rigorous stopping criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  stopping criteria based on Fast Fourier/Walsh Transforms via tracking the decay of the series coefficients \cite{HicJim16a, JimHic16a} and using a Bayesian perspective \cite{RatHic19a}; most of these stopping criteria have arisen from the NSF-supported research of \FH and his collaborators, \AO, \hypertarget{LJlink}{Lan Jiang} (LJ), 
- 	\hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (LlAJR), \hypertarget{JRlink}{Jagadeeswaran Rathinavel} (JR).
+ 	\item \pyinline{StoppingCriteria} based on the \hypertarget{CLTlink}{Central Limit Theorem} (\CLT) for IID sampling and random replications of LD sampling;  a more rigorous stopping criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  stopping criteria based on Fast Fourier/Walsh Transforms via tracking the decay of the series coefficients \cite{HicJim16a, JimHic16a} and using a Bayesian perspective \cite{RatHic19a}; most of these stopping criteria have arisen from the NSF-supported research of \FH and his collaborators, \AO, \hypertarget{LJlink}{Lan Jiang} (\LJ), 
+ 	\LlAJR, \hypertarget{JRlink}{Jagadeeswaran Rathinavel} (\JR).
  	
  	\item Specification of relative error tolerances as well as absolute error tolerances;
  	
@@ -665,7 +659,7 @@ QMCPy is hosted on Github \cite{QMCPy2020a}. Bugs can be reported and features r
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{QMCPy in the Future}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-QMCPy has made a good start.  Yet, there is much to be done to establish the critical mass of algorithms and collaborators for QMCPy to become a self-sustaining software.  Here is our plan.
+QMCPy has made a good start.  Yet, much must done to establish the critical mass of algorithms and collaborators that will make QMCPy  self-sustaining.  Here is our plan.
 
 QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better or interesting LD generator, algorithm, or use case arises, it will be a simple matter to swap out the new for the old and measure the performance improvement.
 
@@ -674,31 +668,29 @@ QMCPy will aggregate the best QMC software with a clear structure and a consiste
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Although QMCPy already includes the most popular LD sequences, their implementation is rather rigid.  Also, some newer sequences are missing.
 
-At present, the digital shifting and scrambling recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{backend}, namely, PyTorch \cite{PyTorch}, MPS \cite{Nuy17a}, and \pyinline{qrng} \cite{QRNG2020}.  However, for flexibility, the generating matrices (direction vectors) for the Sobol' sequence should be specified independently of the digitally scrambling and shifting.  \emph{We will rectify this}, which will allow folks to try scrambled BRODA generators \cite{BRODA20a}.  This is not yet possible.
+At present, the digital shifting and scrambling recommended for Sobol' sequences must be hard coded by the creator of the \pyinline{Sobol} \pyinline{backend}.  For flexibility, the generating matrices  for the Sobol' sequence should be specified independently of the digitally scrambling and shifting.  \emph{We will rectify this}, and thereby allow folks to try scrambled BRODA generators \cite{BRODA20a}, which is not yet possible.
 
 Sobol' sequences are a kind of digital sequence \cite{DicPil10a}.  LatNet Builder \cite{LatNet} can construct the generating matrices for polynomial lattices,  another kind of digital sequence.  When our Sobol' sequence generator allows the  generating matrices to be specified independently of the randomization, users will be able to explore  \emph{what advantages polynomial lattices may have} over Sobol' sequences.
 
-The usual method for scrambling and shifting digital sequences, such as the Sobol' sequence is linear scrambling, proposed in \cite{Mat98} and implemented in \cite{HonHic00a}.  A richer scrambling is the original nested uniform scrambling (NUS) proposed by \AO \cite{Owe95}.  The disadvantage of NUS is that the coding is more complex and the time required is longer, but the advantage is that it has a CLT  \cite{Loh01}.  We will \emph{implement NUS} in QMCPy.
+The usual method for scrambling and shifting digital sequences, such as the Sobol' sequence is linear scrambling, proposed in \cite{Mat98} and implemented in \cite{HonHic00a}.  A richer scrambling is the original nested uniform scrambling (NUS) proposed by \AO \cite{Owe95}.  NUS requires more complex code and a longer computation time, but it has a \CLT  \cite{Loh01}.  We will \emph{implement NUS} in QMCPy.
 
-Higher order digital sequences \cite{Dic09a, Dic11a}  provide faster convergence rates as $n \to \infty$  for integrands with higher order smoothness, which translate into lower computational cost rates as  $\varepsilon \to 0$.  An example  with higher order smoothness is computing probabilities over subsets of the sample space  involving smooth densities.  \emph{Higher order digital sequences will be implemented} in QMCPy.
+For integrands with higher order smoothness, higher order digital sequences \cite{Dic09a, Dic11a}  provide faster convergence rates as $n \to \infty$ , which translate into lower computational cost rates as  $\varepsilon \to 0$.  An example  is computing probabilities over subsets of the sample space  involving smooth densities.  \emph{Higher order digital sequences will be implemented} in QMCPy.
 
-One large family of discrepancies are defined in terms of a symmetric, positive definite kernel, $K$.  If we identify $K(\bt,\bx)$ as some inner product of point distributions, i.e., $K(\bt,\bx) = \ip[\calM]{F_{\{\bt\}}}{F_{\{\bx\}}}$ for all $\bt, \bx \in \cx$,  then the discrepancy between two distributions can be defined as the norm of the distance between the two \cite{Hic99a}:
+Discrepancies may be defined in terms of a symmetric, positive definite kernel, $K$.  If we identify $K(\bt,\bx)$ as some inner product of point distributions, i.e., $K(\bt,\bx) = \ip[\calM]{F_{\{\bt\}}}{F_{\{\bx\}}}$ for all $\bt, \bx \in \cx$,  then the discrepancy between two distributions is the norm of the distance between the two \cite{Hic99a}:
 \begin{equation} \label{eq:gen_disc}
 	D^2(F,G) :=  \norm[\calM]{F-G}^2 = \int_{\cx \times \cx } K(\bt,\bx) \, \dif(F(\bt) - G(\bt)) \dif(F(\bx) - G(\bx)) = D^2(G,F).
 \end{equation}
-When $F$ is a continuous distribution and $G$ is the empirical distribution for $\{ \bX_i\}_{i=1}^n$, we have an example of the discrepancy \hyperlink{FHlink} in  \eqref{eq:KH}:
+When $G$ is the empirical distribution for $\{ \bX_i\}_{i=1}^n$, we have an example of the discrepancy \hyperlink{FHlink} in  \eqref{eq:KH}:
 \begin{multline}
 \label{eq:KHterms}
-	D^2(\{ \bX_i\}_{i=1}^n,F) =  D^2\bigl(F_{\{ \bX_i\}_{i=1}^n},F \bigr) =
+	D^2(\{ \bX_i\}_{i=1}^n,F) :=  D^2\bigl(F_{\{ \bX_i\}_{i=1}^n},F \bigr) =
 	\int_{\cx \times \cx} K(\bt,\bx) \, \dif F(\bt) \dif F(\bx) \\
 	-\frac 2n \sum_{i=1}^n 	\int_{\cx} K(\bt,\bX_i) \, \dif F(\bt) 
 	+ \frac{1}{n^2} \sum_{i,k=1}^n  K(\bX_i,\bX_k).
 \end{multline}
-For error bound \eqref{eq:KH} for LD cubature, $K$ plays the role of a reproducing kernel for the Hilbert space, $\calf$.  There is a Bayesian version of \eqref{eq:KH} for integrands with covariance kernel $K$ \cite{Hic17a}.  
+In error bound \eqref{eq:KH} for LD cubature, $K$ plays the role of a reproducing kernel for the Hilbert space, $\calf$.  A Bayesian version of \eqref{eq:KH} assumes random integrands with covariance kernel $K$ \cite{Hic17a}.  QMCPy \emph{will implement discrepancies} based on a variety of popular kernels, including those in \cite{Hic97a}.
 
-Several popular choices of $K$ exist \cite{Hic97a}.  QMCPy \emph{will implement discrepancies} based on a variety of popular kernels. 
-
-One approach to constructing LD sequences, especially for small $n$ is to optimize numerically \cite{WinFan97a,LiKanHic20a}.  This is non-trivial because the discrepancy as a function $\{ \bX_i\}_{i=1}^n$ is multi-modal.  Changing the order of the $\bX_i$ leaves discrepancy unchanged.  
+One approach to constructing LD sequences, especially for small $n$ is to optimize numerically \cite{WinFan97a,LiKanHic20a}.  This is non-trivial because the discrepancy as a function $\{ \bX_i\}_{i=1}^n$ is multi-modal.  Changing the order of the vectors in the sequence  $\{ \bX_i\}_{i=1}^n$ leaves discrepancy unchanged.  
 
 We will \emph{implement some numerical optimization algorithms} for constructing low discrepancy designs.  Since evaluating  $D(\{ \bX_i\}_{i=1}^n,F)$ generally requires $\Order(n^2)$ operations, this numerical optimization effort will be cost effective when $n$ is not too large, and the kernel, $K$ is smooth enough to allow $D(\{ \bX_i\}_{i=1}^n,F)$  to decay quickly to $0$ with $n$.  The corresponding integration problems would be characterized by a smooth $f$ that is expensive to evaluate, hence  $n$ must be small.  The discrepancies of typical LD sequences do not decay faster than $\Order(n^{-1})$ (except for lattices and smooth, periodic $K$, which necessitate smooth, periodic $f$).  Hence we need numerical optimization to construct LD points  for discrepancies defined with smooth kernels.
 
@@ -875,8 +867,8 @@ The senior personnel on this project include one woman (\SCTC) and one early-car
 } \label{sec:PreviousFred}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\hypertarget{GEFlink}{Gregory E.\ Fasshauer} (GEF, co-PI) and \FH (PI) led this project, and \SCTC contributed as senior personnel.  Other major contributors were \FH's research students \hypertarget{YDlink}{Yuhan Ding} (YD, PhD 2015), \LJ (PhD 2016), 
-\LlAJR (PhD 2016), \hypertarget{DLlink}{Da Li} (DL, MS 2016), \hypertarget{JLlink}{Jiazhen Liu} (JL, MS 2018), JR (PhD 2019), \hypertarget{XTlink}{Xin Tong} (XT, MS 2014, PhD 2020 @ University of Illinois at Chicago), \hypertarget{KZlink}{Kan Zhang} (KZ, PhD student), \hypertarget{YZlink}{Yizhi Zhang} (YZ, PhD 2018), and \hypertarget{XZlink}{Xuan Zhou} (XZ, PhD 2015).  Articles, theses,  
+\hypertarget{GEFlink}{Gregory E.\ Fasshauer} (\GEF, co-PI) and \FH (PI) led this project, and \SCTC contributed as senior personnel.  Other major contributors were \FH's research students \hypertarget{YDlink}{Yuhan Ding} (\YD, PhD 2015), \LJ (PhD 2016), 
+\LlAJR (PhD 2016), \hypertarget{DLlink}{Da Li} (\DL, MS 2016), \hypertarget{JLlink}{Jiazhen Liu} (\JL, MS 2018), JR (PhD 2019), \hypertarget{XTlink}{Xin Tong} (\XT, MS 2014, PhD 2020 @ University of Illinois at Chicago), \hypertarget{KZlink}{Kan Zhang} \KZ, PhD student), \hypertarget{YZlink}{Yizhi Zhang} (\YZ, PhD 2018), and \hypertarget{XZlink}{Xuan Zhou} (\XZ, PhD 2015).  Articles, theses,  
 software, and preprints supported in 
 part by this 
 grant 
