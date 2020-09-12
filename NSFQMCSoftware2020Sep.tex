@@ -546,7 +546,7 @@ During the summer of 2018 \FH began discussing with other QMC researchers, inclu
 	\item[SSJ] Stochastic Simulation in Java \cite{SSJ},
 	\item[ML(Q)MC] Multi-Level (Quasi-)Monte Carlo routines in C++, MATLAB, Python, and R \cite{GilesSoft},
 	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a},
-	\item[GAIL] Automatic stopping criteria for (Q)MC in MATLAB \cite{ChoEtal20a},
+	\item[GAIL] Automatic stopping criteria in MATLAB by \FH, \SCTC and collaborators \cite{ChoEtal20a},
 	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}, and
 	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS}
 \end{description}
@@ -700,22 +700,22 @@ From the definition, CUD  sequences must satisfy much stronger conditions than L
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{A Broader Array of Algorithms}
+\subsection{More Extensive Algorithms}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsubsection{Variance/Variation Reduction Through Importance Sampling and Control Variates}
-The QMC error bound in \eqref{eq:KH} contains the factor $\norm[\calf]{f - \mu}$, which is sometimes called the \emph{variation} of the integrand.  For randomized QMC, the mean squared error of $\hmu_n$ is its variance.  Substantial error reduction can sometimes be obtained by rewriting the integral to reduce the variation or variance.  Examples include rare event modeling \cite{rubino2009rare}, Bayesian inference \cite{salmeron2000importance}.
+The QMC error bound in \eqref{eq:KH} contains the factor $\norm[\calf]{f - \mu}$, which may be called the \emph{variation} of the integrand.  For randomized QMC, the mean squared error of $\hmu_n$ is its variance.  Substantial error reduction can sometimes be obtained by rewriting the integral to reduce the variation or variance.  Examples include rare event modeling \cite{rubino2009rare}, Bayesian inference \cite{salmeron2000importance}.
 
 Importance sampling (see, e.g., \cite{owen2000safe}) uses samples from a new distribution (the \textit{importance} distribution) to place greater weight where the integrand varies more. Let $Q$ be such a distribution on the same sample space $\Omega$. Then the desired integral can be written as:
 \begin{equation}\label{eq:imp}
 \mu = \mathbb{E}[f(\bX)] = \int_\Omega f(\bx)  \, \dif F(\bx) = \int_\Omega \frac{f(\bx) \, \dif F(\bx)}{\dif Q(\bx)} \dif Q(\bx) =: \int_\Omega \tilde{f}(\bx)  \dif Q(\bx)
 \end{equation}
-If error bound \eqref{eq:KH} in terms of $\tilde{f}$, $Q$, and the LD sequence mimicking $Q$ is much smaller than the original error bound, then there will be computational cost savings.   The challenge lies in finding a good choice for $Q$. Important developments include the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and the safe importance sampler \cite{owen2000safe} by \AO. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where PI \SM extends importance sampling for covariate balancing in causal inference.
+If error bound \eqref{eq:KH} in terms of $\tilde{f}$, $Q$, and the LD sequence mimicking $Q$ is much smaller than the original error bound, then there will be computational cost savings.   The challenge lies in finding a good choice for $Q$. Key developments include the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and \AO's safe importance sampler \cite{owen2000safe}. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where PI \SM extends importance sampling for covariate balancing in causal inference.
 
-Control variates or de-trending \cite{Gla03} is another powerful variance/variation reduction technique. The idea is to subtract from the original integrand a linear combination of functions (control variates) whose integrals are zero.  If the new integrand, $\tilde{f}$ has smaller variation/variance than the original integrand, $f$, then again substantial cost savings are possible.  Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the control variates for QMC paper \cite{hickernell2005control} by \AO and PI \FH. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
+Control variates or de-trending \cite{Gla03} is another powerful variance/variation reduction technique. The idea is to subtract from the original integrand a linear combination of functions (control variates) whose integrals are zero.  If the new integrand, $\tilde{f}$, has smaller variation/variance than the original integrand, $f$, then again substantial cost savings are possible.  Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the control variates for QMC paper \cite{hickernell2005control} by \AO and PI \FH. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
 
-\textit{We will implement these existing variance reduction methods} into QMCPy. This will provide users with a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications, from financial engineering to computer graphics.
+\textit{We will implement these variance reduction methods} into QMCPy and attempt to automate them. This will provide users with a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications, from financial engineering to computer graphics.
 
 % Image rendering using neural networks for importance sampling and control variates
 % \cite{mueller20neural,mueller2019neural}
@@ -723,7 +723,7 @@ Control variates or de-trending \cite{Gla03} is another powerful variance/variat
 % - Huling and Mak (2020)
 
 \subsubsection{Multilevel QMC (MLQMC)}
-For high or infinite dimensional integration problems, the cost of the integrand is often proportional to $d$, and the sample mean cost $\Order(dn)$ operations to evaluate.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals of different numbers of variables, $d_1, \ldots, d_L$.  When done well, error criterion \eqref{eq:error_crit} can be met by a large number of samples involving few variables and a few number of samples involving many variables, resulting in an overall large cost savings. \emph{We will strengthen} QMCPy's rudimentary MLQMC, including extending the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a}.
+For high or infinite dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the sample mean cost $\Order(dn)$ operations to evaluate.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals of different numbers of variables, $d_1, \ldots, d_L$.  When done well, error criterion \eqref{eq:error_crit} can be met by a large number of samples involving few variables and a few number of samples involving many variables, which results in an overall large cost savings. \emph{We will strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a}.
 
 \subsubsection{Density Estimation}
 
