@@ -438,7 +438,7 @@ Quasi-Monte Carlo (QMC) methods replace independent and identically distributed 
     \begin{enumerate}
     \renewcommand{\labelenumii}{\alph{enumii}.}
         \item LD sequence generators,
-        \item QMC algorithms, such as multilevel algorithms, automatic stopping criteria, variance/variation reduction, density estimation, and
+        \item QMC algorithms, such as multilevel algorithms, automatic stopping criteria, variance/ variation reduction, density estimation, and
         \item Illuminating use cases;
     \end{enumerate}
     \item A user-friendly, consistent interface to the contributions of many scholars;
@@ -706,6 +706,14 @@ From the definition, CUD  sequences must satisfy much stronger conditions than L
 
 \subsubsection{Variance/Variation Reduction Through Importance Sampling and Control Variates}
 The QMC error bound in \eqref{eq:KH} contains the factor $\norm[\calf]{f - \mu}$, which may be called the \emph{variation} of the integrand.  For randomized QMC, the mean squared error of $\hmu_n$ is its variance.  Substantial error reduction can sometimes be obtained by rewriting the integral to reduce the variation or variance.  Examples include rare event modeling \cite{rubino2009rare}, Bayesian inference \cite{salmeron2000importance}.
+
+\FJHNote{Alternate version:
+Importance sampling (see, e.g., \cite{owen2000safe}) uses samples from a new distribution (the \textit{importance} distribution) to place greater weight where the integrand varies more. Let $Q$ be such a distribution on the same sample space $\Omega$. Then the desired integral can be written as:
+\begin{equation}\label{eq:imp}
+\mu = \mathbb{E}[f(\bX)] = \int_\Omega f(\bx)  \, \dif F(\bx) = \int_\Omega \frac{f(\bx) \, \dif F(\bx)}{\dif Q(\bx)} \dif Q(\bx) =: \int_\Omega \tilde{f}(\bx)  \dif Q(\bx)
+\end{equation}
+If error bound \eqref{eq:KH} in terms of $\tilde{f}$, $Q$, and the LD sequence mimicking $Q$ is much smaller than the original error bound, then there will be computational cost savings.   The challenge lies in finding a good choice for $Q$. Key developments include the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and \AO's safe importance sampler \cite{owen2000safe}. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where PI \SM extends importance sampling for covariate balancing in causal inference.
+}
 
 Importance sampling (see, e.g., \cite{owen2000safe}) uses samples from a new distribution (the \textit{importance} distribution) to place greater weight where the integrand varies more. Let $Q$ be such a distribution on the same sample space $\Omega$. Then the desired integral can be written as:
 \begin{equation}\label{eq:imp}
