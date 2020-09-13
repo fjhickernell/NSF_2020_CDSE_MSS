@@ -374,7 +374,7 @@
 % Notes on the paper for communicating with coauthors
 \newif\ifnotesw \noteswtrue
 \newcommand{\notes}[1]{\ifnotesw \textcolor{red}{  $\clubsuit$\ {\sf \bf \it  #1}\ $\clubsuit$  }\fi}
-%\noteswfalse   % comment this line out to turn on style notes 
+%\noteswfalse   % comment this line out to turn on style notes
 
 
 
@@ -420,7 +420,7 @@ For proposals that include funding to an International Branch Campus of a U.S. I
 
 \begin{center}
 \Large \textbf{
-QMCPy: Quasi-Monte Carlo Community Software\\ 
+QMCPy: Quasi-Monte Carlo Community Software\\
 %Project Description
 }
 \end{center}
@@ -456,7 +456,7 @@ Here we provide an overview of QMC, a description of our early efforts, our plan
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Applications of (Q)MC and of IID and LD Sampling}  
+\subsection{Applications of (Q)MC and of IID and LD Sampling}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Many situations are best understood by building randomness into the mathematical model.  Examples include Bayesian statistical inference \cite{GelEtal13, EfrHas16}, financial risk \cite{Gla03,LEc09}, particle transport \cite{Hag14,Spa95,Vea97}, and uncertainty quantification \cite{Smi14a,HerSch20a}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as means (averages) and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
 
@@ -471,7 +471,7 @@ The quantity of interest, $Y$ (e.g., option payoff, pixel intensity, flow veloci
 \end{equation}
 One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.
 
-Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The random points on the left are independent and do not know about each other.  The multivariate distribution of $\bX_1, \ldots, \bX_n \IIDSim \calu[0,1]^2 $ is $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1) 
+Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The random points on the left are independent and do not know about each other.  The multivariate distribution of $\bX_1, \ldots, \bX_n \IIDSim \calu[0,1]^2 $ is $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1)
 \cdots F(\bx_n) = x_{11}x_{12} x_{21} \cdots x_{n2}$, where $F(\bx)  = x_1x_2$ is the bivariate uniform distribution.
 
 \begin{figure}[H]
@@ -489,11 +489,11 @@ The grid points on the right in Fig.\ \ref{fig:iid_vs_ld} have only $\sqrt{n} = 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiency Benefits from LD Sampling} \label{sec:eff_benefits}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The root mean squared error of the sample mean, $\hmu_n$ when IID samples are used is 
+The root mean squared error of the sample mean, $\hmu_n$ when IID samples are used is
 \begin{equation}
     \sqrt{\bbE\bigl[\abs{\mu - \hmu_n}^2\bigr]} = \frac{\std(Y)}{\sqrt{n}},  \quad \std(Y) = \sqrt{\int_{\cx} \abs{f(\bx) - \mu}^2 \, \dif F(\bx)}, \qquad \bX_1, \bX_2, \ldots \IIDSim F.
 \end{equation}
-The smoothness required of $f$ is minimal, and the error bound has no curse of dimensionality (assuming that $\std(Y)$ does not explode with dimension), but the convergence rate is modest.  
+The smoothness required of $f$ is minimal, and the error bound has no curse of dimensionality (assuming that $\std(Y)$ does not explode with dimension), but the convergence rate is modest.
 
 For LD sampling the absolute error has a deterministic  upper bound of
 \begin{equation} \label{eq:KH}
@@ -505,22 +505,22 @@ Fig.\ \ref{fig:KeisterTimes} displays results from QMCPy for  a computational ph
 \begin{equation} \label{eq:Keister}
 \mu = \int_{\reals^d} \cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2) \, \dif \bt,
 \end{equation}
-for the case $d =5$ under several absolute error tolerances, $\varepsilon$.  QMCPy increases $n$ until 
+for the case $d =5$ under several absolute error tolerances, $\varepsilon$.  QMCPy increases $n$ until
 \begin{equation} \label{eq:error_crit}
 	\abs{\mu -\hmu_n} \le \varepsilon
 \end{equation}
 is satisfied.
-Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases. 
+Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases.
 
 \begin{wrapfigure}{r}{0.63\textwidth}
 	\centering
 	\includegraphics[height =0.32\textwidth]{ProgramsImages/keister_n.eps}
-	\includegraphics[height =0.32\textwidth]{ProgramsImages/keister_timing.eps} 
+	\includegraphics[height =0.32\textwidth]{ProgramsImages/keister_timing.eps}
 	\caption{Number of function values (left) and run time (right) required to compute the Keister integral \eqref{eq:Keister} using QMCPy.  LD sampling is substantially more efficient than IID sampling, especially as the error tolerance decreases.}
 	\label{fig:KeisterTimes}
 \end{wrapfigure}
 
-The advantage of LD sampling is illustrated by the sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = 0.01$ there is a hundredfold contrast between the $n$ and time required for IID versus LD.
+The advantage of LD sampling is illustrated by the sharp divergence of the times and function values required as $\varepsilon$ decreases.  For $\varepsilon = 0.01$ there is a hundred fold contrast between the $n$ and time required for IID versus LD.
 
 The orders of the computational cost dependence on $\varepsilon$ for IID and LD sampling are \emph{independent of $d$}.  This is not the case for tensor product rules and grid sampling.  If the derivatives of $f$ up to total order $rd$ exist, then tensor product rules may provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a computational cost of $\Order(\varepsilon^{-d/r})$.   Increased smoothness, $r$, helps but cannot overcome the exponential growth of the cost with $d$.
 
@@ -569,38 +569,38 @@ The aforementioned discussions produced a skeleton for QMCPy consisting of four 
 	\item \pyinline{Integrand} to define the particular function, $f$, of interest, and
 	\item \pyinline{StoppingCriterion} to determine when to stop the simulation.
 \end{itemize}
-An \pyinline{AccumulateData} class keeps track of intermediate results.
+An additional auxiliary class, \pyinline{AccumulateData}, keeps track of intermediate and final results.
 
 \subsubsection{\textup{\pyinline{DiscreteDistribution} and \pyinline{TrueMeasure}}} LD sequences are constructed by creating the object and then generating points.  The code below gives the points in the center panel of Fig.\ \ref{fig:iid_vs_ld}.
 \begin{pythoncode}
-ld = qmcpy.Lattice(dimension = 2)  #define a discrete LD distribution 
+ld = qmcpy.Lattice(dimension = 2)  #define a discrete LD distribution
 points = lattice.gen_samples(n = 64)  #construct points
 \end{pythoncode}
 
 \begin{wrapfigure}{r}{0.65\textwidth}
 	\centering
-	\includegraphics[height = 4.2cm]{ProgramsImages/Gauss_IID.eps} 
+	\includegraphics[height = 4.2cm]{ProgramsImages/Gauss_IID.eps}
 	\includegraphics[height = 4.2cm]{ProgramsImages/Gauss_Sobol.eps}
 	\caption{IID Gaussian (left) and Sobol'  points transformed to mimic a Gaussian distribution (right).  The LD points better represent the Gaussian distribution than the IID points. \label{fig:ld_Gauss}}
 \end{wrapfigure}
 
-All LD generators provide points designed to mimic the distribution $\calu[0,1]^d$.  QMCPy also has \pyinline{Sobol} \cite{DicPil10a} and \pyinline{Halton} \cite{Hal60} LD generators whose syntax are comparable.  
+All LD generators provide points designed to mimic the distribution $\calu[0,1]^d$.  QMCPy also has \pyinline{Sobol} \cite{DicPil10a} and \pyinline{Halton} \cite{Hal60} LD generators whose syntax are comparable.
 For comparison purposes, QMCPy  has standard uniform and normal psuedo-random generators adopted from \pyinline{numpy}.  Our LD generators are extensible, meaning that one may generate additional points while reusing the original ones.  For lattice and Sobol' points it is preferable that $n$ be a power of $2$.  QMCPy LD generators are randomized by default to ensure that no points lie on the boundary of the unit cube and to improve the the order of convergence of $\hmu_n$ to $\mu$ \cite{Owe97}.
 
-The \pyinline{TrueMeasure} class automates the transformation required to construct good points that mimic distributions other than standard uniform.  The  inverse  distribution is often used.  
+The \pyinline{TrueMeasure} class automates the transformation required to construct good points that mimic distributions other than standard uniform.  The  inverse  distribution is often used.
 \begin{pythoncode}
-gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specify the distribution parameters 
+gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specify the distribution parameters
 points = gaussian_ld.gen_samples(n = 64)  #construct points
 \end{pythoncode}
 
 Fig.\ \ref{fig:ld_Gauss} displays  IID and Sobol' points  transformed to mimic the Gaussian distribution with mean $\begin{pmatrix} 3 \\ 2 \end{pmatrix}$ and covariance matrix $\begin{pmatrix} 9 & 5 \\ 5 & 4 \end{pmatrix}$.  Transformed low discrepancy points may or may not be low discrepancy with respect to the new distribution, depending on how one defines the discrepancy \cite{LiKanHic20a}.  But, transformed low discrepancy points often outperform IID points in Monte Carlo calculations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}} 
+\subsubsection{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 For computing expectations and multivariate integration as described in \eqref{eq:mean}, one must specify the integrand.  The original form of the problem may not be convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with zero mean and covariance $\mI/2$:
 \begin{multline} \label{eq:KeisterAlt}
-\mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)} 
+\mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)}
 = \int_{\reals^d} \underbrace{\cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2)}_{h(\bt)}  \, \underbrace{\dif \bt}_{\text{Lebesgue}} \\
 =   \int_{[0,1]^d} f(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
 \end{multline}
@@ -611,7 +611,7 @@ The first way begins by constructing the Gaussian transformed LD \pyinline{TrueM
 gs = qmcpy.Gaussian(qmcpy.Sobol(5), covariance = 1/2)    #choose the Gaussian distribution
 def g(t):  #your desired integrand, calculations must be vectorized
 	d = t.shape[1]
-	g_val = np.pi**(d/2) * np.cos(np.sqrt((t**2).sum(1))) 
+	g_val = np.pi**(d/2) * np.cos(np.sqrt((t**2).sum(1)))
 	return g_val  #size n vector
 f = qmcpy.CustomFun(gs, custom_fun = g)
 sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)   #stopping criterion must match  points
@@ -632,26 +632,26 @@ def h(t):  #your desired integrand, calculations must be vectorized
  sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)  #stopping criterion must match  points
  solution = sc.integrate()
  \end{pythoncode}
- 
+
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  \subsection{QMCPy Options}
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  QMCPy has several options that users may choose:
  \begin{itemize}
  	\item \pyinline{backends} for \pyinline{Sobol} from  qrng \cite{QRNG2020},  PyTorch \cite{PyTorch} and MPS \cite{Nuy17a};
- 	
+
  	\item \pyinline{backends} for \pyinline{Lattice} from GAIL \cite{ChoEtal20a} and MPS \cite{Nuy17a}, and generators  from LatNet Builder \cite{LatNet};
- 	
- 	\item \pyinline{StoppingCriteria} based on the \hypertarget{CLTlink}{Central Limit Theorem} (\CLT) for IID sampling and random replications of LD sampling;  a more rigorous stopping criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  stopping criteria based on Fast Fourier/Walsh Transforms via tracking the decay of the series coefficients \cite{HicJim16a, JimHic16a} and using a Bayesian perspective \cite{RatHic19a}; most of these stopping criteria have arisen from the NSF-supported research of \FH and his collaborators, \AO, \hypertarget{LJlink}{Lan Jiang} (\LJ), 
+
+ 	\item \pyinline{StoppingCriteria} based on the \hypertarget{CLTlink}{Central Limit Theorem} (\CLT) for IID sampling and random replications of LD sampling;  a more rigorous stopping criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  stopping criteria based on Fast Fourier/Walsh Transforms via tracking the decay of the series coefficients \cite{HicJim16a, JimHic16a} and using a Bayesian perspective \cite{RatHic19a}; most of these stopping criteria have arisen from the NSF-supported research of \FH and his collaborators, \AO, \hypertarget{LJlink}{Lan Jiang} (\LJ),
  	\LlAJR, \hypertarget{JRlink}{Jagadeeswaran Rathinavel} (\JR).
- 	
+
  	\item Specification of relative error tolerances as well as absolute error tolerances;
- 	
- 	\item Multi-level Monte Carlo methods; and 
- 	
+
+ 	\item Multi-level Monte Carlo methods; and
+
  	\item A few use cases, i.e., pre-programmed \pyinline{Integrand} instances.
  \end{itemize}
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{QMCPy Support}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -686,12 +686,12 @@ When $G$ is the empirical distribution for $\{ \bX_i\}_{i=1}^n$, we have an exam
 \label{eq:KHterms}
 	D^2(\{ \bX_i\}_{i=1}^n,F) :=  D^2\bigl(F_{\{ \bX_i\}_{i=1}^n},F \bigr) =
 	\int_{\cx \times \cx} K(\bt,\bx) \, \dif F(\bt) \dif F(\bx) \\
-	-\frac 2n \sum_{i=1}^n 	\int_{\cx} K(\bt,\bX_i) \, \dif F(\bt) 
+	-\frac 2n \sum_{i=1}^n 	\int_{\cx} K(\bt,\bX_i) \, \dif F(\bt)
 	+ \frac{1}{n^2} \sum_{i,k=1}^n  K(\bX_i,\bX_k).
 \end{multline}
 In error bound \eqref{eq:KH} for LD cubature, $K$ plays the role of a reproducing kernel for the Hilbert space, $\calf$.  A Bayesian version of \eqref{eq:KH} assumes random integrands with covariance kernel $K$ \cite{Hic17a}.  QMCPy \emph{will implement discrepancies} based on a variety of popular kernels, including those in \cite{Hic97a}.
 
-One approach to constructing LD sequences, especially for small $n$, is to optimize numerically \cite{WinFan97a,LiKanHic20a}.  This is non-trivial because the discrepancy as a function $\{ \bX_i\}_{i=1}^n$ is multi-modal.  Changing the order of the vectors in the sequence $\{ \bX_i\}_{i=1}^n$ leaves the discrepancy unchanged.  
+One approach to constructing LD sequences, especially for small $n$, is to optimize numerically \cite{WinFan97a,LiKanHic20a}.  This is non-trivial because the discrepancy as a function $\{ \bX_i\}_{i=1}^n$ is multi-modal.  Changing the order of the vectors in the sequence $\{ \bX_i\}_{i=1}^n$ leaves the discrepancy unchanged.
 
 We will \emph{implement some numerical optimization algorithms} for constructing low discrepancy designs.  Since evaluating  $D(\{ \bX_i\}_{i=1}^n,F)$ generally requires $\Order(n^2)$ operations, this numerical optimization effort will be cost effective when $n$ is not too large, and the kernel, $K$ is smooth enough to allow $D(\{ \bX_i\}_{i=1}^n,F)$  to decay quickly to $0$ with $n$.  The corresponding integration problems would be characterized by a smooth $f$ that is expensive to evaluate, hence  $n$ must be small.  The discrepancies of typical LD sequences do not decay faster than $\Order(n^{-1})$ (except for lattices and smooth, periodic $K$, which necessitate smooth, periodic $f$).  Hence we need numerical optimization to construct LD points  for discrepancies defined with smooth kernels.
 
@@ -746,7 +746,7 @@ Much of the QMC  literature focuses on estimating the population \textit{mean}, 
 \end{equation}
 where $\fK$ is a symmetric kernel, and $h>0$ is the bandwidth parameter.
 
-Given the improvement that QMC gives for mean estimation, a natural question is whether QMC also provides gains for density estimation. A recent paper \cite{abdellah2018density} by \AO and coauthors explores this by replacing the IID samples $\{\bX_i\}_{i=1}^n$ used to generate $Y_i = f(\bX_i)$ with randomized LD samples \cite{owen2000monte}. They showed that this new QMC density estimator enjoys an improved rate of convergence over the standard estimator \eqref{eq:kerndens}, both theoretically and in numerical experiments. 
+Given the improvement that QMC gives for mean estimation, a natural question is whether QMC also provides gains for density estimation. A recent paper \cite{abdellah2018density} by \AO and coauthors explores this by replacing the IID samples $\{\bX_i\}_{i=1}^n$ used to generate $Y_i = f(\bX_i)$ with randomized LD samples \cite{owen2000monte}. They showed that this new QMC density estimator enjoys an improved rate of convergence over the standard estimator \eqref{eq:kerndens}, both theoretically and in numerical experiments.
 
 \textit{We will implement this QMC kernel density estimation method} in QMCPy. This will provide users from a broad range of fields, from engineers to data scientists, a useful tool for accurate density estimation when sample data is limited or expensive to collect.
 
@@ -823,7 +823,7 @@ Bayesian optimization applies this probabilistic numerics perspective to finding
 	\centering
 	%\includegraphics[height = 5cm]{ProgramsImages/sample_data.eps} \quad
 	\includegraphics[height = 5cm]{ProgramsImages/qEI_cost_comp_time.eps}
-	%\includegraphics[height = 5cm]{ProgramsImages/qEI_cost_comp_n.eps} 
+	%\includegraphics[height = 5cm]{ProgramsImages/qEI_cost_comp_n.eps}
 	\caption{A one dimensional objective function (left) and the run time (center), and number of function values (right) required to compute the acquisition function in \cite[qEI with QMCPy]{QMCBlog} to the desired tolerance, $\varepsilon$.  LD sampling is much more efficient than IID sampling, especially as the error tolerance decreases.}
 	\label{fig:qei}
 \end{figure}
@@ -835,7 +835,7 @@ Bayesian optimization is a relatively unexplored QMC application area. PI \SM ha
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Enhanced Performance}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C.  For example, this is done for some of the PyTorch code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.  
+Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C.  For example, this is done for some of the PyTorch code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.
 
 There have been attempts at parallel implementations of LD sequences \cite{LiMul00a,OktSri02, SchUhl01,WanEtal06a,LiuHic04a}, but there is no generally accepted parallel LD software library.  There are issues with load balancing.  Does one give different processors different segments of the same LD sequence?  Or does one combine the results of several randomized LD sequences, each from a different processor.
 
@@ -849,13 +849,13 @@ QMCPy will \emph{stand in the breach} between research code form individual grou
 
 Although large scale software packages cannot adopt every new QMCPy wrinkle, QMCPy algorithms attracting broad interest can be folded into these large scale packages.  FH had this experience when MATLAB adopted his TOMS LD generators from \cite{HonHic00a}.
 
-By making QMC methods easily accessible, QMCPy will \emph{introduce new application areas} to the benefits of LD sampling.  This will lead to \emph{LD sampling being incorporated} into the software packages used by practitioners in those disciplines.  
+By making QMC methods easily accessible, QMCPy will \emph{introduce new application areas} to the benefits of LD sampling.  This will lead to \emph{LD sampling being incorporated} into the software packages used by practitioners in those disciplines.
 
 \subsection{New QMC Theory}
 The history of QMC is marked by new applications giving birth to new theoretical insight.  The success of QMC for a $360$-dimensional financial risk application \cite{PasTra95} spurred the theoretical study of QMC's effectiveness for problems with much higher dimensions than was previously thought feasible, which has resulted in dozens of articles (see \cite{NovWoz10a,DicEtal14a} and the citations therein).  These high dimensional applications gave impetus to the development of multilevel \cite{Gil15a} and multivariate decomposition \cite{KuoEtal17a} methods.  The success of QMC in new application areas made possible QMCPy will \emph{pose new theoretical questions} that we and others will address.
 
 \subsection{Promoting Proper QMC Practice and Code}
-QMCPy---software, documentation, academic articles, and conference presentations---will \emph{showcase the right way} to do LD sampling.  As an example, the adoption of PyTorch into QMCPy and the tutorial given by FH at MCQMC 2020 \cite{MCQMC2020QMCPyTut} prompted a vigorous discussion on the PyTorch issues site \cite{PyTorchFirstPt2020a} that migrated to the \pyinline{scipy} issues site \cite{scipySobol2020a}.  \AO, \FH, and other QMC researchers seem to have convinced the developers to not omit the first Sobol' point, but to randomize by default.  Keeping the first point preserves the net property of the first $2^m$ Sobol' points and randomization can speed up convergence.  
+QMCPy---software, documentation, academic articles, and conference presentations---will \emph{showcase the right way} to do LD sampling.  As an example, the adoption of PyTorch into QMCPy and the tutorial given by FH at MCQMC 2020 \cite{MCQMC2020QMCPyTut} prompted a vigorous discussion on the PyTorch issues site \cite{PyTorchFirstPt2020a} that migrated to the \pyinline{scipy} issues site \cite{scipySobol2020a}.  \AO, \FH, and other QMC researchers seem to have convinced the developers to not omit the first Sobol' point, but to randomize by default.  Keeping the first point preserves the net property of the first $2^m$ Sobol' points and randomization can speed up convergence.
 
 In the course of our discussions, it was pointed out that UQLab \cite{UQLab}, OpenTurns \cite{OpenTURNS}, and other packages routinely drop the first Sobol' point, a bad, but understandable practice.  The arguments we provided to the PyTorch and \pyinline{scipy} developers answered their concerns.  We expect this project to produce fruitful discussions with other QMC practitioners that will promote better practice.
 
@@ -874,22 +874,22 @@ The senior personnel on this project include one woman (\SCTC) and one early-car
 
 \section{Results from Prior NSF Support} \label{sec:prior_work}
 
-\subsection{NSF-DMS-1522687\except{toc}{, \emph{Stable, Efficient, Adaptive Algorithms for 
+\subsection{NSF-DMS-1522687\except{toc}{, \emph{Stable, Efficient, Adaptive Algorithms for
 			Approximation and Integration},
 		\$270,000, August 2015 -- July 2018}
 } \label{sec:PreviousFred}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\hypertarget{GEFlink}{Gregory E.\ Fasshauer} (\GEF, co-PI) and \FH (PI) led this project, and \SCTC contributed as senior personnel.  Other major contributors were \FH's research students \hypertarget{YDlink}{Yuhan Ding} (\YD, PhD 2015), \LJ (PhD 2016), 
-\LlAJR (PhD 2016), \hypertarget{DLlink}{Da Li} (\DL, MS 2016), \hypertarget{JLlink}{Jiazhen Liu} (\JL, MS 2018), JR (PhD 2019), \hypertarget{XTlink}{Xin Tong} (\XT, MS 2014, PhD 2020 @ University of Illinois at Chicago), \hypertarget{KZlink}{Kan Zhang} \KZ, PhD student), \hypertarget{YZlink}{Yizhi Zhang} (\YZ, PhD 2018), and \hypertarget{XZlink}{Xuan Zhou} (\XZ, PhD 2015).  Articles, theses,  
-software, and preprints supported in 
-part by this 
-grant 
-include 
-\cite{ala_augmented_2017, 
+\hypertarget{GEFlink}{Gregory E.\ Fasshauer} (\GEF, co-PI) and \FH (PI) led this project, and \SCTC contributed as senior personnel.  Other major contributors were \FH's research students \hypertarget{YDlink}{Yuhan Ding} (\YD, PhD 2015), \LJ (PhD 2016),
+\LlAJR (PhD 2016), \hypertarget{DLlink}{Da Li} (\DL, MS 2016), \hypertarget{JLlink}{Jiazhen Liu} (\JL, MS 2018), JR (PhD 2019), \hypertarget{XTlink}{Xin Tong} (\XT, MS 2014, PhD 2020 @ University of Illinois at Chicago), \hypertarget{KZlink}{Kan Zhang} \KZ, PhD student), \hypertarget{YZlink}{Yizhi Zhang} (\YZ, PhD 2018), and \hypertarget{XZlink}{Xuan Zhou} (\XZ, PhD 2015).  Articles, theses,
+software, and preprints supported in
+part by this
+grant
+include
+\cite{ala_augmented_2017,
 	ChoEtal17a,
 	ChoEtal20a,
-	Din15a, 
+	Din15a,
 	DinHic20a,
 	GilEtal16a,
 	Hic17a,
@@ -929,20 +929,20 @@ include
 	\includegraphics[width = 0.4\textwidth]{ProgramsImages/sampling-funappxg.png}
 	\\
 	\includegraphics[width = 0.4\textwidth]{ProgramsImages/sampling-funming.png}
-	
+
 	\vspace{-2ex}
-	\caption{The function data ({\color{MATLABOrange}$\bullet$}) for the locally adaptive 
+	\caption{The function data ({\color{MATLABOrange}$\bullet$}) for the locally adaptive
 		function approximation (top) and minimization (bottom) algorithms in \cite{ChoEtal17a}.  Sampling is denser where $\abs{f''}$ is larger.  For minimization it is also denser where the function values are smaller. \label{localadaptfig}}
 \end{wrapfigure}
 \fi
 
 \Upara{Adaptive Algorithms for Univariate Problems}
-\FH, \SCTC, \YD, \XT, \YZ and collaborators developed several adaptive algorithms for univariate integration, function approximation, and optimization \cite{ChoEtal17a,HicEtal14b,  Din15a, Ton14a, Zha18a}.  The function approximation and optimization algorithms constructed by \FH, \SCTC, \YD, and \XT in \cite{ChoEtal17a} are \emph{locally adaptive}---the nonuniform sampling density is influenced by the function data.  For function approximation, the computational cost of $\Order\left(\sqrt{\norm[1/2]{f''}/\varepsilon} \right)$, where $\varepsilon$ is the error tolerance, and is essentially optimal.  The $1/2$-quasinorm $\norm[1/2]{f''}$ may be much smaller than 
+\FH, \SCTC, \YD, \XT, \YZ and collaborators developed several adaptive algorithms for univariate integration, function approximation, and optimization \cite{ChoEtal17a,HicEtal14b,  Din15a, Ton14a, Zha18a}.  The function approximation and optimization algorithms constructed by \FH, \SCTC, \YD, and \XT in \cite{ChoEtal17a} are \emph{locally adaptive}---the nonuniform sampling density is influenced by the function data.  For function approximation, the computational cost of $\Order\left(\sqrt{\norm[1/2]{f''}/\varepsilon} \right)$, where $\varepsilon$ is the error tolerance, and is essentially optimal.  The $1/2$-quasinorm $\norm[1/2]{f''}$ may be much smaller than
 $\norm[\infty]{f''}$ for peaky functions.
 
 
 \Upara{Globally Adaptive Cubature Based on LD Sequences}
-\FH, \LlAJR, \DL, and \JR developed globally adaptive algorithms for approximating $\int_{[0,1]^d} f(\bx) \, \dif \bx$ based on LD sequences \cite{HicJim16a,HicEtal17a,JimHic16a}.  These stopping criteria are now in QMCPy. Two common LD sequences are integration lattice nodes and digital sequences \cite{DicEtal14a}.  The error bounds underlying the adaptive cubatures developed by \FH, \LlAJR, \DL track the  Fourier coefficients of the sampled function values on these LD sequences.  \FH and \JR base their automatic Bayesian cubature on credible intervals, where the hyper-parameters of the priors are treated by empirical Bayes (maximum likelihood estimation), full Bayes, and/or cross-validation.   \FH and \JR chose covariance kernels that matched the LD sequences and reduced the computational cost to $\Order(n \log(n))$, making Bayesian cubature practical. 
+\FH, \LlAJR, \DL, and \JR developed globally adaptive algorithms for approximating $\int_{[0,1]^d} f(\bx) \, \dif \bx$ based on LD sequences \cite{HicJim16a,HicEtal17a,JimHic16a}.  These stopping criteria are now in QMCPy. Two common LD sequences are integration lattice nodes and digital sequences \cite{DicEtal14a}.  The error bounds underlying the adaptive cubatures developed by \FH, \LlAJR, \DL track the  Fourier coefficients of the sampled function values on these LD sequences.  \FH and \JR base their automatic Bayesian cubature on credible intervals, where the hyper-parameters of the priors are treated by empirical Bayes (maximum likelihood estimation), full Bayes, and/or cross-validation.   \FH and \JR chose covariance kernels that matched the LD sequences and reduced the computational cost to $\Order(n \log(n))$, making Bayesian cubature practical.
 
 \Upara{Multivariate Function Approximation}
 \FH, \YD, and \LlAJR and collaborators investigated function approximation problems for Banach spaces, $\calf$, defined by series representations \cite{DinHic20a,DinEtal20a}.  For example, the bases can be general multivariate polynomials.  Different definitions of a cone, $\calc$, of functions were defined, all describing a reasonable behavior of the series coefficients.  Adaptive function approximation algorithms constructed were shown to be essentially optimal.
@@ -953,25 +953,25 @@ $\norm[\infty]{f''}$ for peaky functions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \phantom{a}
 
-\Upara{Publications, Conference Participation, Conference Organization, and Leadership} Publications by \GEF, \FH,  \SCTC, students, and collaborators are listed above.  We have spoken at many applied mathematics, statistics, 
-and computational science conferences and given colloquium/seminar talks to mathematics and 
-statistics departments.  \FH co-organized the 
-2016 Spring Research 
+\Upara{Publications, Conference Participation, Conference Organization, and Leadership} Publications by \GEF, \FH,  \SCTC, students, and collaborators are listed above.  We have spoken at many applied mathematics, statistics,
+and computational science conferences and given colloquium/seminar talks to mathematics and
+statistics departments.  \FH co-organized the
+2016 Spring Research
 Conference, a long-running annual industrial statistics conference.   \FH gave an invited tutorial
 at MCQMC 2016
-\cite{Hic17a}, a biennial conference for which he serves on the steering committee.  \FH 
-was a program leader for the SAMSI 2017--18 Quasi-Monte Carlo (QMC) Program.   \FH received the 2016 Joseph F.\ Traub Prize for Achievement in Information-Based Complexity. In recognition of his research leadership, \FH was appointed the director of Illinois Tech's new Center for Interdisciplinary 
+\cite{Hic17a}, a biennial conference for which he serves on the steering committee.  \FH
+was a program leader for the SAMSI 2017--18 Quasi-Monte Carlo (QMC) Program.   \FH received the 2016 Joseph F.\ Traub Prize for Achievement in Information-Based Complexity. In recognition of his research leadership, \FH was appointed the director of Illinois Tech's new Center for Interdisciplinary
 Scientific Computation in 2017.  In 2018, \FH was appointed Vice Provost for Research.
 
-\Upara{\GAIL Software} The results of this research have been implemented in 
+\Upara{\GAIL Software} The results of this research have been implemented in
 \GAIL, our open source \MATLAB library hosted on
-Github. This software 
-has input parsing, input validation, unit tests, inline documentation, and 
-demonstrations.  \GAIL makes it easier for practitioners to try our new adaptive algorithms.  \SCTC has been key in this effort.  \GAIL has been used in the yearly graduate course in Monte Carlo methods taught by \FH and \YD.  
+Github. This software
+has input parsing, input validation, unit tests, inline documentation, and
+demonstrations.  \GAIL makes it easier for practitioners to try our new adaptive algorithms.  \SCTC has been key in this effort.  \GAIL has been used in the yearly graduate course in Monte Carlo methods taught by \FH and \YD.
 %With the help of students, we are starting to port GAIL to Python and \Rlang.
 
-\Upara{Boosting the STEM Workforce} \GEF, \FH, and \SCTC mentored a number of 
-research students associated with this project.  Female students include \YD, \LJ, \JL, \XT, and Xiaoyang Zhao (MS 2017).   Mentees include undergraduate students involved more than a dozen 
+\Upara{Boosting the STEM Workforce} \GEF, \FH, and \SCTC mentored a number of
+research students associated with this project.  Female students include \YD, \LJ, \JL, \XT, and Xiaoyang Zhao (MS 2017).   Mentees include undergraduate students involved more than a dozen
 Brazilian Science Mobility Program students in the summers of 2015 and 2016, plus eight other students (two female) from Illinois Tech, Biola U, U Minnesota, Macalester U, NUS, Colorado School of Mines.  All but one of these eight have enrolled in graduate programs.   All students have learned how to conduct theoretical and/or practical computational mathematics research.
 
 \subsection{NSF CSSI Frameworks 2004571 (Subaward WSU20076). \textit{X-Ion Collisions with a Statistically and Computationally Advanced Program Envelope (X-SCAPE),} \$696,442, July 2020 -- June 2014.} High-energy colliders study the interaction between subatomic particles and environments produced in the collision of protons with protons, with nuclei, or between two nuclei. The study of such interactions requires an elaborate statistical and computational framework, which integrates volumes of data from diverse experiments with computer simulations from candidate theories. The X-SCAPE collaboration is a multi-disciplinary team of physicists, computer scientists and statisticians, is engaged in the construction of such an open-source framework. \SM is a Duke co-PI in this ongoing collaboration (which started in the summer of 2020), and is responsible for leading the statistical developments on the project.
@@ -985,19 +985,19 @@ the quark-gluon plasma into an interacting gas of hadrons, the conversion of par
 The primary broader impacts of the JETSCAPE/ X-SCAPE collaboration have been in the training of its graduate students and postdocs. Through regular weekly meetings, collaboration gatherings and joint projects, a multi-disciplinary, multi-institutional environment is fostered between the experimental and theoretical physicists, computer scientists and statisticians. This continuous cross-talk has imposed a far broader scope on the education and training of these individuals than would be possible in any monodisciplinary academic environment. Physicists learn about techniques in computer science and statistical analysis, while computer scientists encounter a unique physical problem requiring extensive software engineering, which in turn presents a difficult challenge in statistical model to data comparison. Beyond its students and postdocs, the collaboration strives to influence the training of the wider US nuclear physics workforce, through its winter school and workshops. Each of these annual gatherings consist of about 30 students and young postdocs drawn predominantly from the US (and some from Europe), who are then trained in the essential components of Monte Carlo event generation, basics of heavy-ion collisions, and extensive hands on tutorials involving the JETSCAPE/X-SCAPE framework. Over its funding period, JETSCAPE/X-SCAPE has supported several summer students (2-3 per year), gradually introducing them into the field of computational high energy nuclear physics. Beyond this is the growing awareness in the nuclear physics community of the existence and utility of the JETSCAPE/X-SCAPE framework, as witnessed by the ever growing downloads and views of the JETSCAPE Github site \cite{jetscape}.
 
 \section{Strengths of This Team and Collaboration Plan}
-We have a well-constructed  team that combines senior personnel with diverse academic backgrounds, career stages, and institutions.  Together with our students, collaborators, and friends, we will grow QMCPy into what it should become while providing new theory to underpin our new algorithms.  
+We have a well-constructed  team that combines senior personnel with diverse academic backgrounds, career stages, and institutions.  Together with our students, collaborators, and friends, we will grow QMCPy into what it should become while providing new theory to underpin our new algorithms.
 
 The senior personnel---together with our students---will have regular video conference meetings to share our progress and brainstorm next steps. These will be held both at our own institutions and via video conference among institutions.
 
 
 
 \subsection{Senior Personnel}
-\FH has been the lead PI on the GAIL \cite{ChoEtal20a} MATLAB software project that contains many of the stopping criteria incorporated into GAIL.  His expertise is in the numerical analysis of QMC and other algorithms for multivariate problems.  He has also developed several theoretically justified adaptive numerical algorithms.  As a former editorial board member for major computational mathematics journals, a Fellow of the Institute of Mathematical Statistics, and a co-leader of SAMSI's program on QMC in 2017-18, \FH understands the interface between computational mathematics and statistics.  \FH will lead the activities at Illinois Tech and oversee QMCPy's architecture.  He will also lead the development of higher order nets, net scrambling, and multilevel methods.
+\FH has been the lead PI on the GAIL \cite{ChoEtal20a} MATLAB software project that contains many of the stopping criteria incorporated into GAIL.  His expertise is in the numerical analysis of QMC and other algorithms for multivariate problems.  He has also developed several theoretically justified adaptive numerical algorithms.  As a former editorial board member for major computational mathematics journals, a Fellow of the Institute of Mathematical Statistics, and a co-leader of SAMSI's program on QMC in 2017-18, \FH understands the interface between computational mathematics and statistics.  \FH will lead the activities at Illinois Tech and oversee QMCPy's architecture.  He will also lead the development of higher order nets, net scrambling, and multilevel mettexhods.
 
 \SM is a statistician who became quite familiar with QMC through the aforementioned SAMSI program. He is an Assistant Professor of Statistical Science at Duke, and his interests are in Bayesian modeling, big data analytics, and computer experiments. \SM provides expertise on statistical methodology and applications: he is an Associate Editor for \textit{Technometrics} (the top journal for engineering statistics), the recipient of the Statistics in Physical Engineering Science (SPES) Award and the Mary G. and Joseph Natrella Scholarship from the American Statistical Association, as well as multiple student paper awards. He also has experience in software library development, having authored four \textsc{R} packages \cite{support,minimaxdesign,cmenet,atmopt} on the Comprehensive R Archive Network (CRAN). \SM will lead the activities at Duke and oversee the big data learning and Bayesian inference efforts.
 
-\SCTC is a computer scientist and Chief Data Scientist at Kamakura Securities.  She co-led the GAIL project with \FH and was particularly responsible for educating the team in best software engineering practices for numerical software.  \SCTC will lead the effort to ensure that QMCPy is well-tested, well-documented, and meets the needs of the business world.  \FJHNote{Sou-Cheng please add more}
-
+\SCTC is a computational mathematician and engineer by training, currently serving as the Chief Data Scientist at Kamakura Corporation, a leading financial risk-software company.  She has been an adjunct faculty member (Research Associate Professor) with the Department of Applied Mathematics, Illinois Tech since 2013.  She has co-led the GAIL and QMCPy projects with \FH  since 2013 and was particularly responsible for educating the team in best software engineering practices for numerical software.  \SCTC will lead the effort to ensure that QMCPy is well-tested, well-documented, and meets the needs of the business world. She is a co-winner of the SIAM (Society for Industrial and Applied Mathematics) Activity Group on Linear Algebra (SIAG/LA) Prize with Michael A.~Saunders and Chris C.~Paige, an international
+award for the best peer-reviewed journal paper from 2009 to 2011 with significant research contributions to the field of linear algebra, and with direct or potential applications.
 
 
 \subsection{Students}  The PhD students supported by this project will work with the senior personnel to address major algorithmic and theoretical issues.  Promising QMCPy simulations may suggest open theoretical questions.  Alternatively, new theoretical insights may be incorporated as new features in QMCPy.  Our goal is to have theoretically justified, practically impactful algorithms.  Undergraduate students will focus on new features or use cases that can be implemented mostly over the course of a summer.  They will be mentored by the senior personnel and the PhD students.  All students will learn good practices for contributing to a long term software project.
@@ -1021,7 +1021,7 @@ The senior personnel---together with our students---will have regular video conf
 \bibliographystyle{spbasic}
 
 
-{\renewcommand\addcontentsline[3]{} 
+{\renewcommand\addcontentsline[3]{}
 \renewcommand{\refname}{{\Large\textbf{References Cited}}}                   %%
 \renewcommand{\bibliofont}{\normalsize}
 
