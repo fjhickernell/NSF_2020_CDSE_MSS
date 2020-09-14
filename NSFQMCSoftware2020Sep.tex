@@ -800,10 +800,11 @@ Image rendering is a visually stunning application of QMC \cite{Keller2013a}.  Q
 
 % more use cases, \cite{BinSur13}
 
-\subsubsection{\hypertarget{PNlink}{Probabilistic Numerics} (\PN)}
-Probabilistic numerics assumes that the input function or solution of a mathematical problem arise as an instance of a random process.  This allows one to apply a probabilistic approach to construct credible intervals for the solution. PI \FH along with his former PhD student \JR developed a fast Bayesian cubature method \cite{RatHic19a} using lattice LD sampling.  Our collaborator \TS is a P
 
-Bayesian optimization applies this probabilistic numerics perspective to finding the minimum of an objective function.  The next locations to sample the objective function are chosen as the optimum of an acquisition function, which in the Bayesian context takes the form of a $d$-variate integral, where $d$ is the number of future points to be sampled times the dimension of those points.  \MM illustrates the advantages of LD sampling for computing an acquisition function in his blog \cite[qEI with QMCPy]{QMCBlog}.  The observed function values are noisy.  As in the Keister example in Sect.\ \ref{sec:eff_benefits}, LD sampling shows a substantial advantage over IID sampling.
+\subsubsection{Probabilistic Numerics}
+\hypertarget{PNlink}{Probabilistic Numerics} (\PN) assumes that the input function or solution of a mathematical problem arise as an instance of a random process.  This allows one to apply a probabilistic approach to construct credible intervals for the solution. PI \FH along with his former PhD student \JR developed a fast Bayesian cubature method \cite{RatHic19a} using lattice LD sampling.  Our collaborator \TS is a \PN expert.
+
+Bayesian optimization applies this \PN perspective to finding the minimum of an objective function.  The next locations to sample the objective function are chosen as the optimum of an acquisition function, which in the Bayesian context takes the form of a $d$-variate integral, where $d$ is the number of future points to be sampled times the dimension of those points.  \MM illustrates the advantages of LD sampling for computing an acquisition function in his blog \cite[qEI with QMCPy]{QMCBlog}.  The observed function values are noisy.  As in the Keister example in Sect.\ \ref{sec:eff_benefits}, LD sampling shows a substantial advantage over IID sampling.
 
 \begin{figure}[h]
 	\centering
@@ -814,7 +815,7 @@ Bayesian optimization applies this probabilistic numerics perspective to finding
 	\label{fig:qei}
 \end{figure}
 
-Bayesian optimization is a relatively unexplored QMC application area. PI \SM has written several papers on black-box optimization \cite{mak2019analysis,chen2019hierarchical}, most notably on a hierarchical Bayesian optimization method \cite{chen2019hierarchical}. We will explore the \emph{efficacy of LD sampling} in Bayesian optimization and other probabilistic numerics problems.
+Bayesian optimization is a relatively unexplored QMC application area. PI \SM has written several papers on black-box optimization \cite{mak2019analysis,chen2019hierarchical}, most notably on a hierarchical Bayesian optimization method \cite{chen2019hierarchical}. We will explore the \emph{efficacy of LD sampling} in Bayesian optimization and other \PN problems.
 
 
 
@@ -993,7 +994,7 @@ award for the best peer-reviewed journal paper from 2009 to 2011 with significan
 
 \MM convinced his company to fund the early development of QMCPy.  He wanted to spread the advantages of low discrepancy sampling to the tech industry. During the first year of QMCPy's development, \MM advised us on what would  benefit high tech.  Although SigOpt cannot  fund QMCPy further, \MM will advise us on the continued development of QMCPy.  He will also help us spread the word among his network in the machine learning community.
 
-\TS will provide expertise on two application domains for QMCPy.  The first is probabilistic numerics (PN), a Bayesian statistical approach to numerical tasks such as cubature and the solution of differential equations.  Here, we construct a statistical posterior distribution over the value of the integral or solution to the differential equation to reflect the discretisation uncertainty inherited from the finite computational budget.  LD sampling is an attractive way to interrogate PN distributions at significantly lower cost than IID or MCMC sampling.  The second is the use of QMC methods to train metamodels for heterogeneous (i.e. mixed atomistic-continuum) systems, which is of particular interest in Warwick's EPSRC Centre for Doctoral Training in Modelling of Heterogeneous Systems.
+\TS will provide expertise on two application domains for QMCPy.  The first is \PN, a Bayesian statistical approach to numerical tasks such as cubature.  Here, we construct a statistical posterior distribution over the value of the solution to reflect the discretisation uncertainty inherited from the finite computational budget.  LD sampling is an attractive way to interrogate PN distributions at significantly lower cost than IID or MCMC sampling.  The second is the use of QMC methods to train metamodels for heterogeneous (i.e. mixed atomistic-continuum) systems, which is of particular interest in Warwick's EPSRC Centre for Doctoral Training in Modelling of Heterogeneous Systems.
 
 
 
