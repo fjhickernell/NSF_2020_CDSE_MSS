@@ -510,7 +510,7 @@ for the case $d =5$, $\mu \approx 1.135$ under several absolute error tolerances
 \begin{equation} \label{eq:error_crit}
 	\abs{\mu -\hmu_n} \le \varepsilon
 \end{equation}
-is satisfied.
+is satisfied according to its stopping criteria.
 Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases.
 
 \begin{wrapfigure}{r}{0.63\textwidth}
@@ -536,27 +536,25 @@ To harness the efficiency of LD sampling via QMC methods, practitioners need qua
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 During the summer of 2018 \FH began discussing with other QMC researchers, including \AO, how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
 \begin{description}[format=\textup]
-	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.8},
-	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020},
 	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
-	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
-	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LatNet},
-	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a},
-	\item[Owen] Randomized Halton sequences in R \cite{Owe20a},
-	\item[Robbe] LD Sequences in Julia \cite{Rob20a},
 	\item[Burkhardt] various QMC software in C++, Fortran, MATLAB, \& Python \cite{Bur20a},
-	\item[SSJ] Stochastic Simulation in Java \cite{SSJ},
-	\item[ML(Q)MC] Multi-Level (Quasi-)Monte Carlo routines in C++, MATLAB, Python, and R \cite{GilesSoft},
-	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a},
 	\item[GAIL] Automatic stopping criteria in MATLAB by \FH, \SCTC and collaborators \cite{ChoEtal20a},
-	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}, and
-	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS}
+	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LatNet},
+	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.8},
+	\item[ML(Q)MC] Multi-Level (Quasi-)Monte Carlo routines in C++, MATLAB, Python, and R \cite{GilesSoft},
+	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a},
+	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS},
+	\item[Owen] Randomized Halton sequences in R by \AO \cite{Owe20a},
+	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
+	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a},
+	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020},
+	\item[Robbe] LD Sequences in Julia \cite{Rob20a}, 
+	\item[SSJ] Stochastic Simulation in Java \cite{SSJ}, and
+	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.
 \end{description}
-Each software package above  focuses on just certain aspects of QMC.  Some packages focus on the generation of LD sequences, some packages focus on fundamental QMC algorithms, and other packages focus on particular applications of QMC.  The software packages listed above are primarily the initiatives of individual research groups.  They are not a shared community effort.
+Each software package above  focuses on just certain aspects of QMC.  Some packages focus on the generation of LD sequences, some packages focus on fundamental QMC algorithms, and other packages focus on particular applications of QMC.  Most of the software packages listed above are the initiatives of individual research groups, not a shared community effort.
 
 Fruitful discussions in 2018 led to further talks with \MM in early 2019.  \MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  \hypertarget{ASlink}{Aleksei Sorokin} (\AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -570,7 +568,7 @@ The aforementioned discussions produced a skeleton for QMCPy consisting of four 
 	\item \pyinline{Integrand} to define the particular function, $f$, of interest, and
 	\item \pyinline{StoppingCriterion} to determine when to stop the simulation.
 \end{itemize}
-An additional auxiliary class, \pyinline{AccumulateData}, keeps track of intermediate and final results.
+An auxiliary class, \pyinline{AccumulateData}, keeps track of intermediate and final results.
 
 \subsubsection{\textup{\pyinline{DiscreteDistribution} and \pyinline{TrueMeasure}}} LD sequences are constructed by creating the object and then generating points.  The code below gives the points in the center panel of Fig.\ \ref{fig:iid_vs_ld}.
 \begin{pythoncode}
@@ -643,8 +641,8 @@ def h(t):  #your desired integrand, calculations must be vectorized
 
  	\item \pyinline{backends} for \pyinline{Lattice} from GAIL \cite{ChoEtal20a} and MPS \cite{Nuy17a}, and generators  from LatNet Builder \cite{LatNet};
 
- 	\item \pyinline{StoppingCriteria} based on the \hypertarget{CLTlink}{Central Limit Theorem} (\CLT) for IID sampling and random replications of LD sampling;  a more rigorous stopping criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  stopping criteria based on Fast Fourier/Walsh Transforms via tracking the decay of the series coefficients \cite{HicJim16a, JimHic16a} and using a Bayesian perspective \cite{RatHic19a}; most of these stopping criteria have arisen from the NSF-supported research of \FH and his collaborators: \AO, \hypertarget{LJlink}{Lan Jiang} (\LJ),
- 	\LlAJR, \hypertarget{JRlink}{Jagadeeswaran Rathinavel} (\JR).
+ 	\item \pyinline{StoppingCriteria} based on the \hypertarget{CLTlink}{Central Limit Theorem} (\CLT) for IID sampling and random replications of LD sampling;  a more rigorous criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  criteria for LD sampling based on fast transforms of integrand data \cite{HicJim16a, JimHic16a,RatHic19a}; most of these have arisen from the NSF-supported research of \FH, \SCTC and their collaborators, \AO, \hypertarget{LJlink}{Lan Jiang} (\LJ),
+ 	\LlAJR, \hypertarget{JRlink}{Jagadeeswaran Rathinavel} (\JR), and implemented in GAIL \cite{ChoEtal20a}.
 
  	\item Specification of relative error tolerances as well as absolute error tolerances;
 
@@ -663,7 +661,7 @@ QMCPy is hosted on GitHub \cite{QMCPy2020a}. Bugs can be reported and features r
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 QMCPy has made a good start.  Yet, much must be done to establish the critical mass of algorithms and collaborators that will make QMCPy  self-sustaining.  Here is our plan.
 
-QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better or interesting LD generator, algorithm, or use case arises, it will be a simple matter to swap out the old for the new and measure the performance improvement.
+QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better or interesting LD generator, algorithm, or use case arises, it will be a simple matter to swap out the old for the new and measure the performance while all other pieces remain the same.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Feature Rich LD Sequence Generators} \label{sec:richLD}
@@ -696,9 +694,9 @@ One approach to constructing LD sequences, especially for small $n$, is to optim
 
 We will \emph{implement some numerical optimization algorithms} for constructing low discrepancy designs.  Since evaluating  $D(\{ \bX_i\}_{i=1}^n,F)$ generally requires $\Order(n^2)$ operations, this numerical optimization effort will be cost effective when $n$ is modest, and the kernel, $K$ is smooth enough to allow $D(\{ \bX_i\}_{i=1}^n,F)$  to decay quickly to $0$ with $n$.  The corresponding integration problems would be characterized by a smooth $f$ that is expensive to evaluate, hence  $n$ must be small.  The discrepancies of typical LD sequences typically decay no faster than $\Order(n^{-1})$.  Hence we need numerical optimization to construct LD points  for discrepancies defined with smooth kernels.
 
-Markov Chain Monte Carlo (MCMC) differs from IID sampling in the sense that one often uses one infinite dimensional run, $\bX_{\naturals} = (X_1, X_2, \dots)$, generated by a Markov chain to obtain $X_i$ that approach the desired, very complicated, distribution as $i \to \infty$.  Owen and Tribble \cite{OweTri05a} proposed a QMC variant of the Metropolis algorithm (a popular MCMC method) to speed up the convergence of the $X_i$ to the target distribution.  For QMC Metropolis, one needs completely uniformly distributed (CUD) sequences.  A sequence $\{U_1, U_2, \ldots \} \in [0, 1]^{\naturals}$  is CUD, if for every positive integer $d$, the points $\bZ_i = (U_{i}, \ldots, U_{i+d-1}) \in [0, 1]^d$ satisfy $\lim_{n \to \infty} D(\{ \bZ_i\}_{i=1}^n,F_{\unif,d}) = 0$, where $F_{\unif,d}$  is the standard uniform distribution in $d$ dimensions.
+Markov Chain Monte Carlo (MCMC) differs from IID sampling in the sense that one often uses \emph{one} infinite dimensional run, $\bX_{\naturals} = (X_1, X_2, \dots)$, generated by a Markov chain to obtain $X_i$ that approach the desired, very complicated, distribution as $i \to \infty$.  Owen and Tribble \cite{OweTri05a} proposed a QMC variant of the Metropolis algorithm (a popular MCMC method) to speed up the convergence of the $X_i$ to the target distribution.  For QMC Metropolis, one needs completely uniformly distributed (CUD) sequences.  A sequence $\{U_1, U_2, \ldots \} \in [0, 1]^{\naturals}$  is CUD, if for every positive integer $d$, the points $\bZ_i = (U_{i}, \ldots, U_{i+d-1}) \in [0, 1]^d$ satisfy $\lim_{n \to \infty} D(\{ \bZ_i\}_{i=1}^n,F_{\unif,d}) = 0$, where $F_{\unif,d}$  is the standard uniform distribution in $d$ dimensions.
 
-From the definition, CUD  sequences must satisfy much stronger conditions than LD sequences.  We \emph{will implement CUD sequences} in QMCPy.  This will allow further exploration into the situations where QMC-based Markov chain algorithms will outperform ordinary MCMC algorithms.
+CUD sequences must satisfy much stronger conditions than LD sequences.  We \emph{will implement CUD sequences} in QMCPy.  This will allow further exploration into the situations where QMC-based Markov chain algorithms outperform ordinary MCMC algorithms.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -714,8 +712,7 @@ Importance sampling \cite{owen2000safe} is a variance/variation reduction tool w
 \mu = \int_{\reals^d} g(\bt)  \, \varrho(\bt) \,\dif \bt
 =   \int_{[0,1]^d} f_{\bT}(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
 \end{equation}
-Since $\bT$ is not unique---as shown in the Keister example \eqref{eq:KeisterAlt}---
-the challenge lies in finding a good choice for $\bT$ that makes the variation, $\norm[\calf]{f_{\bT} - \mu}$, small. Key developments include the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and \AO's safe importance sampler \cite{owen2000safe}. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where PI \SM extends importance sampling for covariate balancing in causal inference.
+Since $\bT$ is not unique---as shown in the Keister example \eqref{eq:KeisterAlt}---the challenge lies in finding a good choice for $\bT$ that makes the variation, $\norm[\calf]{f_{\bT} - \mu}$, small. Key developments include the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and \AO's safe importance sampler \cite{owen2000safe}. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where PI \SM extends importance sampling for covariate balancing in causal inference.
 
 Control variates or de-trending \cite{Gla03} is another powerful variance/variation reduction technique. The idea is to obtain a new integrand, $\tilde{f}$, by subtracting from the original integrand a linear combination of functions (control variates) whose integrals are zero.  If $\tilde{f}$ has smaller variation/variance than the original integrand, $f$, then substantial cost savings are possible.  Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the QMC control variates papers \cite{HicEtal03, Hic17a} by \AO, PI \FH, and collaborators. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
 
@@ -726,7 +723,7 @@ For high or infinite dimensional integration problems, the computational cost of
 
 \subsubsection{Density Estimation}
 
-Much of the QMC  literature focuses on estimating the population \textit{mean}, $\mathbb{E}(Y)$. In many problems, however, one may be interested in estimating the underlying probability \textit{density} of $Y = f(\bX)$. The state-of-the-art in the classical setting, is kernel density estimation \cite{silverman1986density}, which uses IID samples $Y_1, \dots, Y_n$ to approximate $\varrho$ by:
+Much of the QMC literature focuses on estimating the population \textit{mean}, $\mathbb{E}(Y)$. In many problems, however, one may be interested in estimating the underlying probability \textit{density} of $Y = f(\bX)$. The state-of-the-art in the classical setting, is kernel density estimation \cite{silverman1986density}, which uses IID samples $Y_1, \dots, Y_n$ to approximate $\varrho$ by:
 \begin{equation}\label{eq:kerndens}
 \hat{\varrho}_n(y) = \frac{1}{n} \sum_{i=1}^n \frac{1}{h} \fK \left( \frac{y - Y_i}{h} \right),
 \end{equation}
