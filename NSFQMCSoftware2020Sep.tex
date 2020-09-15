@@ -459,7 +459,7 @@ Here we provide an overview of QMC, a description of our early efforts, our plan
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Applications of (Q)MC and of IID and LD Sampling}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Many situations are best understood by mathematical models that include randomness.  Examples include Bayesian statistical inference \cite{GelEtal13, EfrHas16}, financial risk \cite{Gla03,LEc09}, particle transport \cite{Hag14,Spa95,Vea97}, and uncertainty quantification \cite{Smi14a,HerSch20a}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these sample outcomes---such as their means (averages) and probability densities---can effectively estimate the population quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
+Many situations are best understood by mathematical models that include \emph{randomness}.  Examples include Bayesian statistical inference \cite{GelEtal13, EfrHas16}, financial risk \cite{Gla03,LEc09}, particle transport \cite{Hag14,Spa95,Vea97}, and uncertainty quantification \cite{Smi14a,HerSch20a}.  Simulations use random vectors to generate a myriad of possible outcomes.  The statistical properties of these \emph{sample} outcomes---such as their means (averages) and probability densities---can effectively estimate the \emph{population} quantities.  This is the (Q)MC process:  IID sampling for simple MC and LD sampling for QMC.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{LD Versus IID Sampling} \label{sec:LDvsIID}
@@ -483,7 +483,7 @@ Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to m
 	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{figure}
 
-The  LD points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  They mimic the target distribution $F$  by making the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---close to $F$.  (The empirical distribution assigns equal probability to each point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the size of $F - F_{\{\bX_i\}_{i=1}^n}$.  LD points make the discrepancy small.
+The  LD points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  They mimic the target distribution $F$ (in this case bivariate uniform) by making the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---close to $F$.  (The empirical distribution assigns equal probability to each point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the magnitude of $F - F_{\{\bX_i\}_{i=1}^n}$.  LD points make the discrepancy small.
 
 The grid points on the right in Fig.\ \ref{fig:iid_vs_ld} have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  Grids in large dimension $d$, have only $n^{1/d}$ values in each coordinate direction.  They clump in lower dimensional projections.
 
