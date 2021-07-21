@@ -3,7 +3,8 @@
 % Overleaf: https://www.overleaf.com/9576964687whkhbmrrvhsd
 \documentclass[11pt]{NSFamsart}
 \usepackage{latexsym,amsfonts,amsmath,amssymb,amsthm,epsfig,extdash,multirow}
-\usepackage{stackrel,tabularx,mathtools,enumitem,longtable,xspace}
+\usepackage{stackrel,tabularx,mathtools,longtable,xspace}
+\usepackage[shortlabels]{enumitem}
 \usepackage[dvipsnames]{xcolor}
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage{hyperref}
@@ -20,7 +21,7 @@
 \setlength{\oddsidemargin}{0in}
 \setlength{\evensidemargin}{0in}
 %\thispagestyle{empty} \pagestyle{empty} %to eliminate page numbers for upload
-%\thispagestyle{plain} \pagestyle{plain} %to add back page numbers
+\thispagestyle{plain} \pagestyle{plain} %to add back page numbers
 
 \headsep-0.6in
 
@@ -403,7 +404,14 @@ For proposals that include funding to an International Branch Campus of a U.S. I
 
 \fi
 
+\iffalse
+Ideas:
 
+Theory for higher order nets
+Error bounds with less emphasis on the design, e.g., 
+
+
+\fi
 
 
 
@@ -424,24 +432,31 @@ QMCPy: Quasi-Monte Carlo Community Software\\
 \vspace{-6ex}
 
 
-Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, \hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (\SM, PI from Duke U), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (\SCTC, Senior Personnel) propose to grow the seedling QMC software library QMCPy \cite{QMCPy2020a} into a sapling, which will be embraced by the community of QMC researchers and benefit an expanding base of QMC practitioners.  QMCPy will grow to become
-\begin{enumerate}
-\renewcommand{\labelenumi}{\arabic{enumi}.}
+Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, \hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (\SM, PI from Duke U), \hypertarget{YDlink}{Yuhan Ding} (\YD, co-PI from Illinois Tech), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (\SCTC, Senior Personnel) propose to grow the early stage QMC software library QMCPy \cite{QMCPy2020a} into full-fledged library embraced by the community of QMC researchers and benefit an expanding base of QMC practitioners.  At the same time, we will address several unresolved  questions in the theoretical foundations of QMC.  
+
+QMCPy will become
+\begin{enumerate}[i.]
     \item A tightly-connected suite of the best QMC software from multiple sources:
-    \begin{enumerate}
-    \renewcommand{\labelenumii}{\alph{enumii}.}
+    \begin{enumerate}[a)]
         \item LD sequence generators,
-        \item QMC algorithms, such as multilevel algorithms, automatic stopping criteria, variance/ variation reduction, density estimation, and
-        \item Illuminating use cases;
+        \item QMC algorithms, including multilevel algorithms, automatic stopping criteria, variance/ variation reduction, density estimation, and
+        \item Illuminating use cases in quantitative finance, Bayesian inference, machine learning, uncertainty quantification, and other fields;
     \end{enumerate}
     \item A user-friendly, consistent interface to the contributions of many scholars;
     \item A proving ground for new QMC ideas, which will migrate to other popular packages;
     \item Owned and cultivated by our QMC community; and
     \item An easy on-ramp for those who are new to QMC.
 \end{enumerate}
+
+The theoretical questions addressed by this project will include
+\begin{enumerate}[i.]
+\item Stopping criteria for higher order nets;
+\item ???
+\end{enumerate}
+
 Our partners include  collaborators \hypertarget{MMlink}{Mike McCourt} (\MM, SigOpt), \hypertarget{AOlink}{Art Owen} (\AO, Stanford University), and \hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), as well as students, alumni, and friends.
 
-Here we provide an overview of QMC, a description of our early efforts, our plans to grow QMCPy, the benefits of QMCPy, and why our team is the right one for this project.
+Here we provide an overview of QMC, a description of our efforts to date, our plans to grow QMCPy, the benefits of QMCPy, how we will address the theoretical issue, and why our team is right for this project.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Overview of QMC and LD Sampling}
@@ -456,15 +471,14 @@ Many situations are best understood by mathematical models that include \emph{ra
 \subsection{LD Versus IID Sampling} \label{sec:LDvsIID}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The quantity of interest, $Y$ (e.g., option payoff, pixel intensity, flow velocity at certain location), is commonly expressed as a function of a $d$-dimensional vector random variable $\bX$, i.e., $Y = f(\bX)$.  Here, $\bX$ follows a cumulative distribution function $F:\cx \subseteq \reals^d \to [0,1]$.  When $f$ has a complicated form\footnote{In our notation  $f$ denotes an integrand, $F$ denotes a probability distribution, and $\varrho$ denotes a probability density.}, the population mean (multivariate integral), $\mu$, cannot be computed analytically.  But, it may be estimated by the sample mean, $\hmu_n$:
+The quantity of interest, $Y$ (e.g., option payoff, pixel intensity, flow velocity at certain location), is commonly expressed as a function of a $d$-dimensional \emph{standard uniform} vector random variable $\bX$, i.e., $Y = f(\bX)$.  We are particularly interested in problems where $d$ may be several, or dozens, or even thousands.  When $f$ has a complicated form, the population mean (multivariate integral), $\mu$, cannot be computed analytically.  But, it may be estimated by the sample mean, $\hmu_n$:
 \begin{equation} \label{eq:mean}
-    \mu := \bbE(Y) = \int_{\cx} f(\bx) \, \dif F(\bx) \approx
+    \mu := \bbE(Y) = \int_{\cube} f(\bx) \, \dif \bx \approx
 \hmu_n := \frac 1n \sum_{i=1}^n Y_i = \frac 1n  \sum_{i=1}^n f(\bX_i).
 \end{equation}
-One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.
+One wants to choose $\bX_1, \ldots, \bX_n$ to make $\abs{\mu - \hmu_n} \le \varepsilon$.  
 
-Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The random points on the left are independent and do not know about each other.  The multivariate distribution of $\bX_1, \ldots, \bX_n \IIDSim \calu[0,1]^2 $ is $F_{n}(\bx_1, \ldots, \bx_n) = F(\bx_1)
-\cdots F(\bx_n) = x_{11}x_{12} x_{21} \cdots x_{n2}$, where $F(\bx)  = x_1x_2$ is the bivariate uniform distribution.
+Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to mimic $\calu[0,1]^2$, the standard uniform distribution in dimension $d=2$.  The random points on the left, $\bX_1, \bX_2, \ldots \IIDSim \calu[0,1]^2$ are independent and do not know about each other. The  LD points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  Their empirical distribution\footnote{The empirical distribution assigns equal probability to each point.} is close to the uniform distribution as measured by a \emph{discrepancy} \cite{Nie92,Hic99a}.  The grid points on the right in Fig.\ \ref{fig:iid_vs_ld} have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  Grids in dimension $d$, have only $n^{1/d}$ values in each coordinate direction, which make them unsuitable for high dimensional integration compared to LD or even IID points.
 
 \begin{figure}[H]
 	\centering
@@ -474,24 +488,21 @@ Fig.\ \ref{fig:iid_vs_ld} displays $n=64$ IID, LD, and grid points intended to m
 	\caption{IID points (left), LD lattice points (center), and grid points (right).  The LD points have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{figure}
 
-The  LD points in the center of Fig.\ \ref{fig:iid_vs_ld}, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^2$, are carefully coordinated.  They could be deterministic or random.  They mimic the target distribution $F$ (in this case bivariate uniform) by making the empirical distribution function of  $\bX_1, \ldots \bX_n$---denoted $F_{\{\bX_i\}_{i=1}^n}$---close to $F$.  (The empirical distribution assigns equal probability to each point.)  A \emph{discrepancy}, $D(\{\bX_i\}_{i=1}^n, F)$, measures the magnitude of $F - F_{\{\bX_i\}_{i=1}^n}$.  LD points make the discrepancy small.
-
-The grid points on the right in Fig.\ \ref{fig:iid_vs_ld} have only $\sqrt{n} = 8$ equally spaced values in each coordinate direction, whereas the LD points have $n=64$ equally spaced values.  Grids in large dimension $d$, have only $n^{1/d}$ values in each coordinate direction.  They clump in lower dimensional projections.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiency Benefits from LD Sampling} \label{sec:eff_benefits}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The root mean squared error of the sample mean, $\hmu_n$ when IID samples are used is
-\begin{equation}
-    \sqrt{\bbE\bigl[\abs{\mu - \hmu_n}^2\bigr]} = \frac{\std(Y)}{\sqrt{n}},  \quad \std(Y) = \sqrt{\int_{\cx} \abs{f(\bx) - \mu}^2 \, \dif F(\bx)}, \qquad \bX_1, \bX_2, \ldots \IIDSim F.
+$\std(Y)/\sqrt{n}$, where $\std(Y) = \sqrt{\int_{\cube} \abs{f(\bx) - \mu}^2 \, \dif \bx}$.  The smoothness required of $f$ is minimal, and the error bound has no curse of dimensionality assuming that $\std(Y)$ does not explode with increasing dimension.  However the convergence rate is a modest $\Order(n^{-1/2})$, which translates into a computational cost of $\Order(\varepsilon^{-2})$ to satisfy the error criterion
+\begin{equation} \label{eq:error_crit}
+	\abs{\mu -\hmu_n} \le \varepsilon.
 \end{equation}
-The smoothness required of $f$ is minimal, and the error bound has no curse of dimensionality (assuming that $\std(Y)$ does not explode with dimension), but the convergence rate is a modest $\Order(n^{-1/2})$.
 
-For LD sampling the absolute error has a deterministic  upper bound of
+
+For LD sampling the absolute error has a deterministic  upper bound of \cite{Nie92,Hic99a}
 \begin{equation} \label{eq:KH}
-    \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n, F) \norm[\calf]{f - \mu},  \qquad \bX_1, \bX_2, \ldots \LDSim F.
+    \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n) \norm[\calf]{f - \mu}.
 \end{equation}
-The Banach space $\calf$ requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., $L^2$ mixed partial derivatives of up to order one in each coordinate direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n, F)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$ for well-chosen LD sequences, where $\delta$ is arbitrarily small and positive.
+The Banach space $\calf$ requires somewhat more smoothness than the $L^2$ requirement for IID sampling, e.g., $L^2$ mixed partial derivatives of up to order one in each coordinate direction. The discrepancy,  $D(\{\bX_i\}_{i=1}^n)$, corresponds to the norm of the cubature error functional \cite{Hic97a}, and is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitrarily small and positive. This faster convergence rate translates into a computational cost of $\Order(\varepsilon^{-1-\delta})$ to satisfy error criterion \eqref{eq:error_crit}.
 
 Fig.\ \ref{fig:KeisterTimes} displays results from QMCPy for  a computational physics example of Keister \cite{Kei96},
 \begin{equation} \label{eq:Keister}
@@ -710,7 +721,7 @@ Control variates or de-trending \cite{Gla03} is another powerful variance/variat
 \textit{We will implement these variance/variation reduction methods} in QMCPy and attempt to automate the choices of transformation and control variates. This will provide  a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications.
 
 \subsubsection{Multilevel QMC (MLQMC)}
-For high or infinite dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. \emph{We will strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case.
+For high or infinite dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. \emph{We will strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case. \SMNote{We have a nearly-finished paper applying multilevel QMC points as designs for multi-fidelity emulators. I can add in some preliminary results on this if needed.}
 
 \subsubsection{Density Estimation}
 
@@ -754,11 +765,11 @@ where $\eta$ is the gradient descent step size. Mini-batch SGD is widely used fo
 
 SGD has a notable weakness: since its gradients are estimated by random subsampling, the solution sequence $(\theta^{[l]})_{l=1}^\infty$ converges to a \textit{noise ball} of radius $\mathcal{O}(n^{-1})$ around the global optimum $\theta^*$. For small subsample size $n$, SGD returns parameter estimates that can be very far from  $\theta^*$. One way to address this is by carefully choosing a small LD dataset that well-represents the big data $\mathcal{X}$. This is referred to as ``data squashing'' \cite{owen2003data} by \AO, and has garnered attention in recent years. Leverage-score subsampling was introduced in \cite{ma2015statistical} to scale up linear regression for large datasets. A similar idea of \textit{coresets} has been explored in computer science \cite{chan2006faster}, with recent developments in \cite{bachem2017practical} and \cite{huggins2016coresets} for cluster analysis and logistic regression. There is also recent work \cite{hofert2018quasi, chong2020effectively} on applying QMC methods to generative adversarial networks \cite{goodfellow2014generative}, a popular machine learning model. PI \SM has also done work in this area \cite{mak2018support,mak2018minimax,mak2017projected,krishna2019distributional}, most notably on \textit{support points}, which has been applied to mechanical engineering \cite{fernandez2018estimating}, computer simulations \citep{pronzato2020bayesian}, and experimental design \cite{krishna2020robust}.
 
-\textit{We will implement these existing methods} in QMCPy, and explore their effectiveness in a suite of big data problems. There is little work on which data squashing procedure is most appropriate for SGD optimization. Our preliminary results show that a LD subsample exists for \textit{any} big dataset $\mathcal{X} \subset \mathbb{R}^d$ that achieves a noise ball radius of $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$. We will investigate this further and implement this in QMCPy.
+\SMNote{highlight novelties in methodology and emphasize theory} \textit{We will implement these existing methods} in QMCPy, and explore their effectiveness in a suite of big data problems. There is little work on which data squashing procedure is most appropriate for SGD optimization. Our preliminary results show that a LD subsample exists for \textit{any} big dataset $\mathcal{X} \subset \mathbb{R}^d$ that achieves a noise ball radius of $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$. We will investigate this further and implement this in QMCPy.
 
 \subsubsection{Posterior Sampling for Complex Bayesian Models}
 
-Bayesian methods have become quite popular in recent decades, primarily due to their ability to fit complicated models via sampling \cite{GelEtal13}. Such methods have largely relied on MCMC sampling for exploration of the posterior distribution $F$, which captures information on model parameters. However, with the rise of big data and complex machine learning models, the posterior distribution $F$ can be expensive to evaluate, which makes MCMC sampling very time-consuming \cite{joseph2015sequential}. This is compounded by the highly correlated nature of MCMC samples, which reduces the information provided by each sample \citep{link2012thinning}. For such problems, a LD posterior sampling method can greatly improve model learning given a time budget.
+\SMNote{Add motivation \& methodology \& preliminary results on randomized Stein points. Idea is to provide probabilistic inference for deterministic Bayesian sampling methods.} Bayesian methods have become quite popular in recent decades, primarily due to their ability to fit complicated models via sampling \cite{GelEtal13}. Such methods have largely relied on MCMC sampling for exploration of the posterior distribution $F$, which captures information on model parameters. However, with the rise of big data and complex machine learning models, the posterior distribution $F$ can be expensive to evaluate, which makes MCMC sampling very time-consuming \cite{joseph2015sequential}. This is compounded by the highly correlated nature of MCMC samples, which reduces the information provided by each sample \citep{link2012thinning}. For such problems, a LD posterior sampling method can greatly improve model learning given a time budget.
 
 % While the QMC Metropolis method by \cite{OweTri05a} speeds up the convergence of samples, it still requires many posterior evaluations. We want method which can provide LD sampling with limited posterior evaluations here.
 
@@ -769,7 +780,7 @@ K_{st}(\bt,\bx) = \nabla_\bt \cdot \nabla_\bx K(\bt,\bx) + \nabla_\bt K(\bt,\bx)
 \end{multline}
 where $K$ is a symmetric, positive definite kernel, and $\nabla$ and $\nabla \cdot$ are the gradient and divergence operators. The key advantage is that the integral in question $\int K_{st}(t,\bX) \, \dif F(t)$ evaluates to 0 for all $\bX$, which allows one to generate LD posterior samples via minimization of discrepancy $D(\{\bX_i\}_{i=1}^n, F)$. This is a promising method which speeds up learning of complex Bayesian models.
 
-\textit{We will implement Stein points} in QMCPy. PI \SM has worked on a variety of complex Bayesian modeling problems, from climatology \cite{mak2016regional} to aerospace engineering \cite{mak2018efficient,chang2019kernel,yeh2018common}, and we will explore the effectiveness of Stein points for such problems. We will also explore further extensions of Stein points for approximate Bayesian computation, a popular class of Bayesian methods for population genetics and epidemiology.
+\SMNote{expand on novel developments} \textit{We will implement Stein points} in QMCPy. PI \SM has worked on a variety of complex Bayesian modeling problems, from climatology \cite{mak2016regional} to aerospace engineering \cite{mak2018efficient,chang2019kernel,yeh2018common}, and we will explore the effectiveness of Stein points for such problems. We will also explore further extensions of Stein points for approximate Bayesian computation, a popular class of Bayesian methods for population genetics and epidemiology.
 
 \iffalse
 https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_jkdkrau0
