@@ -420,7 +420,7 @@ Error bounds with less emphasis on the design, e.g.,
 
 \begin{center}
 \Large \textbf{
-QMCPy: Quasi-Monte Carlo Community Software\\
+Quasi-Monte Carlo for Efficient Simulation
 %Project Description
 }
 \end{center}
@@ -432,7 +432,8 @@ QMCPy: Quasi-Monte Carlo Community Software\\
 \vspace{-6ex}
 
 
-Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, \hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (\SM, PI from Duke U), \hypertarget{YDlink}{Yuhan Ding} (\YD, co-PI from Illinois Tech), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (\SCTC, Senior Personnel) propose to grow the early stage QMC software library QMCPy \cite{QMCPy2020a} into full-fledged library embraced by the community of QMC researchers and benefit an expanding base of QMC practitioners.  At the same time, we will address several unresolved  questions in the theoretical foundations of QMC.  
+
+Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points by low discrepancy (LD) points to improve computational efficiency.  We, \hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (\SM, PI from Duke U), \hypertarget{YDlink}{Yuhan Ding} (\YD, co-PI from Illinois Tech), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (\SCTC, Senior Personnel) propose to grow our early stage QMC software library QMCPy \cite{QMCPy2020a} into full-fledged library embraced by the community of QMC researchers and benefiting an expanding base of QMC practitioners.  As we grow QMCPy, we will face and address several unresolved methodological and theoretical questions that are core to QMC.  
 
 QMCPy will become
 \begin{enumerate}[i.]
@@ -448,7 +449,7 @@ QMCPy will become
     \item An easy on-ramp for those who are new to QMC.
 \end{enumerate}
 
-The theoretical questions addressed by this project will include
+The theoretical and methodological questions addressed by this project will include
 \begin{enumerate}[i.]
 \item Stopping criteria for higher order nets;
 \item ???
@@ -508,11 +509,7 @@ Fig.\ \ref{fig:KeisterTimes} displays results from QMCPy for  a computational ph
 \begin{equation} \label{eq:Keister}
 \mu = \int_{\reals^d} \cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2) \, \dif \bt,
 \end{equation}
-for the case $d =5$, $\mu \approx 1.135$ under several absolute error tolerances, $\varepsilon$.  QMCPy increases $n$ until
-\begin{equation} \label{eq:error_crit}
-	\abs{\mu -\hmu_n} \le \varepsilon
-\end{equation}
-is satisfied according to its stopping criteria.
+for the case $d =5$, $\mu \approx 1.135$ under several absolute error tolerances, $\varepsilon$.  QMCPy increases $n$ until \eqref{eq:error_crit} is satisfied according to the suitable stopping criteria.
 Both the number of function values and the computation time increase like $\Order(\varepsilon^{-2})$ for IID sampling and $\Order(\varepsilon^{-1-\delta})$ for LD sampling as $\varepsilon$ decreases.
 
 \begin{wrapfigure}{r}{0.63\textwidth}
@@ -525,9 +522,9 @@ Both the number of function values and the computation time increase like $\Orde
 
 The advantage of LD sampling is illustrated by the sharp divergence of the function values and times required as $\varepsilon$ decreases.  For $\varepsilon = 0.01$ there is a hundred fold contrast between the $n$ and time required for IID versus LD.
 
-The orders of the computational cost dependence on $\varepsilon$ for IID and LD sampling are \emph{independent of $d$}.  This is not the case for tensor product rules and grid sampling.  If the derivatives of $f$ up to total order $rd$ exist, then tensor product rules may provide $\abs{\mu - \hmu_n} \le \varepsilon$  at a computational cost of $\Order(\varepsilon^{-d/r})$.   Increased smoothness, $r$, helps but cannot overcome the exponential growth of the cost with $d$.
+The orders of the computational cost dependence on $\varepsilon$ for IID and LD sampling are \emph{independent of $d$}.  This is not the case for tensor product rules and grid sampling.  If the derivatives of $f$ up to total order $rd$ exist, then tensor product rules may satisfy \eqref{eq:error_crit} at a computational cost of $\Order(\varepsilon^{-d/r})$.  Increased smoothness, $r$, helps but cannot overcome the exponential growth of the cost with $d$.
 
-To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a showcase  for their latest work.  We need QMCPy.
+To harness the efficiency of LD sampling via QMC methods, practitioners need quality software that is easy to use.  QMC researchers need a showcase  for their latest work.  QMCPy satisfies that.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{QMCPy Now}
@@ -536,27 +533,12 @@ To harness the efficiency of LD sampling via QMC methods, practitioners need qua
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Start of QMCPy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-During the summer of 2018 \FH began discussing with other QMC researchers, including \AO, how we could combine our software efforts into a community owned library.  The better existing QMC software efforts now and then include the following:
-\begin{description}[format=\textup]
-	\item[BRODA] Sobol' sequences in C, MATLAB, and Excel \cite{BRODA20a},
-	\item[Burkhardt] various QMC software in C++, Fortran, MATLAB, \& Python \cite{Bur20a},
-	\item[GAIL] Automatic stopping criteria in MATLAB by \FH, \SCTC and collaborators \cite{ChoEtal20a},
-	\item[LatNet Builder] Generating vectors/matrices for lattices and digital nets \cite{LatNet},
-	\item[MATLAB] Sobol' and Halton sequences, commercial \cite{MAT9.8},
-	\item[ML(Q)MC] Multi-Level (Quasi-)Monte Carlo routines in C++, MATLAB, Python, and R \cite{GilesSoft},
-	\item[MPS] Magic Point Shop, lattices and Sobol' sequences \cite{Nuy17a},
-	\item[OpenTURNS] Open source initiative for the Treatment of Uncertainties, Risks 'N Statistics in Python \cite{OpenTURNS},
-	\item[Owen] Randomized Halton sequences in R by \AO \cite{Owe20a},
-	\item[PyTorch] Scrambled Sobol' sequences \cite{PyTorch},
-	\item[QMC4PDE] QMC for elliptic PDEs with random diffusion coefficients \cite{KuoNuy16a},
-	\item [qrng]  Sobol' and Halton sequences in R \cite{QRNG2020},
-	\item[Robbe] LD Sequences in Julia \cite{Rob20a},
-	\item[SSJ] Stochastic Simulation in Java \cite{SSJ}, and
-	\item[UQLab] Framework for Uncertainty Quantification in MATLAB \cite{UQLab2014}.
-\end{description}
-Each software package above  focuses on just certain aspects of QMC.  Some packages focus on the generation of LD sequences, some packages focus on fundamental QMC algorithms, and other packages focus on particular applications of QMC.  Most of the software packages listed above are the initiatives of individual research groups, not a shared community effort.
+The better existing QMC software packages include the following:
+BRODA (Sobol' sequences) \cite{BRODA20a}, GAIL (automatic stopping criteria) by \FH, \SCTC and collaborators \cite{ChoEtal20a}, LatNet Builder (generators for lattices and digital nets) \cite{LatNet}, MATLAB (Sobol' and Halton sequences) \cite{MAT9.10}, Multi-Level (Quasi-)Monte Carlo routines  by Giles \cite{GilesSoft}, Magic Point Shop (lattices and Sobol' sequences) \cite{Nuy17a}, OpenTURNS \cite{OpenTURNS}, randomized Halton sequences by \AO \cite{Owe20a}, PyTorch (scrambled Sobol' sequences) \cite{paszke2019pytorch}, QMC4PDE (QMC for elliptic PDEs with random diffusion coefficients) \cite{KuoNuy16a}, qrng (Sobol' and Halton sequences) \cite{QRNG2020}, LD Sequences by Robbe \cite{Rob20a}, SciPy \cite{virtanen2020scipy}, Stochastic Simulation in Java \cite{SSJ}, and
+UQLab \cite{UQLab2014}.  These softwre packages are written in various languages.  
+Each focuses on just certain aspects of QMC, such as the generation of LD sequences, fundamental QMC algorithms, or particular applications.  Whereas SciPy is a community effort, most of the other software packages are the efforts of individual research groups.
 
-Fruitful discussions in 2018 led to further talks with \MM in early 2019.  \MM's company, Silicon Valley startup SigOpt, offered to fund the early stage development of  QMCPy, which would combine the efforts of several different research groups into a cutting edge package. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  \hypertarget{ASlink}{Aleksei Sorokin} (\AS),  a co-terminal BS applied mathematics and MS data science student at Illinois Tech, was hired to create the QMCPy code.  QMCPy was released in the summer of 2020.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
+\MM's company, Silicon Valley startup SigOpt, now a part of Intel, offered to fund the early stage development of  QMCPy in 2019. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high tech industry.  \hypertarget{ASlink}{Aleksei Sorokin} (\AS),  at the time a co-terminal BS applied mathematics and MS data science student at Illinois Tech, and now an applied mathematics PhD student at Illinois Tech, was hired to create the QMCPy code.  QMCPy was released initially in the summer of 2020 and has had several upgrades since then.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -721,7 +703,7 @@ Control variates or de-trending \cite{Gla03} is another powerful variance/variat
 \textit{We will implement these variance/variation reduction methods} in QMCPy and attempt to automate the choices of transformation and control variates. This will provide  a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications.
 
 \subsubsection{Multilevel QMC (MLQMC)}
-For high or infinite dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. \emph{We will strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case. \SMNote{We have a nearly-finished paper applying multilevel QMC points as designs for multi-fidelity emulators. I can add in some preliminary results on this if needed.}
+For high or infinite dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. \emph{We will strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case. \SMNote{We have a nearly-finished paper applying multilevel QMC points as designs for multi-fidelity emulators. I can add in some preliminary results on this. Arc-sin \& experimental design. Dispersion scales terribly in dimension.}
 
 \subsubsection{Density Estimation}
 
@@ -778,7 +760,7 @@ One approach for LD posterior sampling is to minimize the kernel discrepancy $D(
 K_{st}(\bt,\bx) = \nabla_\bt \cdot \nabla_\bx K(\bt,\bx) + \nabla_\bt K(\bt,\bx) \cdot \nabla_\bx \log \dif F(\bx)\\
  + \nabla_\bx K(\bt,\bx) \nabla_\bt \log \dif F(\bt) + K(\bt,\bx) \nabla_\bt \log \dif F(\bt) \cdot \nabla_\bx \log \dif F(\bx),
 \end{multline}
-where $K$ is a symmetric, positive definite kernel, and $\nabla$ and $\nabla \cdot$ are the gradient and divergence operators. The key advantage is that the integral in question $\int K_{st}(t,\bX) \, \dif F(t)$ evaluates to 0 for all $\bX$, which allows one to generate LD posterior samples via minimization of discrepancy $D(\{\bX_i\}_{i=1}^n, F)$. This is a promising method which speeds up learning of complex Bayesian models.
+where $K$ is a symmetric, positive definite kernel, and $\nabla$ and $\nabla \cdot$ are the gradient and divergence operators. The key advantage is that the integral in question $\int K_{st}(t,\bX) \, \dif F(t)$ evaluates to 0 for all $\bX$, which allows one to generate LD posterior samples via minimization of discrepancy $D(\{\bX_i\}_{i=1}^n, F)$. This is a promising method which speeds up learning of complex Bayesian models. \SMNote{specify problem carefully: expensive function evaluations? etc.}
 
 \SMNote{expand on novel developments} \textit{We will implement Stein points} in QMCPy. PI \SM has worked on a variety of complex Bayesian modeling problems, from climatology \cite{mak2016regional} to aerospace engineering \cite{mak2018efficient,chang2019kernel,yeh2018common}, and we will explore the effectiveness of Stein points for such problems. We will also explore further extensions of Stein points for approximate Bayesian computation, a popular class of Bayesian methods for population genetics and epidemiology.
 
@@ -811,7 +793,7 @@ Bayesian optimization applies this \PN perspective to finding the minimum of an 
 	\label{fig:qei}
 \end{figure}
 
-Bayesian optimization is a relatively unexplored QMC application area. PI \SM has worked on black-box optimization \cite{mak2019analysis,chen2019hierarchical}, most notably on a hierarchical Bayesian optimization method \cite{chen2019hierarchical}. We will explore the \emph{efficacy of LD sampling} in Bayesian optimization and other \PN problems.
+Bayesian optimization is a relatively unexplored QMC application area. PI \SM has worked on black-box optimization \cite{mak2019analysis,chen2019hierarchical}, most notably on a hierarchical Bayesian optimization method \cite{chen2019hierarchical}. We will explore the \emph{efficacy of LD sampling} in Bayesian optimization and other \PN problems. \SMNote{new methodology \& theory?}
 
 
 
