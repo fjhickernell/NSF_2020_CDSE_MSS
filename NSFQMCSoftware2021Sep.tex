@@ -671,10 +671,10 @@ Control variates or de-trending \cite{Gla03} is another powerful variance/variat
 
 \textit{We will implement these variance/variation reduction methods} in QMCPy and attempt to automate the choices of transformation and control variates. This will provide  a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications. \FJHNote{Theory?}
 
-\subsubsection{Multilevel QMC (MLQMC)}
+\subsection{Multilevel QMC (MLQMC)}
 For high or infinite dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. \emph{We will strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case. \SMNote{We have a nearly-finished paper applying multilevel QMC points as designs for multi-fidelity emulators. I can add in some preliminary results on this. Arc-sin \& experimental design. Dispersion scales terribly in dimension.}
 
-\subsubsection{Density Estimation}
+\subsection{Density Estimation}
 
 Much of the QMC literature focuses on estimating the population \textit{mean}, $\mathbb{E}(Y)$. In many problems, however, one may be interested in estimating the underlying probability \textit{density} of $Y = f(\bX)$. The state-of-the-art in the classical setting, is kernel density estimation \cite{silverman1986density}, which uses IID samples $Y_1, \dots, Y_n$ to approximate $\varrho$ by:
 \begin{equation}\label{eq:kerndens}
