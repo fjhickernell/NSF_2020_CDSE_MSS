@@ -454,7 +454,7 @@ The theoretical and methodological questions addressed by this project will incl
 \item ???
 \end{enumerate}
 
-Our partners include  collaborators \hypertarget{MMlink}{Mike McCourt} (\MM, SigOpt), \hypertarget{AOlink}{Art Owen} (\AO, Stanford University), and \hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), \hypertarget{ASlink}{Aleksei Sorokin } (\AS, PhD student, Illinois Tech) as well as other students, alumni, and friends.
+Our partners include  collaborators \hypertarget{MMlink}{Mike McCourt} (\MM, SigOpt), \hypertarget{AOlink}{Art Owen} (\AO, Stanford University), and \hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), \hypertarget{ASlink}{Aleksei Sorokin } (\AS, PhD student, Illinois Tech) as well as other students, alumni, and friends. \SMNote{think more on collaborations, specifically from Bayesian side of things. Take a look at Pieterjan's work on multi-fidelity, and on nuclear physics.}
 
 This project description  provides an overview of QMC, a description of QMCPy to date, our plans to grow QMCPy, the methodological and theoretical issues to be addressed,  why our team is ideal, and the broader impacts of this project.
 
@@ -635,15 +635,15 @@ QMCPy has made a good start.  Yet, much must be done to establish the critical m
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Richer LD Sequence Generators} \label{sec:richLD}
+\subsection{Richer LD Sequence Generators } [\FH lead, \AS] \label{sec:richLD}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Although QMCPy already includes the most popular LD sequences and is comparable to competitors, we will implement more flexibility.  We will expand our generators to include \emph{higher order digital sequences} \cite{Dic09a, Dic11a}, which yield  faster convergence rates  $n \to \infty$ for smooth integrands, such as those arising in computing multivariate probabilities.  Higher order nets are not yet available in popular libraries.  
+Although QMCPy already includes the most popular LD sequences and is comparable to competitors, we will implement more flexibility.  We will expand our generators to include \emph{higher order digital sequences} \cite{Dic09a, Dic11a}, which yield  faster convergence rates  $n \to \infty$ for smooth integrands, such as those arising in computing multivariate probabilities.  Higher order nets are not yet available in popular libraries.  [Year 1]
 
 For flexibility, the random digital scrambling and shifting of digital nets will be implemented so that either one or both can be turned on or off.  Linear matrix scrambling (LMS) \cite{Mat98,HonHic00a} is the simpler and more common method for randomizing digital sequences (such as the Sobol' sequence).  The original nested uniform scrambling (NUS) proposed by \AO \cite{Owe95} requires more complex code and a longer computation time, but it has a \CLT  \cite{Loh01}.  We will \emph{implement NUS} in QMCPy.
 
 Implementing a richer class of LD sequence generators combined with QMCPy's growing set of use cases will allow us to test which LD sequence generators perform better in practice, e.g., Niederreiter vs. Sobol' or LMS vs. NUS. If we detect that certain sequences, or certain scrambling methods substantially outperform in practice, then we will develop a \emph{theoretical description} of when that happens.
 
-\subsection{Theoretical Issues Surrounding Discrepancy and Convergence}
+\subsection{Theoretical Issues Surrounding Discrepancy and Convergence} [\FH lead, \AS]
 The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  When the original integral is defined with respect to a different distribution, as in \eqref{eq:KeisterAlt}, we must perform a variable transformation:
 \begin{equation}\label{eq:imp}
 	\mu = \int_{\reals^d} g(\bt)  \, \dif F(\bt)
@@ -661,7 +661,7 @@ There is no theory to say under what conditions small  $D(\{\bX_i\}_{i=1}^n)$ im
 \FJHNote{Strong law of larg numbers for lattices}
 
 
-\subsection{Variance/Variation Reduction Through Importance Sampling and Control Variates}
+\subsection{Variance/Variation Reduction Through Importance Sampling and Control Variates} [\FH lead]
 The QMC error bound in \eqref{eq:KH} contains the factor $\norm[\calf]{f - \mu}$, which may be called the \emph{variation} of the integrand.  For randomized QMC, the mean squared error of $\hmu_n$ is its variance.  Substantial error reduction can sometimes be obtained by rewriting the integral to reduce the variation or variance.  Examples include rare event modeling \cite{rubino2009rare} and Bayesian inference \cite{salmeron2000importance}.
 
 Importance sampling \cite{owen2000safe} is a variance/variation reduction tool whereby one samples from a new distribution (the \textit{importance} distribution) to place greater weight where the integrand varies more. Since LD sampling at its heart is $\calu[0,1]^d$, LD sampling to mimic a different distribution can be thought of as choosing a variable transformation, $\bT$ in \eqref{eq:imp}.
@@ -671,9 +671,10 @@ Control variates or de-trending \cite{Gla03} is another powerful variance/variat
 
 \textit{We will implement these variance/variation reduction methods} in QMCPy and attempt to automate the choices of transformation and control variates. This will provide  a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications. \FJHNote{Theory?}
 
-\subsection{Multilevel QMC (MLQMC)}
-For high or infinite dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. \emph{We will strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case. \SMNote{We have a nearly-finished paper applying multilevel QMC points as designs for multi-fidelity emulators. I can add in some preliminary results on this. Arc-sin \& experimental design. Dispersion scales terribly in dimension.}
+\subsection{Multilevel QMC (MLQMC)}[\SM lead]
+\SMNote{Add related work from Karen Willcox and Max Gunzburger} For high or infinite dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. \emph{We will strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case. \SMNote{We have a nearly-finished paper applying multilevel QMC points as designs for multi-fidelity emulators. I can add in some preliminary results on this. Arc-sin \& experimental design. Dispersion scales terribly in dimension.}
 
+\iffalse
 \subsection{Density Estimation}
 
 Much of the QMC literature focuses on estimating the population \textit{mean}, $\mathbb{E}(Y)$. In many problems, however, one may be interested in estimating the underlying probability \textit{density} of $Y = f(\bX)$. The state-of-the-art in the classical setting, is kernel density estimation \cite{silverman1986density}, which uses IID samples $Y_1, \dots, Y_n$ to approximate $\varrho$ by:
@@ -685,6 +686,8 @@ where $\fK$ is a symmetric kernel, and $h>0$ is the bandwidth parameter.
 Given the improvement that QMC gives for mean estimation, a natural question is whether QMC also provides gains for density estimation. A recent paper \cite{abdellah2018density} by \AO and coauthors explores this by replacing the IID samples $\{\bX_i\}_{i=1}^n$ used to generate $Y_i = f(\bX_i)$ with randomized LD samples \cite{owen2000monte}. They showed that this new QMC density estimator enjoys an improved rate of convergence over the standard estimator \eqref{eq:kerndens}, both theoretically and in numerical experiments.
 
 \textit{We will implement this QMC kernel density estimation method} in QMCPy. This will provide users from a broad range of fields, from engineers to data scientists, a useful tool for accurate density estimation when sample data is limited or expensive to collect.
+
+\fi
 
 % \subsubsection{Uncertainty Propagation}
 
@@ -703,7 +706,7 @@ Given the improvement that QMC gives for mean estimation, a natural question is 
 \subsubsection{Sobol' Indices} In sensitivity analysis, Sobol' indices, which are defined as multidimensional integrals, play an important role.  We will implement the work done by \LlAJR and others \cite{GilEtal16a,GilJim16b} to adaptively compute Sobol' indices.  \AO will encourage his PhD student, Chris Hoyt, to help.
 \fi
 
-\subsection{Big Data Analytics}
+\subsection{Big Data Analytics} [\SM lead]
 
 With advances in experimental technology, mathematical modeling, and computing power, big data is ubiquitous.  A key challenge is making use of this rich source of data; learning algorithms need to be highly \textit{efficient} and \textit{scalable} to extract information for real-time decision-making. The development of such algorithms is an important research direction in statistics and computer science.
 
@@ -717,7 +720,7 @@ SGD has a notable weakness: since its gradients are estimated by random subsampl
 
 \SMNote{highlight novelties in methodology and emphasize theory} \textit{We will implement these existing methods} in QMCPy, and explore their effectiveness in a suite of big data problems. There is little work on which data squashing procedure is most appropriate for SGD optimization. Our preliminary results show that a LD subsample exists for \textit{any} big dataset $\mathcal{X} \subset \mathbb{R}^d$ that achieves a noise ball radius of $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$. We will investigate this further and implement this in QMCPy.
 
-\subsection{Posterior Sampling for Complex Bayesian Models}
+\subsection{Posterior Sampling for Complex Bayesian Models} [\SM lead]
 
 \SMNote{Add motivation \& methodology \& preliminary results on randomized Stein points. Idea is to provide probabilistic inference for deterministic Bayesian sampling methods.} Bayesian methods have become quite popular in recent decades, primarily due to their ability to fit complicated models via sampling \cite{GelEtal13}. Such methods have largely relied on MCMC sampling for exploration of the posterior distribution $F$, which captures information on model parameters. However, with the rise of big data and complex machine learning models, the posterior distribution $F$ can be expensive to evaluate, which makes MCMC sampling very time-consuming \cite{joseph2015sequential}. This is compounded by the highly correlated nature of MCMC samples, which reduces the information provided by each sample \citep{link2012thinning}. For such problems, a LD posterior sampling method can greatly improve model learning given a time budget.
 
@@ -739,10 +742,12 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 
 \fi
 
+\iffalse
 \subsection{Uncertainty Quantification}
 Uncertainty quantification is the science of quantifying, characterizing, tracing, and managing uncertainty in computational and real worlds systems \cite{smartuq, Smi14a}. Since data from such systems are typically expensive to simulate or collect, a key focus in this area is the sampling design for data collection, which can greatly benefit from QMC methods.
 
 A recent application of QMC for uncertainty quantification is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}. This has broad applications in engineering problems, e.g., fluid flow through a porous medium. QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package. The PI \SM has done extensive work on uncertainty quantification, for rocket engine design \cite{li2017two,li2018uncertainty,chang2019kernel,yeh2018common,mak2018efficient}, neuroscience modeling \cite{wang2020uncertainty}, and active learning \cite{mak2018maximum}. We will explore the performance of LD sampling for these applications.
+\fi
 
 \iffalse 
 \subsubsection{Ray Tracing}
@@ -768,7 +773,7 @@ Bayesian optimization is a relatively unexplored QMC application area. PI \SM ha
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Enhanced Performance}
+\subsection{Enhanced Performance} [\FH lead]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C.  For example, this is done for some of the PyTorch code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.
 
@@ -787,7 +792,7 @@ QMCPy will \emph{stand in the breach} between research code from individual grou
 
 Although large scale software packages cannot adopt every new QMCPy wrinkle, QMCPy algorithms attracting broad interest can be folded into these large scale packages. FH had this experience when MATLAB adopted his TOMS LD generators from \cite{HonHic00a}.
 
-By making QMC methods easily accessible, QMCPy will \emph{introduce new application areas} to the benefits of LD sampling.  This will lead to \emph{LD sampling being incorporated} into the software packages used by practitioners in those disciplines. This includes, e.g., PyMC3 \citep{salvatier2016probabilistic} and PyStan \citep{stan2017pystan}, which are popular Python packages for Bayesian statistical modeling and probabilistic machine learning.
+By making QMC methods easily accessible, QMCPy will \emph{introduce new application areas} to the benefits of LD sampling.  This will lead to \emph{LD sampling being incorporated} into the software packages used by practitioners in those disciplines. This includes, e.g., PyMC3 \citep{salvatier2016probabilistic} and PyStan \citep{stan2017pystan}, which are popular Python packages for Bayesian statistical modeling and probabilistic machine learning. \SMNote{add discussion on UQ applications, sensitivity analysis, }
 
 As a library which strives to connect the best of QMC software to the scientific community, the success of QMCPy will be gauged by how well such a connection is made. We will thus measure project success via a variety of \textit{engagement} metrics (e.g., number of package downloads, Github pull requests), as well as the degree of integration into large scale packages used by practitioners.
 
