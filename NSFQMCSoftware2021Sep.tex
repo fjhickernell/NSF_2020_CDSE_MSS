@@ -833,21 +833,20 @@ The senior personnel on this project include one woman (\SCTC) and one early-car
 
 \section{Results from Prior NSF Support} \label{sec:prior_work}
 
-\subsection{NSF-DMS-1522687\except{toc}{, \emph{Stable, Efficient, Adaptive Algorithms for
-			Approximation and Integration},
-		\$270,000, August 2015 -- July 2018}
-} \label{sec:PreviousFred}
+\subsection{NSF-DMS-1522687, \emph{Stable, Efficient, Adaptive Algorithms for
+		Approximation and Integration},
+	\$270,000, August 2015 -- July 2018} \label{sec:PreviousFred}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\hypertarget{GEFlink}{Gregory E.\ Fasshauer} (\GEF, co-PI) and \FH (PI) led this project, and \SCTC contributed as senior personnel.  Other major contributors were \FH's research students \hypertarget{YDlink}{Yuhan Ding} (\YD, PhD 2015), \LJ (PhD 2016),
-\LlAJR (PhD 2016), \hypertarget{DLlink}{Da Li} (\DL, MS 2016), \hypertarget{JLlink}{Jiazhen Liu} (\JL, MS 2018), JR (PhD 2019), \hypertarget{XTlink}{Xin Tong} (\XT, MS 2014, PhD 2020 @ University of Illinois at Chicago), \hypertarget{KZlink}{Kan Zhang} \KZ, PhD student), \hypertarget{YZlink}{Yizhi Zhang} (\YZ, PhD 2018), and \hypertarget{XZlink}{Xuan Zhou} (\XZ, PhD 2015).  Articles, theses,
+Fred Hickernell (\FH, PI) and Gregory E. Fasshauer (\GEF, co-PI) led this project, and \SCTC contributed as senior personnel
+Gregory E.  Other contributors were \FH's research students {\YD} ( PhD 2015), \LJ (PhD 2016),
+\LlAJR (PhD 2016), \hypertarget{DLlink}{Da Li} (\DL, MS 2016), \hypertarget{JLlink}{Jiazhen Liu} (\JL, MS 2018), JR (PhD 2019), \hypertarget{XTlink}{Xin Tong} (\XT, MS 2014, PhD 2020 at the University of Illinois at Chicago), \hypertarget{KZlink}{Kan Zhang} (\KZ, PhD student), \hypertarget{YZlink}{Yizhi Zhang} (\YZ, PhD 2018), and \hypertarget{XZlink}{Xuan Zhou} (\XZ, PhD 2015).  Articles, theses,
 software, and preprints supported in
 part by this
 grant
 include
 \cite{ala_augmented_2017,
 	ChoEtal17a,
-	ChoEtal20a,
+	ChoEtal21a,
 	Din15a,
 	DinHic20a,
 	GilEtal16a,
@@ -879,7 +878,6 @@ include
 \subsubsection{Intellectual Merit from Prior NSF Support}
 \label{previousmeritsubsec}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\phantom{a}
 
 \iffalse
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -888,48 +886,32 @@ include
 	\includegraphics[width = 0.4\textwidth]{ProgramsImages/sampling-funappxg.png}
 	\\
 	\includegraphics[width = 0.4\textwidth]{ProgramsImages/sampling-funming.png}
-
+	
 	\vspace{-2ex}
 	\caption{The function data ({\color{MATLABOrange}$\bullet$}) for the locally adaptive
 		function approximation (top) and minimization (bottom) algorithms in \cite{ChoEtal17a}.  Sampling is denser where $\abs{f''}$ is larger.  For minimization it is also denser where the function values are smaller. \label{localadaptfig}}
 \end{wrapfigure}
 \fi
 
-\Upara{Adaptive Algorithms for Univariate Problems}
-\FH, \SCTC, \YD, \XT, \YZ and collaborators developed several adaptive algorithms for univariate integration, function approximation, and optimization \cite{ChoEtal17a,HicEtal14b,  Din15a, Ton14a, Zha18a}.  The function approximation and optimization algorithms constructed by \FH, \SCTC, \YD, and \XT in \cite{ChoEtal17a} are \emph{locally adaptive}---the nonuniform sampling density is influenced by the function data.  For function approximation, the computational cost of $\Order\left(\sqrt{\norm[1/2]{f''}/\varepsilon} \right)$, where $\varepsilon$ is the error tolerance, and is essentially optimal.  The $1/2$-quasinorm $\norm[1/2]{f''}$ may be much smaller than
-$\norm[\infty]{f''}$ for peaky functions.
-
-
-\Upara{Globally Adaptive Cubature Based on LD Sequences}
-\FH, \LlAJR, \DL, and \JR developed globally adaptive algorithms for approximating $\int_{[0,1]^d} f(\bx) \, \dif \bx$ based on LD sequences \cite{HicJim16a,HicEtal17a,JimHic16a}.  These stopping criteria are now in QMCPy. Two common LD sequences are integration lattice nodes and digital sequences \cite{DicEtal14a}.  The error bounds underlying the adaptive cubatures developed by \FH, \LlAJR, and \DL track the  Fourier coefficients of the sampled function values on these LD sequences.  \FH and \JR base their automatic Bayesian cubature on credible intervals, where the hyper-parameters of the priors are treated by empirical Bayes (maximum likelihood estimation), full Bayes, and/or cross-validation.   \FH and \JR chose covariance kernels that matched the LD sequences and reduced the computational cost to $\Order(n \log(n))$, making Bayesian cubature practical.
-
-\Upara{Multivariate Function Approximation}
-\FH, \YD, and \LlAJR and collaborators investigated function approximation problems for Banach spaces, $\calf$, defined by series representations \cite{DinHic20a,DinEtal20a}.  For example, the bases can be general multivariate polynomials.  Different definitions of a cone, $\calc$, of functions were defined, all describing a reasonable behavior of the series coefficients.  Adaptive function approximation algorithms constructed were shown to be essentially optimal.
+\FH, \SCTC, \YD, \XT, \YZ developed several adaptive algorithms for univariate integration, function approximation, and optimization \cite{ChoEtal17a,HicEtal14b,  Din15a, Ton14a, Zha18a}.  Those constructed by \FH, \SCTC, \YD, and \XT in \cite{ChoEtal17a} are \emph{locally adaptive}---the nonuniform sampling density is influenced by the function data.  For function approximation, the computational cost of $\Order\left(\sqrt{\norm[1/2]{f''}/\varepsilon} \right)$, where $\varepsilon$ is the error tolerance, and is essentially optimal. 
+\FH, \LlAJR, \DL, and \JR developed globally adaptive algorithms for approximating $\int_{[0,1]^d} f(\bx) \, \dif \bx$ based on LD sequences \cite{HicJim16a,HicEtal17a,JimHic16a}. 
+\FH, \YD, \LlAJR, and collaborators investigated function approximation problems for Banach spaces, $\calf$, defined by series representations \cite{DinHic20a,DinEtal20a}.  Adaptive function approximation algorithms constructed were shown to be essentially optimal.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Broader Impacts from Prior NSF Support} \label{prevBIsect}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\phantom{a}
-
-\Upara{Publications, Conference Participation, Conference Organization, and Leadership} Publications by \GEF, \FH,  \SCTC, students, and collaborators are listed above.  We have spoken at many applied mathematics, statistics,
+Publications by \GEF, \FH,  \SCTC, students, and collaborators are listed above.  We have spoken at many applied mathematics, statistics,
 and computational science conferences and given colloquium/seminar talks to mathematics and
 statistics departments.  \FH co-organized the
 2016 Spring Research
-Conference, a long-running annual industrial statistics conference.   \FH gave an invited tutorial
+Conference, \FH gave an invited tutorial
 at MCQMC 2016
-\cite{Hic17a}, a biennial conference for which he serves on the steering committee.  \FH
-was a program leader for the SAMSI 2017--18 Quasi-Monte Carlo (QMC) Program.   \FH received the 2016 Joseph F.\ Traub Prize for Achievement in Information-Based Complexity. In recognition of his research leadership, \FH was appointed the director of Illinois Tech's new Center for Interdisciplinary
-Scientific Computation in 2017.  In 2018, \FH was appointed Vice Provost for Research.
+\cite{Hic17a}, was a program leader for the SAMSI 2017--18 Quasi-Monte Carlo (QMC) Program, and received the 2016 Joseph F.\ Traub Prize for Achievement in Information-Based Complexity.  This research has been implemented in our open-source library
+\GAIL \cite{ChoEtal21a}.  \SCTC has been key in this effort.  \GAIL has been used in the graduate Monte Carlo course taught by \FH and \YD. \GEF, \FH, and \SCTC mentored a number of
+research students;  female students include \YD, \LJ, \JL, \XT, and Xiaoyang Zhao (MS 2017).
 
-\Upara{\GAIL Software} The results of this research have been implemented in
-\GAIL, our open source \MATLAB library hosted on
-Github.  \SCTC has been key in this effort.  \GAIL has been used in the yearly graduate course in Monte Carlo methods taught by \FH and \YD.
-%With the help of students, we are starting to port GAIL to Python and \Rlang.
 
-\Upara{Boosting the STEM Workforce} \GEF, \FH, and \SCTC mentored a number of
-research students associated with this project.  Female students include \YD, \LJ, \JL, \XT, and Xiaoyang Zhao (MS 2017).   Mentees include undergraduate students involving more than a dozen
-Brazilian Science Mobility Program students in the summers of 2015 and 2016, plus eight other students (two female) from Illinois Tech, Biola U, U Minnesota, Macalester U, NUS, and Colorado School of Mines.  All but one of these eight have enrolled in graduate programs. 
 
 \subsection{NSF CSSI Frameworks 2004571 (Subaward WSU20076). \textit{X-Ion Collisions with a Statistically and Computationally Advanced Program Envelope (X-SCAPE),} \$696,442, July 2020 -- June 2014.} High-energy colliders study the interaction between subatomic particles and environments produced in the collision of protons with protons, with nuclei, or between two nuclei. The study of such interactions requires an elaborate statistical and computational framework, which integrates volumes of data from diverse experiments with computer simulations from candidate theories. The X-SCAPE collaboration is a multi-disciplinary team of physicists, computer scientists and statisticians, is engaged in the construction of such an open-source framework. \SM is a Duke co-PI in this ongoing collaboration (which started in the summer of 2020), and is responsible for leading the statistical developments on the project.
 
