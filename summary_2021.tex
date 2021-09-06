@@ -1,0 +1,64 @@
+\documentclass[11pt]{article}%
+
+\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage[lofdepth,lotdepth]{subfig}
+\usepackage{titlesec}
+\usepackage[dvipsnames]{xcolor}
+%\usepackage{timetabl}
+%\usepackage{margins}
+%\usepackage[dvips,usenames,dvipsnames]{color}
+
+\pagestyle{empty}
+% \titlespacing*{\section}
+% {0pt}{2pt}{2pt}
+% \titlespacing*{\subsection}
+% {0pt}{0pt}{2pt}
+% \titlespacing*{\subsubsection}
+% {0pt}{0pt}{2pt}
+\titlespacing*{\paragraph}
+{0pt}{2pt}{2pt}
+
+\newcommand{\FJHNote}[1]{{\color{blue}Fred: #1}}
+\newcommand{\SMNote}[1]{{\color{blue}Simon: #1}}
+\newcommand{\SCTCNote}[1]{{\color{green}Sou-Cheng: #1}}
+
+\begin{document}
+
+\noindent{\bf Overview} %Per NSF section headings need to be on a separate line
+
+\noindent Simulations based on quasi-Monte Carlo (QMC) methods converge to the solution much faster than those based on independent and identically distributed (IID) sampling.  QMC has already has resounding success in quantitative finance and solutions of (partial) differential equations with random coefficients.  However, there is the potential for QMC to make an even greater impact.
+
+This project will extend the scope of application of QMC sampling to areas such as Bayesian inference and machine learning through theoretical and methodological advances.  This will involve variation/variance reduction, new stopping criteria, 
+
+We also will grow  QMCPy, an open-source QMC Python software library that is gaining support among the QMC community.  This will accelerate the adoption of QMCPy in new application areas and provide theoreticians and algorithm developers a test-bed of use cases for demonstrating their breakthroughs.
+
+
+be a library embraced by the QMC community. QMC methods replace independent and identically distributed points by low discrepancy (highly stratified) points.  This yields significant improvements in computational efficiency for a wide range of important problems, including Bayesian inference, financial risk, uncertainty quantification, and machine learning. Despite the demonstrated effectiveness of QMC methods, existing software comes primarily from \textit{individual} research groups acting independently. There has yet to be a community owned effort which \textit{integrates} these initiatives into a cutting edge package, which practitioners can apply to their problem of interest. QMCPy will take on this role, bridging the gap between research efforts of individual groups and QMC practitioners.
+
+QMCPy will become a tightly-connected collection of best QMC software, including low discrepancy generators, QMC algorithms, and illuminating use cases. It will provide a user-friendly, consistent interface to the contributions of many scholars. QMCPy will serve as a proving ground for new QMC methods, allowing researchers to test their ideas with the state-of-the-art on a broad range of use cases. QMCPy will be owned and cultivated by the QMC community, and will provide an easy on-ramp for practitioners who are new to QMC.
+
+\bigskip
+
+\noindent{\bf Intellectual Merit}
+
+\noindent Currently, QMCPy has a basic suite of low discrepancy generators, QMC algorithms,  and use cases. We will develop QMCPy in three crucial directions, guided by our motivation of bridging individual researchers to potential practitioners. First, we will implement in QMCPy a broader offering of low discrepancy sequence generators.  This includes a richer scrambling of digital sequences, higher-order digital sequences, and low discrepancy sequences for Bayesian computation and experimental design. Second, we will implement a broader array of algorithms. This includes popular variance/variation reduction methods such as importance sampling and control variates, multilevel QMC algorithms, and density estimation algorithms. Lastly, we will develop and implement a broader spectrum of use cases for QMC, including big data analytics, Bayesian modeling, uncertainty quantification, computer vision, and probabilistic numerics. New algorithms will be underpinned by new theory.  Performance will be enhanced by a computational framework including refactoring in C, parallel processing, and GPU computing.
+
+\bigskip
+
+% \noindent The participants will present their research and will have an opportunity to learn about current research by others, in similar stages of their career. Such information will help young researchers broaden their views on current trends in statistics and probability. The participants will be strongly encouraged to attend all talks and posters at the different workshops, and will be requested to make their research accessible to a wide audience. The participants will also interact at the breaks, lunch and dinner, poster sessions and evening events, among themselves and also with senior researchers from academia and industry, who will play a mentoring role throughout the conference. The initial contact through a New Researchers conference will facilitate future interactions among participants at other scientific meetings (such as JSM), which can lead to new collaborations. The flagship New Researchers Conference is special, as it is organized by junior researchers for junior researchers, so as to better address their own needs. The Teaching workshop is co-organized by New Researchers and established educators to provide a broad set of perspectives on learning, teaching and pedagogy.
+
+\noindent{\bf Broader Impacts}
+
+\noindent By connecting individual QMC research groups with QMC practitioners, QMCPy will catalyze new application areas for low discrepancy sampling. QMCPy will serve as a proving ground for researchers to compare new ideas with the state-of-the-art on a broad range of realistic use cases. Large scale software packages, such as \texttt{scipy}, PyTorch, or MATLAB, do not offer the options that QMCPy does and will. QMCPy will offer practitioners a user-friendly platform for implementing the best QMC methods, which will bring about significant computational gains in a broad range of scientific disciplines. The success of QMC in new application areas will in turn raise new theoretical questions and computational challenges, which will advance the QMC community as a whole.
+
+QMCPy will serve as an important vehicle for educating cross-disciplinary researchers and promoting proper QMC practice. Students supported by this project will learn to write clean, efficient code that fits the package architecture, is documented, and passes doctests. They will also become proficient in software engineering tools, which are essential skills for computational mathematicians and statisticians. The products of this project -- software, academic articles, conference presentations, and documentation -- will also showcase the \textit{right} way to do low discrepancy sampling, both within the QMC community and to the broader scientific community.
+
+% \noindent These conferences are explicitly aimed at training the next generation of leaders and researchers in probability, statistics and data science. In helping to create networks of new researchers, they lay the groundwork for future collaboration and the informal exchange of ideas and knowledge. They are also critical for building professional cohesion within the fields of statistics, probability and data science and setting new frontiers for research. Meeting people outside of one's research specialty area, and learning about their research, helps young researchers develop a more comprehensive research perspective, which is key for future editorial and administrative positions and professional services. The meetings also assist in general professional development in various critical areas of research, teaching, mentoring, publishing and funding. Under-represented groups (women, minorities, people with disabilities) are explicitly encouraged to attend in the conference announcements. By inspiring and guiding new researchers and also creating a sense of community amongst them, across research specialties, genders, ethnicities and geographical regions, these conferences significantly impacts the future of these fields. 
+
+% section project_summary (end)
+ 
+%\bibliographystyle{apalike}
+%\bibliography{bibfile}{}
+\end{document}
