@@ -82,6 +82,7 @@
 \newcommand{\CLT}{\hyperlink{CLTlink}{CLT}\xspace}
 \newcommand{\PN}{\hyperlink{PNlink}{PN}\xspace}
 \newcommand{\PR}{\hyperlink{PRlink}{PR}\xspace}
+\newcommand{\DN}{\hyperlink{DNlink}{DN}\xspace}
 
 
 \newcommand{\QMCSoft}{QMCSoft\xspace}
@@ -455,7 +456,10 @@ The theoretical and methodological questions addressed by this project will incl
 \item ??? \SCTCNote{TODO}
 \end{enumerate}
 
-Our partners include  collaborators \hypertarget{MMlink}{Mike McCourt} (\MM, SigOpt), \hypertarget{AOlink}{Art Owen} (\AO, Stanford University), 
+Our partners include  collaborators 
+\hypertarget{MMlink}{Mike McCourt} (\MM, SigOpt), 
+\hypertarget{DNlink}{Dirk Nuyens} (\DN,  Katholieke Universiteit Leuven)
+\hypertarget{AOlink}{Art Owen} (\AO, Stanford University), 
 \hypertarget{PRlink}{Pieterjan Robbe} (\PR, Sandia National Laboratories and Katholieke Universiteit Leuven),  
 \hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), \hypertarget{ASlink}{Aleksei Sorokin } (\AS, PhD student, Illinois Tech) as well as other students, alumni, and friends. \SMNote{think more on collaborations, specifically from Bayesian side of things. Take a look at Pieterjan's work on multi-fidelity, and on nuclear physics.}
 
@@ -629,22 +633,37 @@ Another way to compute the Keister integral, see \eqref{eq:KeisterAlt}, is to th
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{QMCPy Support}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-QMCPy is hosted on GitHub \cite{QMCPy2020a}. Bugs can be reported and features requested on the issues page.  Pull requests can be made by those who wish to add features.  All features are documented \cite{QMCPyDocs} using ReadtheDocs.  Doctests ensure that features work as expected. Features are illustrated by Jupyter notebooks.  \FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory Notebook \cite{QMCPyTutColab2020} is available so that those watching  can try out QMCPy themselves in real time.  \FH, \SCTC, \AO, \AS, and \MM wrote a series of blogs \cite{QMCBlog} to introduce QMC to the broader community of QMC.
+QMCPy is hosted on GitHub \cite{QMCPy2020a}. Bugs can be reported and features requested on the issues page.  Pull requests can be made by those who wish to add features.  All features are documented \cite{QMCPyDocs} using ReadtheDocs.  Doctests ensure that features work as expected. Features are illustrated by Jupyter notebooks.  \FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory Notebook \cite{QMCPyTutColab2020} is available so that those watching  can try out QMCPy themselves in real time.  \FH, \SCTC, \AO, \AS \MM, and \PR wrote a series of blogs \cite{QMCBlog} to introduce QMC to the broader community of QMC.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{QMCPy in the Future}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-QMCPy has made a good start.  Yet, much must be done to establish the critical mass of algorithms and collaborators that will make QMCPy  self-sustaining.  There are also several methodological and theoretical issues to be addressed. 
+QMCPy has made a good start.  Yet, much must be done to establish the critical mass of algorithms and collaborators that will make QMCPy  self-sustaining.  QMC theory is over 60 years old, yet there are also several methodological and theoretical issues to be addressed, especially to expand the scope of applicability of QMC.   The subsections below highlight those research problems that we will tackle.  We indicate the primary investigators and collaborators who will be addressing these problems and the time periods over which they will be addressed.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Richer LD Sequence Generators } [\FH lead, \AS] \label{sec:richLD}
+\subsection{Performance} [\FH lead, \AS, \DN, \AO{}] \label{sec:performance}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Although QMCPy already includes the most popular LD sequences and is comparable to competitors, we will implement more flexibility.  We will expand our generators to include \emph{higher-order digital sequences} \cite{Dic09a, Dic11a}, which yield  faster convergence rates  $n \to \infty$ for smooth integrands, such as those arising in computing multivariate probabilities.  Higher-order nets are not yet available in popular libraries.  [Year 1]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Richer LD Sequence Generators } [Years 1--2] \label{sec:richLD}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Although QMCPy already includes the most popular LD sequences, we will implement more flexibility.  We will expand our generators to include \emph{higher-order digital sequences} \cite{Dic09a, Dic11a}, which yield  faster convergence rates  $n \to \infty$ for smooth integrands, such as those arising in computing multivariate probabilities.  Higher-order nets are not yet available in popular libraries.
 
 For flexibility, the random digital scrambling and shifting of digital nets will be implemented so that either one or both can be turned on or off.  Linear matrix scrambling (LMS) \cite{Mat98,HonHic00a} is the simpler and more common method for randomizing digital sequences (such as the Sobol' sequence).  The original nested uniform scrambling (NUS) proposed by \AO \cite{Owe95} requires more complex code and a longer computation time, but it has a \CLT  \cite{Loh01}.  We will \emph{implement NUS} in QMCPy.
 
-Implementing a richer class of LD sequence generators combined with QMCPy's growing set of use cases will allow us to test which LD sequence generators perform better in practice, e.g., Niederreiter vs. Sobol' or LMS vs. NUS. If we detect that certain sequences or some scrambling methods substantially outperform in practice, then we will develop a \emph{theoretical description} of when that happens.
+Implementing a richer class of LD sequence generators combined with QMCPy's growing set of use cases will allow us to test which LD sequence generators perform better in practice, e.g., Niederreiter vs.\ Sobol' or LMS vs.\ NUS. If we detect that certain sequences or some scrambling methods substantially outperform in practice, then we will develop a \emph{theoretical description} of when that happens.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Speed-Up}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C or utilizing GPUs.  For example, this is done for some of the PyTorch code and the TensorFlow code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.
+
+There have been attempts at parallel implementations of LD sequences \cite{LiMul00a,OktSri02, SchUhl01,WanEtal06a,LiuHic04a}, but there is no generally accepted parallel LD software library.  There are issues with load balancing.  Does one give different processors different segments of the same LD sequence?  Or does one combine the results of several randomized LD sequences, each from a different processor?
+
+We will \emph{implement LD sequences taking advantage of multiple cores} of the same CPU.  We will also explore the possibility of GPU implementations.  Python parallel computing resources \cite{ParallelPython}, such as Numba \cite{Numba} will prove invaluable.
+
 
 \subsection{Theoretical Issues Surrounding Discrepancy and Convergence} [\FH lead, \AS]
 The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  When the original integral is defined with respect to a different distribution, as in \eqref{eq:KeisterAlt}, we must perform a variable transformation:
@@ -786,14 +805,6 @@ Bayesian optimization is a relatively unexplored QMC application area. PI \SM ha
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Enhanced Performance} [\FH lead]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C.  For example, this is done for some of the PyTorch code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.
-
-There have been attempts at parallel implementations of LD sequences \cite{LiMul00a,OktSri02, SchUhl01,WanEtal06a,LiuHic04a}, but there is no generally accepted parallel LD software library.  There are issues with load balancing.  Does one give different processors different segments of the same LD sequence?  Or does one combine the results of several randomized LD sequences, each from a different processor?
-
-We will \emph{implement LD sequences taking advantage of multiple cores} of the same CPU.  We will also explore the possibility of GPU implementations.  Python parallel computing resources \cite{ParallelPython}, such as Numba \cite{Numba} will prove invaluable.
 
 
 
