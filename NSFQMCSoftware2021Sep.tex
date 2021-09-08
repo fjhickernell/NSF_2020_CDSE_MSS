@@ -657,14 +657,20 @@ For flexibility, the random digital scrambling and shifting of digital nets will
 Implementing a richer class of LD sequence generators combined with QMCPy's growing set of use cases will allow us to test which LD sequence generators perform better in practice, e.g., Niederreiter vs.\ Sobol' or LMS vs.\ NUS. If we detect that certain sequences or some scrambling methods substantially outperform in practice, then we will develop a \emph{theoretical description} of when that happens.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Speed-Up}
+\subsubsection{Speed-Up} [Years 2--3]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C or utilizing GPUs.  For example, this is done for some of the PyTorch code and the TensorFlow code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.
+Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C or utilizing GPUs.  For example, this is done for some of the PyTorch code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.
 
-There have been attempts at parallel implementations of LD sequences \cite{LiMul00a,OktSri02, SchUhl01,WanEtal06a,LiuHic04a}, but there is no generally accepted parallel LD software library.  There are issues with load balancing.  Does one give different processors different segments of the same LD sequence?  Or does one combine the results of several randomized LD sequences, each from a different processor?
+There have been attempts at parallel implementations of LD sequences \cite{LiMul00a,OktSri02, SchUhl01,WanEtal06a,LiuHic04a}.  TensorFlow \cite{tfqf2021a} implements Sobol' sequences using GPUs.  However, parallel or GPU implementations with  load balancing.  Does one give different processors different segments of the same LD sequence?  Or does one combine the results of several randomized LD sequences, each from a different processor?  We will \emph{implement LD sequences taking advantage of multiple cores} of the same CPU.  We will also explore the possibility of GPU implementations.  Python parallel computing resources \cite{ParallelPython}, such as Numba \cite{Numba} will prove invaluable.
 
-We will \emph{implement LD sequences taking advantage of multiple cores} of the same CPU.  We will also explore the possibility of GPU implementations.  Python parallel computing resources \cite{ParallelPython}, such as Numba \cite{Numba} will prove invaluable.
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Playing Well with Other Python Libraries} [Years 1--2]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+When it makes more sense to \emph{write wrappers} around the code in other Python libraries, we will.  E.g., SciPy \cite{SCIPY} has a wealth of probability distributions, some with inverse distribution functions, which can be used for the variable transformations, $\bT$, required to obtain a QMC-friendly integral over the unit cube from the original integral (see \eqref{eq:KeisterAlt}, for an example of a $\bT$):
+\begin{equation}\label{eq:imp}
+	\mu = \int_{\reals^d} g(\bt)  \, \dif F(\bt)
+	=   \int_{[0,1]^d} f_{\bT}(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
+\end{equation}
 
 \subsection{Theoretical Issues Surrounding Discrepancy and Convergence} [\FH lead, \AS]
 The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  When the original integral is defined with respect to a different distribution, as in \eqref{eq:KeisterAlt}, we must perform a variable transformation:
