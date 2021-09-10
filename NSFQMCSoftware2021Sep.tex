@@ -2,6 +2,7 @@
 % GitHub: https://github.com/fjhickernell/NSF_CompMath2018Nov
 % Overleaf: https://www.overleaf.com/9576964687whkhbmrrvhsd
 \documentclass[11pt]{NSFamsart}
+%\usepackage[top=1in,bottom=1in,left=1in,right=1in]{geometry}
 \usepackage{latexsym,amsfonts,amsmath,amssymb,amsthm,epsfig,extdash,multirow}
 \usepackage{stackrel,tabularx,mathtools,longtable,xspace}
 \usepackage[shortlabels]{enumitem}
@@ -16,14 +17,16 @@
 \usepackage[font=small,labelfont=bf]{caption}
 
 \voffset 0.2in
+\hoffset 0in
 \textheight 9in
-\textwidth6.5in
+\textwidth6.45in
 \setlength{\oddsidemargin}{0in}
 \setlength{\evensidemargin}{0in}
-%\thispagestyle{empty} \pagestyle{empty} %to eliminate page numbers for upload
-\thispagestyle{plain} \pagestyle{plain} %to add back page numbers
-
 \headsep-0.6in
+\thispagestyle{empty} \pagestyle{empty} %to eliminate page numbers for upload
+%\thispagestyle{plain} \pagestyle{plain} %to add back page numbers
+
+
 
 
 \usepackage{minted}
@@ -666,18 +669,25 @@ There have been attempts at parallel implementations of LD sequences \cite{LiMul
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Playing Well with Other Python Libraries} [Years 1--2]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-When it makes more sense to \emph{write wrappers} around the code in other Python libraries, we will.  E.g., SciPy \cite{SCIPY} has a wealth of probability distributions, some with inverse distribution functions, which can be used for the variable transformations, $\bT$, required to obtain a QMC-friendly integral over the unit cube from the original integral (see \eqref{eq:KeisterAlt}, for an example of a $\bT$):
+When it makes more sense to \emph{write wrappers} around the code in other Python libraries to make them compatible with QMCPy, we will.  E.g., SciPy \cite{SCIPY} has a wealth of probability distributions, some with inverse distribution functions, which can be used for the variable transformations, $\bT$, required to obtain a QMC-friendly integral over the unit cube from the original integral (see \eqref{eq:KeisterAlt}, for an example of a $\bT$):
 \begin{equation}\label{eq:imp}
-	\mu = \int_{\reals^d} g(\bt)  \, \dif F(\bt)
+	\mu = \int_{\reals^d} g(\bt)  \, \lambda(\bt) \dif \bt
 	=   \int_{[0,1]^d} f_{\bT}(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
 \end{equation}
+By the same token, those methods in QMCPy that become more widely accepted will be pushed into the broad-scope libraries such as SciPy, PyTorch, and TensorFlow.
 
-\subsection{Theoretical Issues Surrounding Discrepancy and Convergence} [\FH lead, \AS]
-The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  When the original integral is defined with respect to a different distribution, as in \eqref{eq:KeisterAlt}, we must perform a variable transformation:
-\begin{equation}\label{eq:imp}
-	\mu = \int_{\reals^d} g(\bt)  \, \dif F(\bt)
-	=   \int_{[0,1]^d} f_{\bT}(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
-\end{equation}
+\subsection{Theoretical Issues Surrounding Discrepancy and Convergence} [\FH lead, \AO, \AS]
+
+\subsubsection {Variance/Variation Reduction Through Importance Sampling and Control Variates} [Years 1--3]  The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  In many cases, the original problem is posed as an integral over $\reals^d$, as on the left side of \label{eq:imp}, in which case a variable transformation must be performed to obtain an integral over $[0,1]^d$.  Note that $f_{\bT}(\bx) = g(\bT(\bx)) \lambda(\bT(\bx)) / \abs{(\bT'(\bx))}$, where $\abs{(\bT'(\bx))}$ denotes the Jacobian.  While one may choose $\bT$ such that $\lambda(\bT(\bx)) / \abs{(\bT'(\bx))} = 1$, this is not the only choice and may not be the best choice.  Choosing the transformation $\bT$ is equivalent to performing importance sampling.   
+
+The Koksma-Hlawka inequality, \eqref{eq:KH}, tells us to choose $\bT$ to make the variation, $\norm[\calf]{f_{\bT} - \mu}$, small, which corresopnds to making $f_{\bT}$ as flat as possible.  
+
+
+o Importance sampling \cite{owen2000safe} is a variance/variation reduction tool whereby one samples from a new distribution (the \textit{importance} distribution) to place greater weight where the integrand varies more. Since LD sampling at its heart is $\calu[0,1]^d$, LD sampling to mimic a different distribution can be thought of as choosing a variable transformation, $\bT$ in \eqref{eq:imp}.
+Since $\bT$ is not unique---as shown in the Keister example \eqref{eq:KeisterAlt}---the challenge lies in finding a good choice for $\bT$ that makes the variation, $\norm[\calf]{f_{\bT} - \mu}$, small. Key developments include the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and \AO's safe importance sampler \cite{owen2000safe}. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where PI \SM extends importance sampling for covariate balancing in causal inference.
+
+Control variates or de-trending \cite{Gla03} is another powerful variance/variation reduction technique. The idea is to obtain a new integrand, $\tilde{f}$, by subtracting from the original integrand a linear combination of functions (control variates) whose integrals are zero.  If $\tilde{f}$ has smaller variation/variance than the original integrand, $f$, then substantial cost savings are possible.  Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the QMC control variates papers \cite{HicEtal03, Hic17a} by \AO, PI \FH, and collaborators. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
+
 
 A perspective is that we transform our sampling points to mimic the original distribution, $F$, and work with  the error bound derived by \FH in \cite{Hic99a}:
 \begin{equation}
@@ -685,7 +695,7 @@ A perspective is that we transform our sampling points to mimic the original dis
 \end{equation}
 where the discrepancy $D(\{\bT(\bX_i)\}_{i=1}^n,F )$ is a distance between the empirical distribution of the transformed points and the distribution defining the integral.    This discrepancy is defined in terms of the reproducing kernel, $K$, for the Hilbert space $\calg$.  The advantage of this approach is that it may be easier to determine whether $g- \mu$ has a small $\calg$-norm than determine whether $f_\bT-\mu$ has a small $\calf$-norm.
 
-There is no theory to say under what conditions small  $D(\{\bX_i\}_{i=1}^n)$ implies small  $D(\{\bT(\bX_i)\}_{i=1}^n,F )$.  Indeed our recent study \cite{LiKanHic20a} suggests that this is not always the case.  We will derive conditions under which the transformation of low discrepancy points yields low discrepancy points.  This will involve assumptions on the reproducing kernel $K$ and the distribution $F$.
+There is no theory that says when small  $D(\{\bX_i\}_{i=1}^n)$ implies small  $D(\{\bT(\bX_i)\}_{i=1}^n,F )$.  Indeed our recent study \cite{LiKanHic20a} suggests that this is not always the case.  We will derive conditions under which the transformation of low discrepancy points yields low discrepancy points.  This will involve assumptions on the reproducing kernel $K$ and the distribution $F$.
 
 \FJHNote{Strong law of large numbers for lattices}
 
