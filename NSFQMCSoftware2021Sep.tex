@@ -595,7 +595,7 @@ points = gaussian_ld.gen_samples(n = 64)  #construct points
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-One must specify the integrand For computing expectations and multivariate integration as described in \eqref{eq:mean},  The original form of the problem may not be convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with zero mean and covariance $\mI/2$:
+One must specify the integrand to compute expectations and multivariate integrals as described in \eqref{eq:mean}.   The original form of the problem may not be convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with zero mean and covariance $\mI/2$:
 \begin{multline} \label{eq:KeisterAlt}
 \mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)}
 = \int_{\reals^d} \underbrace{\cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2)}_{h(\bt)}  \, \underbrace{\dif \bt}_{\text{Lebesgue}} \\
@@ -603,7 +603,7 @@ One must specify the integrand For computing expectations and multivariate integ
 \end{multline}
 Alternatively, $\mu$ can be thought of as an integral of $h$ with respect to Lebesgue measure.  QMCPy can compute the integral either way.
 
-The first way begins by constructing the Gaussian transformed LD \pyinline{TrueMeasure} instance \pyinline{gs} as discussed in the previous section.  Next, one defines the function $g$ as in \eqref{eq:KeisterAlt} above.   \pyinline{CustomFun}  constructs an $f$ for which the integral, $\mu$, can be written in terms of the uniform distribution, which the LD sequence mimics.   \pyinline{CustomFun} automatically constructs the transformation $\bT$ in \eqref{eq:KeisterAlt}.
+The first way begins by constructing the Gaussian transformed LD \pyinline{TrueMeasure} instance \pyinline{gs} as described in the previous section.  Next, one defines the function $g$ as in \eqref{eq:KeisterAlt} above.   \pyinline{CustomFun}  constructs an $f$ for which the integral, $\mu$, can be written in terms of the uniform distribution, which the LD sequence mimics.   \pyinline{CustomFun} automatically constructs the transformation $\bT$ in \eqref{eq:KeisterAlt}.
 \begin{pythoncode}
 gs = qmcpy.Gaussian(qmcpy.Sobol(5), covariance = 1/2)    #choose the Gaussian distribution
 def g(t):  #your desired integrand, calculations must be vectorized
@@ -615,10 +615,11 @@ sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)   #stopping criterion must match  poi
 solution = sc.integrate()
 \end{pythoncode}
 
-The final stage of the computation requires the construction of a \pyinline{StoppingCriterion} instance, \pyinline{sc}.  The one here is due to PI \FH and \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR) \cite{HicJim16a} and is based on Walsh transformations of the sampled integrand data.  Invoking the \pyinline{integrate} method of \pyinline{sc} yields $\hmu_n$ satisfying \eqref{eq:error_crit}.
+The final stage of the computation requires the construction of a \pyinline{StoppingCriterion} instance, \pyinline{sc}.  The one here is due to PI \FH and \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR) \cite{HicJim16a} and is based on Walsh transformations of the sampled integrand data.  Invoking the \pyinline{integrate} method of \pyinline{sc} yields $\hmu_n$ satisfying error criterion \eqref{eq:error_crit}.
 
-Another way to compute the Keister integral, see \eqref{eq:KeisterAlt}, is to think of it as an integral with respect to the Lebesgue measure.  Again \pyinline{CustomFun} makes the proper variable transformation.  The answer returned by QMCPy is the same as the first way, but this second way takes about twice the time.  The choice of variable transformation, $\bT$ that defines the  integrand $f$ from the original integrand is equivalent to importance sampling.  Automatic and adaptive importance sampling requires further research (see Sec. 3.3).
+Another way to compute the Keister integral, see \eqref{eq:KeisterAlt}, is to think of it as an integral with respect to the Lebesgue measure.  Again \pyinline{CustomFun} makes the proper variable transformation.  The answer returned by QMCPy is the same as the first way, but this second way takes about twice the time.  The choice of variable transformation, $\bT$, that defines the  integrand $f$ from the original integrand is equivalent to importance sampling.  Automatic and adaptive importance sampling requires further research (see Sec. 3.3).
 
+\iffalse
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  \subsection{QMCPy Options}
  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -637,11 +638,12 @@ Another way to compute the Keister integral, see \eqref{eq:KeisterAlt}, is to th
 
  	\item A few use cases, i.e., pre-programmed \pyinline{Integrand} instances.
  \end{itemize}
+\fi
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{QMCPy Support}
+\subsection{QMCPy Options and Support}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-QMCPy is hosted on GitHub \cite{QMCPy2020a}. Bugs can be reported and features requested on the issues page.  Pull requests can be made by those who wish to add features.  All features are documented \cite{QMCPyDocs} using ReadtheDocs.  Doctests ensure that features work as expected. Features are illustrated by Jupyter notebooks.  \FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory Notebook \cite{QMCPyTutColab2020} is available so that those watching  can try out QMCPy themselves in real time.  \FH, \SCTC, \AO, \AS \MM, and \PR wrote a series of blogs \cite{QMCBlog} to introduce QMC to the broader community of QMC.
+QMCPy supports digital nets and lattices with generating vectors from several sources.  There are also stoppoing criteria based on the work of \FH, \SCTC, and their collaborators \cite{HicEtal14a, HicJim16a, JimHic16a,RatHic19a}.  QMCPy is hosted on GitHub \cite{QMCPy2020a}. Bugs can be reported and features requested on the issues page.  Pull requests can be made by those who wish to add features.  All features are documented \cite{QMCPyDocs} using ReadtheDocs.  Doctests ensure that features work as expected. Features are illustrated by Jupyter notebooks.  \FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory Notebook \cite{QMCPyTutColab2020} is available so that those watching  can try out QMCPy themselves in real time.  \FH, \SCTC, \AO, \AS \MM, and \PR wrote  blogs \cite{QMCBlog} to introduce QMC and QMCPy to the broader community.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{QMCPy in the Future}
