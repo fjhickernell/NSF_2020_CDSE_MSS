@@ -23,8 +23,8 @@
 \setlength{\oddsidemargin}{0in}
 \setlength{\evensidemargin}{0in}
 \headsep-0.6in
-\thispagestyle{empty} \pagestyle{empty} %to eliminate page numbers for upload
-%\thispagestyle{plain} \pagestyle{plain} %to add back page numbers
+%\thispagestyle{empty} \pagestyle{empty} %to eliminate page numbers for upload
+\thispagestyle{plain} \pagestyle{plain} %to add back page numbers
 
 
 
@@ -70,6 +70,8 @@
 \newcommand{\AO}{\hyperlink{AOlink}{AO}\xspace}
 \newcommand{\MM}{\hyperlink{MMlink}{MM}\xspace}
 \newcommand{\TS}{\hyperlink{TSlink}{TS}\xspace}
+\newcommand{\IJi}{\hyperlink{IJlink}{IJ}\xspace}
+\newcommand{\TT}{\hyperlink{TTlink}{TT}\xspace}
 \newcommand{\GEF}{\hyperlink{GEFlink}{GEF}\xspace}
 \newcommand{\YD}{\hyperlink{YDlink}{YD}\xspace}
 \newcommand{\JR}{\hyperlink{JRlink}{JR}\xspace}
@@ -457,7 +459,7 @@ QMCPy will become
 The theoretical and methodological questions addressed by this project will include
 \begin{enumerate}[i.]
 \item Stopping criteria for higher-order nets;
-\item ??? \SCTCNote{TODO}
+\item ??? \SMNote{I will fill in}
 \end{enumerate}
 
 Our partners include  collaborators 
@@ -465,7 +467,7 @@ Our partners include  collaborators
 \hypertarget{DNlink}{Dirk Nuyens} (\DN,  Katholieke Universiteit Leuven)
 \hypertarget{AOlink}{Art Owen} (\AO, Stanford University), 
 \hypertarget{PRlink}{Pieterjan Robbe} (\PR, Sandia National Laboratories and Katholieke Universiteit Leuven),  
-\hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), \hypertarget{ASlink}{Aleksei Sorokin } (\AS, PhD student, Illinois Tech) as well as other students, alumni, and friends. \SMNote{think more on collaborations, specifically from Bayesian side of things. Take a look at Pieterjan's work on multi-fidelity, and on nuclear physics.}
+\hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), \hypertarget{ASlink}{Aleksei Sorokin } (\AS, PhD student, Illinois Tech), \hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke University), \hypertarget{TTlink}{Tao Tang} (\TT, PhD student, Duke University), as well as other students, alumni, and friends. \SMNote{think more on collaborations, specifically from Bayesian side of things. Take a look at Pieterjan's work on multi-fidelity, and on nuclear physics.}
 
 This project description  provides an overview of QMC, a description of QMCPy to date, our plans to grow QMCPy, the methodological and theoretical issues to be addressed,  why our team is ideal, and the broader impacts of this project.
 
@@ -544,7 +546,7 @@ To harness the efficiency of LD sampling via QMC methods, practitioners need qua
 \subsection{The Start of QMCPy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 The better existing QMC software packages include the following:
-BRODA (Sobol' sequences) \cite{BRODA20a}, GAIL (automatic stopping criteria) by \FH, \SCTC and collaborators \cite{ChoEtal20a}, LatNet Builder (generators for lattices and digital nets) \cite{LatNet}, MATLAB (Sobol' and Halton sequences) \cite{MAT9.10}, Multi-Level (Quasi-)Monte Carlo routines  by Giles \cite{GilesSoft}, Magic Point Shop (lattices and Sobol' sequences) \cite{Nuy17a}, OpenTURNS \cite{OpenTURNS}, randomized Halton sequences by \AO \cite{Owe20a}, PyTorch (scrambled Sobol' sequences) \cite{paszke2019pytorch}, QMC4PDE (QMC for elliptic PDEs with random diffusion coefficients) \cite{KuoNuy16a}, QRNG (Sobol' and Halton sequences) \cite{QRNG2020}, LD Sequences by Robbe \cite{Rob20a}, SciPy \cite{virtanen2020scipy}, Stochastic Simulation in Java \cite{SSJ}, and
+BRODA (Sobol' sequences) \cite{BRODA20a}, GAIL (automatic stopping criteria) by \FH, \SCTC and collaborators \cite{ChoEtal20a}, LatNet Builder (generators for lattices and digital nets) \cite{LatNet}, MATLAB (Sobol' and Halton sequences) \cite{MAT9.10}, Multi-Level (Quasi-)Monte Carlo routines  by Giles \cite{GilesSoft}, Magic Point Shop (lattices and Sobol' sequences) \cite{Nuy17a}, OpenTURNS \cite{OpenTURNS}, randomized Halton sequences by \AO \cite{Owe20a}, PyTorch (scrambled Sobol' sequences) \cite{paszke2019pytorch}, QMC4PDE (QMC for elliptic PDEs with random diffusion coefficients) \cite{KuoNuy16a}, QRNG (Sobol' and Halton sequences) \cite{QRNG2020}, LD Sequences by Robbe \cite{Rob20a}, SciPy \cite{virtanen2020scipy}, Stochastic Simulation in Java \cite{SSJ}, TensorFlow Quant Finance \cite{tfqf2021a}, and
 UQLab \cite{UQLab2014}.  These software packages are written in various languages.  
 Each focuses on just certain aspects of QMC, such as the generation of LD sequences, fundamental QMC algorithms, or particular applications.  Whereas SciPy is a community effort, most of the other software packages are the efforts of individual research groups.
 
@@ -711,26 +713,28 @@ Control variates or de-trending \cite{Gla03} is another powerful variance/variat
 
 \textit{We will implement these variance/variation reduction methods} in QMCPy and attempt to automate the choices of transformation and control variates. This will provide  a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications. \FJHNote{Theory?}
 
-\subsection{Multilevel QMC (MLQMC)}[\SM lead]
+\subsection{Multilevel QMC (MLQMC)}[\SM lead, \FH, \IJi, \TT]
+
+\subsubsection{Stopping Criteria for MLQMC}
+
 For high or infinite dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations.
 
-\begin{itemize}
-\item \textit{Task 3.4.1}: We will \textit{strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case. \SMNote{should we add more detail?}
-\end{itemize}
+We will \textit{strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case.
 
-An emerging and important extension of MLQMC is \textit{multi-level approximation}. The set-up is as follows. Let $f: [0,1]^d \rightarrow \mathbb{R}$ be an unknown function which we wish to infer. In many problems, $f$ cannot be directly evaluated, but there are lower-accuracy (or \textit{lower-fidelity}) representations of $f$ (call these $f_1, \cdots, f_L$) which can be observed or simulated. Here, a larger value of $l$ suggests the function $f_l$ provides a \textit{better} approximation of $f$, but also incurs a \textit{higher} cost per function evaluation. This scenario is widely encountered in physical sciences \& engineering, e.g., $f_l$ can be the numerical solution of a partial differential equation (PDE) using a certain mesh of the domain, with a larger $l$ indicating a finer choice of mesh for the solver.
+\subsubsection{MLQMC for Multi-Level Approximation}
+An emerging and important extension of MLQMC is \textit{multi-level approximation}. The set-up is as follows. Let $f: [0,1]^d \rightarrow \mathbb{R}$ be an unknown function which we wish to infer. In many problems, $f$ cannot be directly evaluated, but there are lower-accuracy (or \textit{lower-fidelity}) representations of $f$ (call these $f_1, \ldots, f_L$) which can be observed or simulated. Here, a larger value of $l$ suggests the function $f_l$ provides a \textit{better} approximation of $f$, but also incurs a \textit{higher} cost per function evaluation. This scenario is widely encountered in physical sciences \& engineering, e.g., $f_l$ can be the numerical solution of a partial differential equation (PDE) using a certain mesh of the domain, with a larger $l$ indicating a finer choice of mesh for the solver.
 
 We employ the following \textit{multi-level} approach for predicting $f$. We first evaluate the lower-fidelity functions $f_l(\cdot)$ at points $\{\bX_i^l\}_{i=1}^{n_l}$, then use the observed data to train a predictive model for $f(\cdot)$. We make use of the following multi-level prediction model from \cite{haaland2011accurate}:
 \begin{equation}
 \hat{f}_L(\bx) = \sum_{l=1}^L \mathcal{P}_l(\bx), \quad \text{where $\mathcal{P}_l(\bx)$ is a predictor for the \textit{refinement} $f_l(\bx) - f_{l-1}(\bx)$.}
 \label{eq:mlpred}
 \end{equation}
-In what follows, we will use a Gaussian process predictor \cite{santner2003design} with Mat\'ern correlation \cite{stein2012interpolation}, but this can be flexible in practice. Clearly, the placement of evaluation points $\{\bX_i^l\}_{i=1}^{n_l}$, $l=1, \cdots, L$ is paramount for maximizing predictive accuracy: these points should be well spread out over $[0,1]^d$ for each level $l$, and the sample sizes $n_1, \cdots, n_L$ should be chosen to balance predictive accuracy and evaluation cost. We show next that a careful allocation of QMC points over each level allows for provably improved predictions over the state-of-the-art. Related work on multi-level approximation \cite{kennedy2000predicting,haaland2011accurate,le2014recursive,le2015cokriging} deal largely with the modeling of the multi-level predictor, but not the design of the multi-level samples, which we investigate here.
+In what follows, we will use a Gaussian process predictor \cite{santner2003design} with Mat\'ern correlation \cite{stein2012interpolation}, but this can be flexible in practice. Clearly, the placement of evaluation points $\{\bX_i^l\}_{i=1}^{n_l}$, $l=1, \ldots, L$ is paramount for maximizing predictive accuracy: these points should be well spread out over $[0,1]^d$ for each level $l$, and the sample sizes $n_1, \ldots, n_L$ should be chosen to balance predictive accuracy and evaluation cost. We show next that a careful allocation of QMC points over each level allows for provably improved predictions over the state-of-the-art. Related work on multi-level approximation \cite{kennedy2000predicting,haaland2011accurate,le2014recursive,le2015cokriging} deal largely with the modeling of the multi-level predictor, but not the design of the multi-level samples, which we investigate here.
 
 \SMNote{The following theorem shows that ... . leverages theory from giles. quick discussion.
 
 \begin{itemize}
-\item \textit{Task 3.4.2}:
+\item \textit{Task 3.4.2}: \SMNote{mention curse of dimensionality: projectivity?}
 \end{itemize}
 }
 
@@ -768,11 +772,13 @@ Given the improvement that QMC gives for mean estimation, a natural question is 
 \subsubsection{Sobol' Indices} In sensitivity analysis, Sobol' indices, which are defined as multidimensional integrals, play an important role.  We will implement the work done by \LlAJR and others \cite{GilEtal16a,GilJim16b} to adaptively compute Sobol' indices.  \AO will encourage his PhD student, Chris Hoyt, to help.
 \fi
 
-\subsection{Big Data Analytics} [\SM lead] Big data is ubiquitous with recent advances in experimental technology and computing power. A key challenge is that learning algorithms need to be highly \textit{efficient} and \textit{scalable} to extract information for real-time decision-making. One way to make these algorithms scalable is to iteratively train the model on small batches of the data, typically sampled uniformly at random. This is used to scale up many powerful state-of-the-art machine learning algorithms, such as stochastic gradient descent (SGD, \cite{Bot2010}) and stochastic gradient boosting \cite{friedman2002stochastic}.
+\subsection{Big Data Analytics} [\SM lead]
 
-Consider SGD as an example. The objective is to minimize the loss $L(\theta;\mathcal{X}) = N^{-1} \sum_{m=1}^N l(\theta;\bX_m)$ over model parameters $\theta \in \mathbb{R}^q$, where $\mathcal{X} = \{\bX_m\}_{m=1}^N \subset \mathbb{R}^d$ is the large training data. Standard gradient descent optimization methods \cite{nocedal2006numerical} are impractical here, since they require evaluation of the full gradient $N^{-1} \sum_{m=1}^N \nabla_\theta l(\theta;\bX_m)$, which is very expensive for big data. Mini-batch SGD \cite{Bot2010} approximates this gradient using a subsample $\mathcal{X}_{s}^{[l]} \subset \mathcal{X}$ of size $n \ll N$, taken IID and uniformly from big data $\mathcal{X}$. The descent steps are then iterated until convergence:
+\subsubsection{Motivation and Preliminary Results} Big data is ubiquitous with recent advances in experimental technology and computing power. A key challenge is that learning algorithms need to be highly \textit{efficient} and \textit{scalable} to extract information for real-time decision-making. One way to make these algorithms scalable is to iteratively train the model on small batches of the data, typically sampled uniformly at random. This is used to scale up many powerful state-of-the-art machine learning algorithms, such as stochastic gradient descent (SGD, \cite{Bot2010}) and stochastic gradient boosting \cite{friedman2002stochastic}.
+
+\sloppypar Consider SGD as an example. The objective is to minimize the loss $L(\theta;\mathcal{X}) = N^{-1} \sum_{m=1}^N l(\theta;\bX_m)$ over model parameters $\theta \in \mathbb{R}^q$, where $\mathcal{X} = \{\bX_m\}_{m=1}^N \subset \mathbb{R}^d$ is the large training data. Standard gradient descent optimization methods \cite{nocedal2006numerical} are impractical here, since they require evaluation of the full gradient $N^{-1} \sum_{m=1}^N \nabla_\theta l(\theta;\bX_m)$, which is very expensive for big data. Mini-batch SGD \cite{Bot2010} approximates this gradient using a subsample $\mathcal{X}_{s}^{[l]} \subset \mathcal{X}$ of size $n \ll N$, taken IID and uniformly from big data $\mathcal{X}$. The descent steps are then iterated until convergence:
 \begin{equation}\label{eq:sgdopt}
-\theta^{[l+1]} \leftarrow \theta^{[l]} - \eta \left( \frac{1}{n} \sum_{\bX \in \mathcal{X}_{s}^{[l]}} l(\theta;\bX)\right) , \quad l = 1, 2, \cdots,
+\theta^{[l+1]} \leftarrow \theta^{[l]} - \eta \Biggl( \frac{1}{n} \sum_{\bX \in \mathcal{X}_{s}^{[l]}} l(\theta;\bX)\Biggr) , \quad l = 1, 2, \ldots,
 \end{equation}
 where $\eta$ is the gradient descent step size. Mini-batch SGD is widely used for scalable training of neural networks and deep learning models with big data \citep{srivastava2014dropout}.
 
@@ -786,23 +792,26 @@ Let $\mathcal{X} = \{\bX_m\}_{m=1}^N$ be any set of points on $[0,1]^d$ (the ``b
 \end{theorem}
 \noindent This theorem guarantees that, under mild assumptions on loss $l$, there exists a LD subsample of the big data which, when used within SGD, converges a noise ball of radius $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$ around the global optimum $\theta^*$. Thus, with a carefully chosen LD subsample, the proposed ``LD-batch SGD'' can yield \textit{improved} optimization over standard mini-batch SGD, which converges to a \textit{larger} noise ball of radius $\mathcal{O}(n^{-1})$. Viewed another way, this suggests that LD-batch SGD can yield comparable performance to mini-batch SGD with much less optimization iterations, thereby providing \textit{large computational savings for big data analysis}.
 
-We will tackle the following tasks to flesh out a comprehensive methodological framework for LD-batch SGD, implementable within QMCPy:
-\begin{itemize}
-\item \textit{Task 3.5.1 - Optimization}: While the existence of a LD subset is promising, one challenge lies in finding such subset efficiently. We will find this subset the following optimization approach. Define the so-called ``data kernel'', defined using the big data $\mathcal{X} = \{\bX_m\}_{m=1}^N$:
-\begin{equation}
-K_{\rm data}(\bx,\by) = \sum_{\mathbf{k} \in \mathbb{Z}^d \setminus \mathbf{0}} \lambda_{\mathbf{k}} \phi_{\mathbf{k}}(\bx)\overline{\phi_{\mathbf{k}}(\by)}, \quad \phi_{\mathbf{k}}(\bx) = e^{2 \pi i \mathbf{k}^T\bx} - b_{\mathbf{k}}, \quad b_{\mathbf{k}} = \frac{1}{N} \sum_{m=1}^N e^{2 \pi i \mathbf{k}^T\bx_m}.
-\end{equation}
-Here, the coefficients $b_{\mathbf{k}}$ can be efficiently computed via non-linear fast Fourier transform \citep{wahls2015fast}. This data kernel $K_{\rm data}$ has two appealing properties. We can show that the subsample $\mathcal{X}_s$ that minimizes the kernel discrepancy with $K_{\rm data}$ indeed yields the improved optimization rate in Theorem \ref{thm:ldsgd}. We can also show that, with all coefficients computed, this kernel discrepancy can be evaluated in $\mathcal{O}(n^2)$ work, \textit{independent} of $N$ (the big data sample size). We will develop efficient and provably correct algorithms for optimizing this data kernel discrepancy, leveraging recent developments in accelerated gradient descent \citep{jin2018accelerated} and randomized algorithms \citep{mahoney2011randomized}.
+We will tackle the following tasks to flesh out a comprehensive methodological framework for LD-batch SGD, implementable within QMCPy.
+\subsubsection{Optimization for LD-batch SGD} 
 
-\item \textit{Task 3.5.2 - Implementation}: We will provide an efficient and well-documented implementation of LD-batch SGD within QMCPy. Given recent breakthroughs in high-performance and distributed computing, we will develop scalable algorithms which exploit such technologies for efficient LD-batch subsampling. We will also provide specific implementations of LD-batch SGD for popular learning models (e.g., regression, neural nets, Gaussian processes) on QMCPy.
-\end{itemize}   
+While the existence of a LD subset is promising, one challenge lies in finding such subset efficiently. We will find this subset the following optimization approach. Define the so-called ``data kernel'', defined using the big data $\mathcal{X} = \{\bX_m\}_{m=1}^N$:
+\begin{equation}
+K_{\rm data}(\bx,\by) = \sum_{\bk \in \mathbb{Z}^d \setminus \mathbf{0}} \lambda_{\bk} \phi_{\bk}(\bx)\overline{\phi_{\bk}(\by)}, \quad \phi_{\bk}(\bx) = e^{2 \pi i \bk^T\bx} - b_{\bk}, \quad b_{\bk} = \frac{1}{N} \sum_{m=1}^N e^{2 \pi i \bk^T\bX_m}.
+\end{equation}
+Here, the coefficients $b_{\bk}$ can be efficiently computed via non-linear fast Fourier transform \citep{wahls2015fast}. This data kernel $K_{\rm data}$ has two appealing properties. We can show that the subsample $\mathcal{X}_s$ that minimizes the kernel discrepancy with $K_{\rm data}$ indeed yields the improved optimization rate in Theorem \ref{thm:ldsgd}. We can also show that, with all coefficients computed, this kernel discrepancy can be evaluated in $\mathcal{O}(n^2)$ work, \textit{independent} of $N$ (the big data sample size). We will develop efficient and provably correct algorithms for optimizing this data kernel discrepancy, leveraging recent developments in accelerated gradient descent \citep{jin2018accelerated} and randomized algorithms \citep{mahoney2011randomized}.
+
+\subsubsection{Implementation within QMCPy}
+
+We will provide an efficient and well-documented implementation of LD-batch SGD within QMCPy. Given recent breakthroughs in high-performance and distributed computing, we will develop scalable algorithms which exploit such technologies for efficient LD-batch subsampling. We will also provide specific implementations of LD-batch SGD for popular learning models (e.g., regression, neural nets, Gaussian processes) on QMCPy.
+
 % \textit{We will implement these existing methods} in QMCPy, and explore their effectiveness in a suite of big data problems. There is little work on which data squashing procedure is most appropriate for SGD optimization. Our preliminary results show that a LD subsample exists for \textit{any} big dataset $\mathcal{X} \subset \mathbb{R}^d$ that achieves a noise ball radius of $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$. We will investigate this further and implement this in QMCPy.
 
-\subsection{Posterior Sampling for Expensive Bayesian Models} [\SM lead] Bayesian methods have become popular in recent decades, primarily due to their ability to fit complicated models via sampling \cite{GelEtal13}. Such methods rely on MCMC sampling for exploration of the posterior distribution $F$, which captures information on model parameters. However, with the rise of big data and complex learning models, the posterior $F$ is often \textit{expensive} to evaluate, thus making MCMC sampling very \textit{time-consuming} \cite{joseph2015sequential}. This is compounded by the highly correlated nature of MCMC samples, which reduces the information provided by each sample \citep{link2012thinning}. For such expensive Bayesian problems, a LD posterior sampling method can greatly improve model learning given a time budget.
+\subsection{Posterior Sampling for Expensive Bayesian Models} [\SM lead, \FH, \TT] \SMNote{add collaborators} Bayesian methods have become popular in recent decades, primarily due to their ability to fit complicated models via sampling \cite{GelEtal13}. Such methods rely on MCMC sampling for exploration of the posterior distribution $F$, which captures information on model parameters. However, with the rise of big data and complex learning models, the posterior $F$ is often \textit{expensive} to evaluate, thus making MCMC sampling very \textit{time-consuming} \cite{joseph2015sequential}. This is compounded by the highly correlated nature of MCMC samples, which reduces the information provided by each sample \citep{link2012thinning}. For such expensive Bayesian problems, a LD posterior sampling method can greatly improve model learning given a time budget.
 
 % While the QMC Metropolis method by \cite{OweTri05a} speeds up the convergence of samples, it still requires many posterior evaluations. We want method which can provide LD sampling with limited posterior evaluations here.
 
-One approach for LD posterior sampling is to minimize the kernel discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ in \eqref{eq:kerdisc} for samples $\{\bX_i\}_{i=1}^n$. This is known as \textit{kernel herding} \citep{chen2012super}. Kernel herding has a key limitation: the discrepancy, $D(\{\bX_i\}_{i=1}^n, F)$, requires an analytic form for the integral $\int K(t,\bX_i) \, \dif F(t)$, which is unattainable for complex posteriors $F$. To address this, \cite{chen2018stein} proposes the \textit{Steinized kernel}:
+One approach for LD posterior sampling is to minimize the kernel discrepancy $D(\{\bX_i\}_{i=1}^n, F)$ in \eqref{eq:kerdisc} for samples $\{\bX_i\}_{i=1}^n$. This is known as \textit{kernel herding} \citep{chen2012super}. Kernel herding has a key limitation: the discrepancy, $D(\{\bX_i\}_{i=1}^n, F)$, requires an analytic form for the integral $\int K(t,\bX_i) \, \dif F(t)$, which is unattainable for complex posteriors $F$. To address this, \cite{chen2018stein} proposed the \textit{Steinized kernel}:
 \begin{multline}\label{eq:stein}
 K_{\rm ST}(\bt,\bx) = \nabla_\bt \cdot \nabla_\bx K(\bt,\bx) + \nabla_\bt K(\bt,\bx) \cdot \nabla_\bx \log \dif F(\bx)\\
  + \nabla_\bx K(\bt,\bx) \nabla_\bt \log \dif F(\bt) + K(\bt,\bx) \nabla_\bt \log \dif F(\bt) \cdot \nabla_\bx \log \dif F(\bx),
@@ -832,7 +841,7 @@ https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 \subsection{Uncertainty Quantification}
 Uncertainty quantification is the science of quantifying, characterizing, tracing, and managing uncertainty in computational and real worlds systems \cite{smartuq, Smi14a}. Since data from such systems are typically expensive to simulate or collect, a key focus in this area is the sampling design for data collection, which can greatly benefit from QMC methods.
 
-A recent application of QMC for uncertainty quantification is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}. This has broad applications in engineering problems, e.g., fluid flow through a porous medium. QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package. The PI \SM has done extensive work on uncertainty quantification, for rocket engine design \cite{li2017two,li2018uncertainty,chang2019kernel,yeh2018common,mak2018efficient}, neuroscience modeling \cite{wang2020uncertainty}, and active learning \cite{mak2018maximum}. We will explore the performance of LD sampling for these applications.
+A recent application of QMC for uncertainty quantification is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}. This has broad applications in engineering problems, e.g., fluid flow through a porous medium. \SMNote{emphasize win here} QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package. The PI \SM has done extensive work on uncertainty quantification, for rocket engine design \cite{li2017two,li2018uncertainty,chang2019kernel,yeh2018common,mak2018efficient}, neuroscience modeling \cite{wang2020uncertainty}, and active learning \cite{mak2018maximum}. We will explore the performance of LD sampling for these applications.
 \fi
 
 \iffalse 
@@ -858,9 +867,9 @@ Although large-scale software packages cannot adopt every new QMCPy wrinkle, QMC
 
 By making QMC methods easily accessible, QMCPy will \emph{introduce new application areas} to the benefits of LD sampling.  This will lead to \emph{LD sampling being incorporated} into the software packages used by practitioners in those disciplines. This includes, e.g., PyMC3 \citep{salvatier2016probabilistic} and PyStan \citep{stan2017pystan}, which are popular Python packages for Bayesian statistical modeling and probabilistic machine learning. The accessibility of state-of-the-art QMC methods will also spur on novel advancements in a diverse range of disciplines. We will focus specifically on three important application areas as proving grounds for QMCPy:
 \begin{enumerate}[(i)]
-\item \textit{Uncertainty Quantification (UQ)}: UQ is the science of quantifying, characterizing, tracing, and managing uncertainty in computational and physical systems \cite{smartuq, Smi14a}. Since data from such systems are typically expensive to collect, a key focus in UQ is the sampling design for data collection, which can greatly benefit from QMC methods. A recent application of QMC for UQ is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}. This has broad applications in engineering problems, e.g., fluid flow through a porous medium. QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package. The PI \SM has done extensive work on uncertainty quantification, for rocket engine design \cite{li2017two,li2018uncertainty,chang2019kernel,yeh2018common,mak2018efficient}, neuroscience modeling \cite{wang2020uncertainty}, and active learning \cite{mak2018maximum}, we will explore the performance of LD sampling for these applications.
-\item \textit{Bayesian Computation}: \SMNote{need? fill in a few sentences.}
+\item \textit{Uncertainty Quantification (UQ)}: UQ is the science of quantifying, characterizing, tracing, and managing uncertainty in computational and physical systems \cite{smartuq, Smi14a}. Since data from such systems are typically expensive to collect, a key focus in UQ is the sampling design for data collection \SMNote{simulation?}, which can greatly benefit from QMC methods. A recent application of QMC for UQ is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}. This has broad applications in engineering problems, e.g., fluid flow through a porous medium. \SMNote{emphasize win here} QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package. The PI \SM has done extensive work on uncertainty quantification, for rocket engine design \cite{li2017two,li2018uncertainty,chang2019kernel,yeh2018common,mak2018efficient}, neuroscience modeling \cite{wang2020uncertainty}, and active learning \cite{mak2018maximum}, we will explore the performance of LD sampling for these applications.
 \item \textit{Machine Learning}: \SMNote{add few sentences before} Image rendering is a visually stunning application of QMC \cite{Keller2013a}.  QMCPy will implement a simple example to showcase the advantage of LD over IID sampling.
+\item \textit{Bayesian Modeling}: \SMNote{need? fill in a few sentences.}
 \item \textit{Probabilistic Numerics}: \PN assumes that the input function or solution of a mathematical problem is an instance of a random process.  This allows one to apply a probabilistic approach to construct credible intervals for the solution. PI \FH along with his former PhD student \JR developed a fast Bayesian cubature method \cite{RatHic19a} using lattice LD sampling.  Our collaborator \TS is a \PN expert.
 
 Bayesian optimization applies this \PN perspective to finding the minimum of a black-box objective function.  The next locations to sample the objective function are chosen as the optimum of an acquisition function, which takes the form of a $d$-variate integral, where $d$ is the number of future points to be sampled times the dimension of those points.  \MM illustrates the advantages of LD sampling for computing an acquisition function in his blog \cite[qEI with QMCPy]{QMCBlog}. We will demonstrate the \emph{efficacy of LD sampling} in Bayesian optimization and other \PN problems. The PI \SM has worked on a range of Bayesian optimization problems, including several recent papers \cite{mak2019analysis,chen2019hierarchical}. 
