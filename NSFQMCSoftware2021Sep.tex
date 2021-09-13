@@ -653,7 +653,7 @@ QMCPy has made a good start.  Yet, much must be done to establish the critical m
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Performance} [\FH lead, \AS, \DN, \AO{}] \label{sec:performance}
+\subsection{Performance} [\FH lead, \SCTC, \AS, \DN, \AO{}] \label{sec:performance}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -687,11 +687,8 @@ By the same token, those methods in QMCPy that become more widely accepted will 
 
 \subsubsection {Variance/Variation Reduction Through Importance Sampling and Control Variates} [Years 1--3]  The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  In many cases, the original problem is posed as an integral over $\reals^d$, as on the left side of \eqref{eq:imp}, in which case a variable transformation must be performed to obtain an integral over $[0,1]^d$.  Note that $f_{\bT}(\bx) = g(\bT(\bx)) \lambda(\bT(\bx)) / \abs{(\bT'(\bx))}$, where $\abs{(\bT'(\bx))}$ denotes the Jacobian.  While one may choose $\bT$ such that $\lambda(\bT(\bx)) / \abs{(\bT'(\bx))} = 1$, this is not the only choice and may not be the best choice.  Choosing the transformation $\bT$ is equivalent to performing importance sampling.   
 
-The Koksma-Hlawka inequality, \eqref{eq:KH}, tells us to choose $\bT$ to make the variation, $\norm[\calf]{f_{\bT} - \mu}$, small, which corresponds to making $f_{\bT}$ as flat as possible.  
-
-
-o Importance sampling \cite{owen2000safe} is a variance/variation reduction tool whereby one samples from a new distribution (the \textit{importance} distribution) to place greater weight where the integrand varies more. Since LD sampling at its heart is $\calu[0,1]^d$, LD sampling to mimic a different distribution can be thought of as choosing a variable transformation, $\bT$ in \eqref{eq:imp}.
-Since $\bT$ is not unique---as shown in the Keister example \eqref{eq:KeisterAlt}---the challenge lies in finding a good choice for $\bT$ that makes the variation, $\norm[\calf]{f_{\bT} - \mu}$, small. Key developments include the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and \AO's safe importance sampler \cite{owen2000safe}. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where PI \SM extends importance sampling for covariate balancing in causal inference.
+The Koksma-Hlawka inequality, \eqref{eq:KH}, tells us to choose $\bT$ to make the variation, $\norm[\calf]{f_{\bT} - \mu}$, small, which corresponds to making $f_{\bT}$ as flat as possible.  As illustrated in the the Keister example \eqref{eq:KeisterAlt} finding a better $f_{\bT}$ may significantly reduce the computation time.  We will \emph{implement adaptive importance sampling}, drawing on the work of  
+\AO \cite{owen2000safe} for safe importance sampling, the  annealed importance sampler \cite{neal2001annealed}, and the bridge sampler \cite{gelman1998simulating}.  Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering.  In \cite{huling2020energy}, PI \SM extends importance sampling for covariate balancing in causal inference.  \FH's PhD student, \KZ, has shown how importance sampling with QMC can beat MCMC in computing the posterior means of logistic regression coefficients \cite{Zha21a}.  We will also determine \emph{theoretically and empirically} under what conditions adaptive importance sampling makes \emph{significant improvement in computation times.}
 
 Control variates or de-trending \cite{Gla03} is another powerful variance/variation reduction technique. The idea is to obtain a new integrand, $\tilde{f}$, by subtracting from the original integrand a linear combination of functions (control variates) whose integrals are zero.  If $\tilde{f}$ has smaller variation/variance than the original integrand, $f$, then substantial cost savings are possible.  Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the QMC control variates papers \cite{HicEtal03, Hic17a} by \AO, PI \FH, and collaborators. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
 
@@ -707,12 +704,6 @@ There is no theory that says when small  $D(\{\bX_i\}_{i=1}^n)$ implies small  $
 
 \FJHNote{Strong law of large numbers for lattices}
 
-
-\subsection{Variance/Variation Reduction Through Importance Sampling and Control Variates} [\FH lead]
-The QMC error bound in \eqref{eq:KH} contains the factor $\norm[\calf]{f - \mu}$, which may be called the \emph{variation} of the integrand.  For randomized QMC, the mean squared error of $\hmu_n$ is its variance.  Substantial error reduction can sometimes be obtained by rewriting the integral to reduce the variation or variance.  Examples include rare event modeling \cite{rubino2009rare} and Bayesian inference \cite{salmeron2000importance}.
-
-Importance sampling \cite{owen2000safe} is a variance/variation reduction tool whereby one samples from a new distribution (the \textit{importance} distribution) to place greater weight where the integrand varies more. Since LD sampling at its heart is $\calu[0,1]^d$, LD sampling to mimic a different distribution can be thought of as choosing a variable transformation, $\bT$ in \eqref{eq:imp}.
-Since $\bT$ is not unique---as shown in the Keister example \eqref{eq:KeisterAlt}---the challenge lies in finding a good choice for $\bT$ that makes the variation, $\norm[\calf]{f_{\bT} - \mu}$, small. Key developments include the annealed importance sampler \cite{neal2001annealed}, the bridge sampler \cite{gelman1998simulating}, and \AO's safe importance sampler \cite{owen2000safe}. Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering, and \cite{huling2020energy}, where PI \SM extends importance sampling for covariate balancing in causal inference.
 
 Control variates or de-trending \cite{Gla03} is another powerful variance/variation reduction technique. The idea is to obtain a new integrand, $\tilde{f}$, by subtracting from the original integrand a linear combination of functions (control variates) whose integrals are zero.  If $\tilde{f}$ has smaller variation/variance than the original integrand, $f$, then substantial cost savings are possible.  Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the QMC control variates papers \cite{HicEtal03, Hic17a} by \AO, PI \FH, and collaborators. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
 
