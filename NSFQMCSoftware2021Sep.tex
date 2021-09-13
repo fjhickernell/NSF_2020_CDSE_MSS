@@ -412,9 +412,6 @@ Plans for data management and sharing of the products of research, including pre
 
 For proposals that include funding to an International Branch Campus of a U.S. IHE or to a foreign organization (including through use of a subaward or consultant arrangement), the proposer must provide the requisite explanation/justification in the project description. See Chapter I.E for additional information on the content requirements.
 
-\fi
-
-\iffalse
 Ideas:
 
 Theory for higher-order nets
@@ -424,8 +421,16 @@ Error bounds with less emphasis on the design, e.g.,
 \fi
 
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\setlength{\leftmargini}{2.5ex}
 
 \begin{center}
@@ -446,33 +451,33 @@ Quasi-Monte Carlo for Efficient Simulation
 Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points with low discrepancy (LD) points to improve computational efficiency.  Given rapid developments in science and engineering, the spectrum of use cases for QMC needs to be broadened, and crucial methodological and theoretical issues must be addressed.  We, \hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (\SM, PI from Duke U), \hypertarget{YDlink}{Yuhan Ding} (\YD, co-PI from Illinois Tech), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (\SCTC, Senior Personnel) propose to grow our toddler QMC software library QMCPy \cite{QMCPy2020a} into a mature library embraced by the community of QMC researchers and benefiting an expanding base of QMC practitioners.  As we grow QMCPy, we will address several unresolved methodological and theoretical questions core to QMC and inspired by new use cases.  
 
 QMCPy will become
-\begin{enumerate}[i.]
+\begin{enumerate}[i)]
     \item A tightly-connected suite of the best QMC software from multiple sources:
     \begin{enumerate}[a)]
-        \item A variety of high performance LD sequence generators (\cref{sec:richLD}),
-        \item QMC algorithms, including automatic stopping criteria, adaptive variance/variation reduction (\cref{sec:varred}), multilevel algorithms (\cref{sec:multilevel}), big data analytics (\cref{sec:bigdata}), and Bayesian computation (\cref{sec:bayes}), and
-        \item Illuminating use cases in timely applications, including machine learning, uncertainty quantification, Bayesian methodology, quantitative finance, and other fields (\cref{sec:scopeapplication});
+        \item A variety of high performance LD sequence generators (\cref{sec:richLD,sec:speedup}),
+        \item QMC algorithms, including automatic stopping criteria, adaptive variance/variation reduction (\cref{sec:imp}), multilevel algorithms (\cref{sec:multilevel}), big data analytics (\cref{sec:bigdata}), and Bayesian computation (\cref{sec:bayes}), and
+        \item Illuminating use cases in  areas including machine learning, uncertainty quantification, Bayesian methodology, quantitative finance, and other fields (\cref{sec:scopeapplication});
     \end{enumerate}
-    \item A user-friendly, consistent interface to the contributions of many scholars, owned and cultivated by our QMC community;
-    \item A proving ground for new QMC ideas, which will migrate to other popular packages; and
-    \item An easy on-ramp for those who are new to QMC.
+    \item A user-friendly, consistent interface to the contributions of many scholars, owned and cultivated by our QMC community and an easy on ramp for new QMC users (\cref{sec:provingground}); and
+    \item \sloppypar A proving ground for new QMC ideas, which will migrate to other popular packages (\cref{sec:playwell,sec:provingground,sec:goodpractice}).
 \end{enumerate}
 
 The theoretical and methodological questions addressed by this project will include
-\begin{enumerate}[i.]
-\item Attaining $\Order(n^{-3/2})$ convergence with scrambled nets for integrals over $\reals^d$;
-\item Stopping criteria for higher-order nets and for multilevel QMC cubature;
-\item QMC methods for multilevel function approximation;
-\item LD subsampling methods for big data analytics; and
+\begin{enumerate}[i)]
+\item Reliable adaptive importance for QMC cubature (\cref{sec:imp});
+\item $\Order(n^{-3/2})$ convergence with scrambled nets for integrals over $\reals^d$ (\cref{sec:threehalves});
+\item Stopping criteria for higher-order digital net and multilevel QMC cubatures (\cref{sec:threehalves});
+\item Multilevel QMC function approximation;
+\item LD subsampling methods for big data analytics to decrease computational cost; and
 \item LD posterior sampling methods for expensive Bayesian modeling problems.
 \end{enumerate}
 
-Our partners include collaborators 
+Our collaborators include  
 \hypertarget{MMlink}{Mike McCourt} (\MM, SigOpt), 
 \hypertarget{DNlink}{Dirk Nuyens} (\DN,  Katholieke Universiteit Leuven)
 \hypertarget{AOlink}{Art Owen} (\AO, Stanford University), 
 \hypertarget{PRlink}{Pieterjan Robbe} (\PR, Sandia National Laboratories and Katholieke Universiteit Leuven),  
-\hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), \hypertarget{ASlink}{Aleksei Sorokin } (\AS, PhD student, Illinois Tech), \hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke University), \hypertarget{TTlink}{Tao Tang} (\TT, PhD student, Duke University), as well as other students, alumni, and friends. 
+\hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), \hypertarget{ASlink}{Aleksei Sorokin} (\AS, PhD student, Illinois Tech), \hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke University), \hypertarget{TTlink}{Tao Tang} (\TT, PhD student, Duke University), as well as other students, alumni, and friends. 
 
 This project description  provides an overview of QMC, a description of QMCPy to date, our plans to grow QMCPy, the key methodological and theoretical issues to be addressed,  why our team is ideal, and the broader impacts of this project.
 
@@ -512,7 +517,7 @@ One wants to choose $\bX_1, \ldots, \bX_n$ to make
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Efficiency Benefits from LD Sampling} \label{sec:eff_benefits}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The root mean squared error of the sample mean, $\hmu_n$ when IID samples are used is
+The root mean squared error (RMSE) of the sample mean, $\hmu_n$ when IID samples are used is
 $\std(Y)/\sqrt{n}$, where $\std(Y) = \sqrt{\int_{\cube} \abs{f(\bx) - \mu}^2 \, \dif \bx}$.  The smoothness required of $f$ is minimal, and the error bound has no ``curse of dimensionality'' assuming $\std(Y)$ does not explode with increasing dimension.  However, the convergence rate of $\Order(n^{-1/2})$ is modest, translating into a computational cost of $\Order(\varepsilon^{-2})$ to satisfy error criterion \eqref{eq:error_crit}.
 
 
@@ -638,7 +643,7 @@ QMCPy has made a good start.  Yet, much must be done to establish the critical m
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Performance} [\FH lead, \SCTC, \AS, \DN, \AO{}] \label{sec:performance}
+\subsection{Performance} [\FH lead, \SCTC, \YD, \AS, \DN, \AO{}] \label{sec:performance}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -652,14 +657,14 @@ For flexibility, the random digital scrambling and shifting of digital nets will
 Implementing a richer class of LD sequence generators combined with QMCPy's growing set of use cases will allow us to test which LD sequence generators perform better in practice, e.g., Niederreiter vs.\ Sobol' or LMS vs.\ NUS. If we detect that certain sequences or some scrambling methods substantially outperform in practice, then we will develop a \emph{theoretical description} of when that happens.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Speed-Up} [Years 2--3]
+\subsubsection{Speed-Up} [Years 2--3] \label{sec:speedup}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C or utilizing GPUs.  For example, this is done for some of the PyTorch code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.
 
 There have been attempts at parallel implementations of LD sequences \cite{LiMul00a,OktSri02, SchUhl01,WanEtal06a,LiuHic04a}.  TensorFlow \cite{tfqf2021a} implements Sobol' sequences using GPUs.  However, parallel or GPU implementations with load balancing. \SCTCNote{last sentence unclear} Does one give different processors different segments of the same LD sequence?  Or does one combine the results of several randomized LD sequences, each from a different processor?  We will \emph{implement LD sequences taking advantage of multiple cores} of the same CPU.  We will also explore the possibility of GPU implementations.  Python parallel computing resources \cite{ParallelPython} such as Numba \cite{Numba} will prove invaluable.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Playing Well with Other Python Libraries} [Years 1--2]
+\subsubsection{Playing Well with Other Python Libraries} [Years 1--2] \label{sec:playwell}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 When it makes more sense to \emph{write wrappers} around the code in other Python libraries to make them compatible with QMCPy, we will.  E.g., SciPy \cite{SCIPY} has a wealth of probability distributions, some with inverse distribution functions, which can be used for the variable transformations, $\bT$, required to obtain a QMC-friendly integral over the unit cube from the original integral (see \eqref{eq:KeisterAlt}, for an example of a $\bT$):
 \begin{equation} \label{eq:imp}
@@ -668,28 +673,41 @@ When it makes more sense to \emph{write wrappers} around the code in other Pytho
 \end{equation}
 By the same token, those methods in QMCPy that become more widely accepted will be pushed into the broad-scope libraries such as SciPy, PyTorch, and TensorFlow.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Theoretical Issues Surrounding Discrepancy and Convergence} [\FH lead, \AO, \AS{}]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Variance/Variation Reduction Through Importance Sampling} \label{sec:varred} [Years 1--3]  The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  In many cases, the original problem is posed as an integral over $\reals^d$, as on the left side of \eqref{eq:imp}, in which case a variable transformation must be performed to obtain an integral over $[0,1]^d$.  Note that $f_{\bT}(\bx) = g(\bT(\bx)) \lambda(\bT(\bx)) \abs{\bT'(\bx)}$, where $\abs{\bT'(\bx)}$ denotes the Jacobian.  One may also interpret $\abs{\bT'(\bx)}$ as $1/\varrho(\bT(\bx))$, where $\varrho$ is the density of the random variable $\bT(\bX)$ with $\bX \sim \calu[0,1]^d$.  While in some cases one may choose $\bT$ such that $\varrho(\bt) = \lambda(\bt)$, this is not the only choice and may not be the best choice.  Choosing the transformation $\bT$ is equivalent to performing importance sampling.   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Variance/Variation Reduction Through Importance Sampling} \label{sec:imp} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[Years 1--3]  The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  In many cases, the original problem is posed as an integral over $\reals^d$, as on the left side of \eqref{eq:imp}, in which case a variable transformation must be performed to obtain an integral over $[0,1]^d$.  Note that $f_{\bT}(\bx) = g(\bT(\bx)) \lambda(\bT(\bx)) \abs{\bT'(\bx)}$, where $\abs{\bT'(\bx)}$ denotes the Jacobian.  One may also interpret $\abs{\bT'(\bx)}$ as $1/\varrho(\bT(\bx))$, where $\varrho$ is the density of the random variable $\bT(\bX)$ with $\bX \sim \calu[0,1]^d$.  While in some cases one may choose $\bT$ such that $\varrho(\bt) = \lambda(\bt)$, this is not the only choice and may not be the best choice.  Choosing the transformation $\bT$ is equivalent to performing importance sampling.   
 
 The Koksma-Hlawka inequality, \eqref{eq:KH}, tells us to choose $\bT$ to make the variation, $\norm[\calf]{f_{\bT} - \mu}$, small, which corresponds to making $f_{\bT}$ as flat as possible.  As illustrated in the the Keister example \eqref{eq:KeisterAlt} finding a better $f_{\bT}$ may significantly reduce the computation time.  We will \emph{implement adaptive importance sampling}, drawing on the work of  
 \AO \cite{owen2000safe} for safe importance sampling, the  annealed importance sampler \cite{neal2001annealed}, and the bridge sampler \cite{gelman1998simulating}.  Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering.  In \cite{huling2020energy}, PI \SM extends importance sampling for covariate balancing in causal inference.  \FH's PhD student, \KZ, has shown how importance sampling with QMC can beat MCMC in computing the posterior means of logistic regression coefficients \cite{Zha21a}.  We will also determine \emph{theoretically and empirically} under what conditions adaptive importance sampling makes \emph{significant improvement in computation times.}
 
-\subsubsection{Attaining $\Order(n^{-3/2})$ Convergence for Scrambled Nets} [Years 2--3] \AO showed that for moderately smooth integrands, $f$, integrated over the unit cube, the root mean square error using randomly scrambled digital nets is $\Order(n^{-3/2})$ \cite{Owe97}.  This work was extended by \FH and collaborators \cite{HicYue00,HeiHicYue02a}.  However, when relatively tame integrands, $g$, integrated with respect to the multivariate normal distribution, are transformed in the natural way as in \eqref{eq:imp}, singularities are introduced into $f_{\bT}$, which destroys the $\Order(n^{-3/2})$ convergence.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Attaining $\Order(n^{-3/2})$ Convergence for Scrambled Nets} \label{sec:threehalves}
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[Years 2--3] \AO showed that for moderately smooth integrands, $f$, integrated over the unit cube, the RMSE using randomly scrambled digital nets is $\Order(n^{-3/2})$ \cite{Owe97}.  \FH and collaborators extended this work \cite{HicYue00,HeiHicYue02a}.  However, this convergence rate does not always hold up when the original integrand is over $\reals^d$ because the natural transformation, $\bT$,  in \eqref{eq:imp} and \cref{sec:imp} introduces singularities into $f_{\bT}$.
 
-Consider the example of 
+Consider the following two integrals:
 \begin{equation} \label{eq:getthreehalves}
-	g(\bt) = \exp(t_1 + 0.0625 t_2 + 0.0123t_3), \qquad \mu_1 = \int_{[0,1]^3} g(\bt) \, \dif \bt, \qquad \mu_2 = \int_{\reals^3} g(\bt) \phi(\bt) \, \dif \bt, 
+	\mu_1 = \int_{[0,1]^3} g(\bt) \, \dif \bt, \quad \mu_2 = \int_{\reals^3} g(\bt) \phi(\bt) \, \dif \bt, \qquad \text{where } g(\bt) = \exp(t_1 + 0.0625 t_2 + 0.0123t_3), 
 \end{equation}
 \begin{wrapfigure}{r}{0.65\textwidth}
 	\centering
 	\includegraphics[width = 0.32\textwidth] {ProgramsImages/ConvergeRateStrat_exp_uniform_natural_d3_m20.eps}
 	\includegraphics[width = 0.32\textwidth] {ProgramsImages/ConvergeRateStrat_exp_stdGauss_logistic_d3_m20.eps}
-	\caption{The root mean square error for scrambled Sobol' cubature for integrals $\mu_1$ (left) and $\mu_2$ (right) defined in \eqref{eq:getthreehalves}.  For $\mu_1$ the natural transformation of $\bT(\bx) = \bx$ yields the expected $\Order(n^{-3/2})$ error, whereas for $\mu_2$ the natural inverse normal distribution function transformation, yields only $\Order(n^{-1})$  error. \label{fig:obtainthreehalf}}
+	\caption{The relative RMSE  for scrambled Sobol' cubature for integrals $\mu_1$ (left) and $\mu_2$ (right) defined in \eqref{eq:getthreehalves}.  For $\mu_1$ the natural transformation of $\bT(\bx) = \bx$ yields the expected $\Order(n^{-3/2})$ error, whereas for $\mu_2$ the natural inverse normal distribution function transformation, yields only $\Order(n^{-1})$  error. \label{fig:obtainthreehalf}}
 \end{wrapfigure}
-where $\phi$ is the standard trivariate normal density.  The relative root mean square error  of the QMC cubatures based on randomly scrambled Sobol' nets is plotted in \cref{fig:obtainthreehalf}.  For $\mu_1$ all is as expected with IID sampling yielding $\Order(n^{-1/2})$ error, and scrambled Sobol' cubature yielding $\Order(n^{-3/2})$ error.  However, for $\mu_2$, the natural transformation of variables corresponding to the inverse distribution function gives only $\Order(n^{-1})$ error.  Importance sampling with the heavier tailed logistic distribution reclaims the hoped for $\Order(n^{-3/2})$ error.  
+where $\phi$ is the standard trivariate normal density.  IID cubature for $\mu_1$ and $\mu_2$ yields a RMSE of $\Order(n^{-1/2})$ as shown in \cref{fig:obtainthreehalf}.  For $\mu_1$ scrambled Sobol' cubature yields an $\Order(n^{-3/2})$ RMSE.  However, for $\mu_2$, the natural transformation of variables corresponding to the inverse distribution function gives only $\Order(n^{-1})$ RMSE.  Importance sampling with the heavier tailed logistic distribution reclaims the hoped for $\Order(n^{-3/2})$ error.  
 
-It is not clear how obtain $\Order(n^{-3/2})$ error using scrambled net cubature for integrals of the form $\mu_2$ and general $g$.  We will return to the original work cited above that proves $\Order(n^{-3/2})$ error for integrals of the form $\mu_1$, and \emph{extend this theory to integrals of the form $\mu_2$.}  It seems that prudent importance sampling is necessary
+It is not clear how to obtain $\Order(n^{-3/2})$ error using scrambled net cubature for integrals of the form $\mu_2$ and general $g$.  We will return to the original work cited above that proves $\Order(n^{-3/2})$ error for integrals of the form $\mu_1$, and \emph{extend this theory to integrals of the form $\mu_2$.}  Prudent importance sampling seems necessary.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Stopping Criteria for Higher Order Net Cubature} \label{sec:HONstop} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[Years 2--3] Josef Dick introduced the concept of higher order nets, and showed how these could give $\Order(n^{-\alpha})$ convergence rates for QMC cubature, where $\alpha$ is limited by the smoothness of the integrand and the order of the net \cite{Dic08a,Dic09a,Dic11a}.  The stopping criteria developed by PI \FH and his collaborators \cite{HicJim16a,HicEtal17a,Jag19a}, are not designed for these higher order nets because they only track the decay of the Walsh coefficients of the integrand. We will \emph{develop stopping criteria for higher order net cubature}.  We will extend by extending \cite{HicJim16a} by tracking a more nuanced measure of the fast Walsh coefficients of the integrand that matches the definition of higher order nets.  We will extend the Bayesian stopping criterion \cite{Jag19a} by identifying smoother digital shift invariant covariance kernels whose Gram matrices can be decomposed by a fast Walsh transform.
+
 
 \iffalse
 A perspective is that we transform our sampling points to mimic the original distribution, $F$, and work with  the error bound derived by \FH in \cite{Hic99a}:
@@ -707,11 +725,14 @@ There is no theory that says when small  $D(\{\bX_i\}_{i=1}^n)$ implies small  $
 \textit{We will implement these variance/variation reduction methods} in QMCPy and attempt to automate the choices of transformation and control variates. This will provide  a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications. \FJHNote{Theory?}
 
 \fi
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Multilevel QMC (MLQMC)} \label{sec:multilevel} [\SM lead, \FH, \IJi, \TT{}] 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Stopping Criteria for MLQMC}
 [Years 1--3]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 For high or infinite-dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations.
 
 We will \textit{strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case.
@@ -857,7 +878,9 @@ Although large-scale software packages cannot adopt every new QMCPy wrinkle, QMC
 \subsection{New QMC Theory}
 The history of QMC is marked by new applications leading to new theoretical insight.  The success of QMC for a $360$-dimensional financial risk application \cite{PasTra95} spurred the theoretical study of QMC's effectiveness for problems with much higher dimensions than was previously thought feasible.  This resulted in dozens of articles (see \cite{NovWoz10a,DicEtal14a} and the citations therein).  These high dimensional applications gave impetus to the development of multilevel \cite{Gil15a} and multivariate decomposition \cite{KuoEtal17a} methods. Looking forward, QMCPy's success in new application areas will \emph{raise new theoretical questions} that we and others will address.
 
-\subsection{Promoting Proper QMC Practice and Code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Promoting Proper QMC Practice and Code} \label{sec:goodpractice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 QMCPy---software, documentation, academic articles, and conference presentations---will \emph{showcase the right way} to do LD sampling.  As an example, the adoption of PyTorch into QMCPy and the tutorial given by FH at MCQMC 2020 \cite{MCQMC2020QMCPyTut} prompted a vigorous discussion on the PyTorch issues site \cite{PyTorchFirstPt2020a} that migrated to the \SciPy issues site \cite{scipySobol2020a}.  \AO, \FH, and other QMC researchers seem to have convinced the developers to not omit the first Sobol' point, but to randomize by default.  Keeping the first point preserves the net property of the first $2^m$ Sobol' points and randomization can speed up convergence~\cite{owen2020dropping}.
 
 In these discussions, it was pointed out that UQLab \cite{UQLab2014}, OpenTurns \cite{OpenTURNS}, and other packages routinely drop the first Sobol' point, a bad, but understandable practice.  The arguments we provided to the PyTorch and \SciPy developers answered their concerns.  We expect this project to produce fruitful discussions between QMC practitioners, which will promote better practice.
