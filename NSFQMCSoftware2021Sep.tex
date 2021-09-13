@@ -256,6 +256,7 @@
 \newcommand{\bgamma}{{\boldsymbol{\gamma}}}
 \newcommand{\bphi}{{\boldsymbol{\phi}}}
 \newcommand{\bpsi}{{\boldsymbol{\psi}}}
+\newcommand{\bPsi}{{\boldsymbol{\Psi}}}
 \newcommand{\btheta}{{\boldsymbol{\theta}}}
 \newcommand{\bnu}{{\boldsymbol{\nu}}}
 \newcommand{\balpha}{{\boldsymbol{\alpha}}}
@@ -432,12 +433,12 @@ Quasi-Monte Carlo for Efficient Simulation
 %Project Description
 }
 \end{center}
-\vspace{-2ex}
-
-\setcounter{tocdepth}{1}
-\tableofcontents
-
-\vspace{-6ex}
+%\vspace{-2ex}
+%
+%\setcounter{tocdepth}{1}
+%\tableofcontents
+%
+%\vspace{-6ex}
 
 
 
@@ -547,12 +548,11 @@ To harness the efficiency of LD sampling via QMC methods, practitioners need qua
 \section{QMCPy to Date}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\SCTCNote{Fig 3 and citation for NAG missing}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Start of QMCPy}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The better existing QMC software packages include
-BRODA \cite{BRODA20a}, GAIL by \FH, \SCTC, \YD, and collaborators \cite{ChoEtal20a}, LatNet Builder \cite{LatNet} and Stochastic Simulation in Java (SSJ) \cite{SSJ}, MATLAB \cite{MAT9.10}, NAG \cite{NAG27}, multilevel (Quasi-)Monte Carlo routines  by Giles \cite{GilesSoft}, Magic Point Shop (MPS) \cite{Nuy17a}, OpenTURNS \cite{OpenTURNS}, randomized Halton sequences by \AO \cite{Owe20a}, PyTorch \cite{paszke2019pytorch}, QMC4PDE (QMC for elliptic PDEs with random diffusion coefficients) \cite{KuoNuy16a}, QRNG \cite{QRNG2020}, LD Sequences by Robbe \cite{Rob20a}, SciPy \cite{virtanen2020scipy},  TensorFlow Quant Finance \cite{tfqf2021a}, and
+\sloppypar The better existing QMC software packages include
+BRODA \cite{BRODA20a}, GAIL by \FH, \SCTC, \YD, and collaborators \cite{ChoEtal21a}, LatNet Builder \cite{LatNet} and Stochastic Simulation in Java (SSJ) \cite{SSJ}, MATLAB \cite{MAT9.10}, NAG \cite{NAG27}, multilevel (Quasi-)Monte Carlo routines  by Giles \cite{GilesSoft}, Magic Point Shop (MPS) \cite{Nuy17a}, OpenTURNS \cite{OpenTURNS}, randomized Halton sequences by \AO \cite{Owe20a}, PyTorch \cite{paszke2019pytorch}, QMC4PDE (QMC for elliptic PDEs with random diffusion coefficients) \cite{KuoNuy16a}, QRNG \cite{QRNG2020}, LD Sequences by Robbe \cite{Rob20a}, SciPy \cite{virtanen2020scipy},  TensorFlow Quant Finance \cite{tfqf2021a}, and
 UQLab \cite{UQLab2014}.  These software packages are written in various languages.  
 Each focuses on just certain aspects of QMC, such as the generation of LD sequences, fundamental QMC algorithms, or particular applications.  Some are small libraries, while others have broad scope, but mostly with only a small QMC part.  Whereas SciPy, PyTorch, and TensorFlow are community efforts, most of the other software packages are the efforts of individual research groups or companies.
 
@@ -628,10 +628,10 @@ Another way to compute the Keister integral, see \eqref{eq:KeisterAlt}, is to th
  \begin{itemize}
  	\item \pyinline{backends} for \pyinline{Sobol} from  QRNG \cite{QRNG2020},  SciPy \cite{virtanen2020scipy}, and MPS \cite{Nuy17a};
 
- 	\item \pyinline{backends} for \pyinline{Lattice} from GAIL \cite{ChoEtal20a} and MPS \cite{Nuy17a}, and generators  from LatNet Builder \cite{LatNet};
+ 	\item \pyinline{backends} for \pyinline{Lattice} from GAIL \cite{ChoEtal21a} and MPS \cite{Nuy17a}, and generators  from LatNet Builder \cite{LatNet};
 
  	\item \pyinline{StoppingCriteria} based on the \hypertarget{CLTlink}{Central Limit Theorem} (\CLT) for IID sampling and random replications of LD sampling;  a more rigorous criterion for IID sampling based on a Berry-Essen inequality \cite{HicEtal14a};  criteria for LD sampling based on fast transforms of integrand data \cite{HicJim16a, JimHic16a,RatHic19a}; most of these have arisen from the NSF-supported research of \FH, \SCTC and their collaborators, \AO, \hypertarget{LJlink}{Lan Jiang} (\LJ),
- 	\LlAJR, \hypertarget{JRlink}{Jagadeeswaran Rathinavel} (\JR), and implemented in GAIL \cite{ChoEtal20a}.
+ 	\LlAJR, \hypertarget{JRlink}{Jagadeeswaran Rathinavel} (\JR), and implemented in GAIL \cite{ChoEtal21a}.
 
  	\item Specification of relative error tolerances as well as absolute error tolerances;
 
@@ -685,14 +685,29 @@ By the same token, those methods in QMCPy that become more widely accepted will 
 
 \subsection{Theoretical Issues Surrounding Discrepancy and Convergence} [\FH lead, \AO, \AS{}]
 
-\subsubsection {Variance/Variation Reduction Through Importance Sampling and Control Variates} [Years 1--3]  The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  In many cases, the original problem is posed as an integral over $\reals^d$, as on the left side of \eqref{eq:imp}, in which case a variable transformation must be performed to obtain an integral over $[0,1]^d$.  Note that $f_{\bT}(\bx) = g(\bT(\bx)) \lambda(\bT(\bx)) \abs{(\bT'(\bx))}$, where $\abs{(\bT'(\bx))}$ denotes the Jacobian.  While one may choose $\bT$ such that $\lambda(\bT(\bx)) / \abs{(\bT'(\bx))} = 1$, this is not the only choice and may not be the best choice.  Choosing the transformation $\bT$ is equivalent to performing importance sampling.   
+\subsubsection{Variance/Variation Reduction Through Importance Sampling} [Years 1--3]  The discrepancy in \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  In many cases, the original problem is posed as an integral over $\reals^d$, as on the left side of \eqref{eq:imp}, in which case a variable transformation must be performed to obtain an integral over $[0,1]^d$.  Note that $f_{\bT}(\bx) = g(\bT(\bx)) \lambda(\bT(\bx)) \abs{\bT'(\bx)}$, where $\abs{\bT'(\bx)}$ denotes the Jacobian.  One may also interpret $\abs{\bT'(\bx)}$ as $1/\varrho(\bT(\bx))$, where $\varrho$ is the density of the random variable $\bT(\bX)$ with $\bX \sim \calu[0,1]^d$.  While in some cases one may choose $\bT$ such that $\varrho(\bt) = \lambda(\bt)$, this is not the only choice and may not be the best choice.  Choosing the transformation $\bT$ is equivalent to performing importance sampling.   
 
 The Koksma-Hlawka inequality, \eqref{eq:KH}, tells us to choose $\bT$ to make the variation, $\norm[\calf]{f_{\bT} - \mu}$, small, which corresponds to making $f_{\bT}$ as flat as possible.  As illustrated in the the Keister example \eqref{eq:KeisterAlt} finding a better $f_{\bT}$ may significantly reduce the computation time.  We will \emph{implement adaptive importance sampling}, drawing on the work of  
 \AO \cite{owen2000safe} for safe importance sampling, the  annealed importance sampler \cite{neal2001annealed}, and the bridge sampler \cite{gelman1998simulating}.  Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering.  In \cite{huling2020energy}, PI \SM extends importance sampling for covariate balancing in causal inference.  \FH's PhD student, \KZ, has shown how importance sampling with QMC can beat MCMC in computing the posterior means of logistic regression coefficients \cite{Zha21a}.  We will also determine \emph{theoretically and empirically} under what conditions adaptive importance sampling makes \emph{significant improvement in computation times.}
 
-Control variates or de-trending \cite{Gla03} is another powerful variance/variation reduction technique. The idea is to obtain a new integrand, $\tilde{f}$, by subtracting from the original integrand a linear combination of functions (control variates) whose integrals are zero.  If $\tilde{f}$ has smaller variation/variance than the original integrand, $f$, then substantial cost savings are possible.  Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the QMC control variates papers \cite{HicEtal03, Hic17a} by \AO, PI \FH, and collaborators. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
+\subsubsection{Attaining $\Order(n^{-3/2})$ Convergence for Scrambled Nets} [Years 2--3] \AO showed that for moderately smooth integrands, $f$, integrated over the unit cube, the root mean square error using randomly scrambled digital nets is $\Order(n^{-3/2})$ \cite{Owe97}.  This work was extended by \FH and collaborators \cite{HicYue00,HeiHicYue02a}.  However, when relatively tame integrands, $g$, integrated with respect to the multivariate normal distribution, are transformed in the natural way as in \eqref{eq:imp}, singularities are introduced into $f_{\bT}$, which destroys the $\Order(n^{-3/2})$ convergence.
 
 
+Consider the example of 
+\begin{equation} \label{eq:getthreehalves}
+	g(\bt) = \exp(t_1 + 0.0625 t_2 + 0.0123t_3), \qquad \mu_1 = \int_{[0,1]^3} g(\bt) \, \dif \bt, \qquad \mu_2 = \int_{\reals^3} g(\bt) \phi(\bt) \, \dif \bt, 
+\end{equation}
+\begin{wrapfigure}{r}{0.65\textwidth}
+	\centering
+	\includegraphics[width = 0.32\textwidth] {ProgramsImages/ConvergeRateStrat_exp_uniform_natural_d3_m20.eps}
+	\includegraphics[width = 0.32\textwidth] {ProgramsImages/ConvergeRateStrat_exp_stdGauss_logistic_d3_m20.eps}
+	\caption{The root mean square error for scrambled Sobol' cubature for integrals $\mu_1$ (left) and $\mu_2$ (right) defined in \eqref{{eq:getthreehalves}}.  For $\mu_1$ the natural transformation of $\bT(\bx) = \bx$ yields the expected $\Order(n^{-3/2})$ error, whereas for $\mu_2$ the natural inverse normal distribution function transformation, yields only $\Order(n^{-1})$  error. \label{fig:obtainthreehalf}}
+\end{wrapfigure}
+where $\phi$ is the standard trivariate normal density.  The relative root mean square error  of the QMC cubatures based on randomly scrambled Sobol' nets is plotted in Fig.\ \ref{fig:obtainthreehalf}.  For $\mu_1$ all is as expected with IID sampling yielding $\Order(n^{-1/2})$ error, and scrambled Sobol' cubature yielding $\Order(n^{-3/2})$ error.  However, for $\mu_2$, the natural transformation of variables corresponding to the inverse distribution function gives only $\Order(n^{-1})$ error.  Importance sampling with the heavier tailed logistic distribution reclaims the hoped for $\Order(n^{-3/2})$ error.  
+
+It is not clear how obtain $\Order(n^{-3/2})$ error using scrambled net cubature for integrals of the form $\mu_2$ and general $g$.  We will return to the original work cited above that proves $\Order(n^{-3/2})$ error for integrals of the form $\mu_1$, and \emph{extend this theory to integrals of the form $\mu_2$.}  It seems that prudent importance sampling is necessary
+
+\iffalse
 A perspective is that we transform our sampling points to mimic the original distribution, $F$, and work with  the error bound derived by \FH in \cite{Hic99a}:
 \begin{equation}
 	\abs{ \mu  - \frac 1n \sum_{i=1}^n g(\bT(\bX_i))} \le  D(\{\bT(\bX_i)\}_{i=1}^n,F ) \norm[\calg]{g - \mu},
@@ -705,9 +720,9 @@ There is no theory that says when small  $D(\{\bX_i\}_{i=1}^n)$ implies small  $
 \FJHNote{Strong law of large numbers for lattices}
 
 
-Control variates or de-trending \cite{Gla03} is another powerful variance/variation reduction technique. The idea is to obtain a new integrand, $\tilde{f}$, by subtracting from the original integrand a linear combination of functions (control variates) whose integrals are zero.  If $\tilde{f}$ has smaller variation/variance than the original integrand, $f$, then substantial cost savings are possible.  Control variates are widely used in financial pricing and stochastic simulations. Important works (among many) include \cite{nelson1990control}, which investigates control variate remedies, and the QMC control variates papers \cite{HicEtal03, Hic17a} by \AO, PI \FH, and collaborators. Recently, \cite{mueller20neural} introduced the neural control variates method, which uses a neural network to learn an optimal choice of control variate for variance reduction.
-
 \textit{We will implement these variance/variation reduction methods} in QMCPy and attempt to automate the choices of transformation and control variates. This will provide  a comprehensive and accessible toolbox of variance reduction methods for a broad range of applications. \FJHNote{Theory?}
+
+\fi
 
 \subsection{Multilevel QMC (MLQMC)}[\SM lead, \FH, \IJi, \TT{}]
 
@@ -1019,7 +1034,7 @@ The senior personnel---together with our students---will have regular video conf
 
 
 \subsection{Senior Personnel}
-\FH has been the lead PI on the GAIL \cite{ChoEtal20a} MATLAB software project that contains many of the stopping criteria incorporated into QMCPy.  His expertise is in the numerical analysis of QMC and other algorithms for multivariate problems.  He has also developed several theoretically justified adaptive numerical algorithms.  As a former editorial board member for major computational mathematics journals, a Fellow of the Institute of Mathematical Statistics, and a co-leader of SAMSI's program on QMC in 2017-18, \FH understands the interface between computational mathematics and statistics.  \FH will lead the activities at Illinois Tech and oversee QMCPy's architecture.  He will also lead the development of higher-order nets, net scrambling, and multilevel methods.
+\FH has been the lead PI on the GAIL \cite{ChoEtal21a} MATLAB software project that contains many of the stopping criteria incorporated into QMCPy.  His expertise is in the numerical analysis of QMC and other algorithms for multivariate problems.  He has also developed several theoretically justified adaptive numerical algorithms.  As a former editorial board member for major computational mathematics journals, a Fellow of the Institute of Mathematical Statistics, and a co-leader of SAMSI's program on QMC in 2017-18, \FH understands the interface between computational mathematics and statistics.  \FH will lead the activities at Illinois Tech and oversee QMCPy's architecture.  He will also lead the development of higher-order nets, net scrambling, and multilevel methods.
 
 \SM is a statistician who became quite familiar with QMC, having served as a Working Group Leader on the aforementioned SAMSI program led by \FH. He is an Assistant Professor of Statistical Science at Duke, and his interests are in Bayesian modeling, big data analytics, and computer experiments. \SM provides expertise on statistical methodology and applications: he is an Associate Editor for \textit{Technometrics} (a top journal for engineering statistics), the recipient of the Statistics in Physical Engineering Science (SPES) Award and the Mary G. and Joseph Natrella Scholarship from the American Statistical Association, as well as multiple student paper awards. He also has experience in software library development, having authored four \textsc{R} packages \cite{support,minimaxdesign,cmenet,atmopt} on the Comprehensive R Archive Network (CRAN). \SM will lead the activities at Duke and oversee the big data learning and Bayesian inference efforts.
 
