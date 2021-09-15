@@ -23,13 +23,16 @@
 \newcommand{\FJHNote}[1]{{\color{blue}Fred: #1}}
 \newcommand{\SMNote}[1]{{\color{blue}Simon: #1}}
 \newcommand{\SCTCNote}[1]{{\color{green}Sou-Cheng: #1}}
+\renewcommand{\baselinestretch}{0.995}
+
 
 \begin{document}
 
 \noindent{\bf Overview} %Per NSF section headings need to be on a separate line
 
-\noindent Simulations based on quasi-Monte Carlo (QMC) methods, also known as low discrepancy (LD) sampling, converge to the solution much faster than those based on independent and identically distributed (IID) sampling.  QMC has already had resounding success in several fields, including quantitative finance and stochastic partial differential equations. With rapid developments in science and engineering, there is the potential for QMC to make an even greater impact.
+\noindent Simulations based on quasi-Monte Carlo (QMC) methods, also known as low discrepancy (LD) sampling, converge to the solution much faster than those based on independent and identically distributed (IID) sampling.  QMC has already had resounding success in several fields, including quantitative finance and partial differential equations with randomness. With rapid developments in science and engineering, there is the potential for QMC to make an even greater impact.
 % solutions of (partial) differential equations with random coefficients
+%My friends who do stochastic pdes say that they are not the same as pdes with randomness
 
 This project will extend the scope of application for QMC sampling to important and timely areas, such as big data analytics, Bayesian computation, machine learning and uncertainty quantification, through theoretical, methodological and algorithmic advances. This will feature novel QMC developments in variation/variance reduction methods, automatic stopping criteria, big data subsampling methods, and low-discrepancy Bayesian sampling. We also will grow QMCPy, an open-source QMC Python software library that is gaining support among the QMC community. This will accelerate the adoption of QMCPy in new application areas and provide theoreticians and algorithm developers a test-bed of use cases for demonstrating their breakthroughs.
 
