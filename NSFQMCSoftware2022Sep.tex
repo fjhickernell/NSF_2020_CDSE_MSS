@@ -176,6 +176,7 @@
 \newcommand{\VAR}{\textup{V}}
 \newcommand{\LS}{\textup{LS}}
 \newcommand{\unif}{\textup{unif}}
+\newcommand{\fidparam}{\bldeta}
 
 
 
@@ -270,6 +271,7 @@
 \newcommand{\bnu}{{\boldsymbol{\nu}}}
 \newcommand{\balpha}{{\boldsymbol{\alpha}}}
 \newcommand{\bbeta}{{\boldsymbol{\beta}}}
+\newcommand{\bldeta}{{\boldsymbol{\eta}}}
 \newcommand{\bo}{{\boldsymbol{\omega}}}  %GF added
 \newcommand{\newton}[2]{\left(\begin{array}{c} #1\\ #2\end{array}\right)}
 \newcommand{\anor}[2]{\| #1\|_{\mu_{#2}}}
@@ -564,23 +566,37 @@ The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitr
 
 Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  Note that a grid of $64$ points would only have $8$ different values in each coordinate direction, whereas  the LD sample covers $64$ different values in each coordinate direction.
 
-\subsection{Stopping Criteria} Efficient LD sampling is only part of the process of satisfying  error tolerance \eqref{eq:error_crit}.  One also needs reliable criteria based on the function data, $f(\bX_1), f(\bX_2), \ldots$, that determines a suitable sample size $n$.  One approach is to use $N$ different randomizations of a single low discrepancy sequence to compute $N$ sample means, and then estimate the error of the grand sample mean, $\hmu_{nN} = (\hmu_n^{(1)} +  \cdots \hmu_n^{(N)})/N$, via bootstrap or the variance of these $N$ sample means.  However, theory to justify this approach is lacking, and the sample size of $nN$ may be costly.
+\subsection{Stopping Criteria} \label{sec:stopcrit}
+Efficient LD sampling is only part of the process of satisfying  error tolerance \eqref{eq:error_crit}.  One also needs reliable bounds on $\abs{\mu - \hmu_n}$  based on the function data, $f(\bX_1), f(\bX_2), \ldots$, that can inform stopping criteria that determine a suitable sample size $n$.  We want to be confident in meeting the desired error tolerance
 
-PI Hickernell and his collaborators have developed two kinds of theoretically justified stopping criteria for LD sampling based on tracking the decay of the Fourier coefficients of the function data.  The first kind tracks the decay of the Fourier coefficients of the function data to determine a bound on $\abs{\mu-\mu_n}$ \cite{HicJim16a,JimHic16a,HicEtal17a}.  The second kind relies on Bayesian credible intervals assuming that $f$ is an instance of a Gaussian process \cite{HicJag18b,RatHic19a,JagHic22a}. For both kinds of stopping criteria, the a, the cost computing a bound on the error $\abs{\mu-\mu_n}$ is only $\Order(n \log(n))$, the cost of a one-dimensional fast Fourier or Walsh transform.  This achieved for the Bayesian approach by choosing covariance kernels that match the LD sampling schemes, and so avoiding the typical $\Order(n^3)$ cost.
+A common approach is to use $N$ different randomizations of a single LD sequence to compute $N$ sample means, and then estimate the error of the grand sample mean, $\hmu_{nN} = (\hmu_n^{(1)} +  \cdots \hmu_n^{(N)})/N$, via bootstrap or the variance of these $N$ sample means.  However, theory to justify this approach is lacking, and the sample size of $nN$ may be costly.
+
+PI Hickernell and his collaborators have developed two kinds of theoretically justified stopping criteria for LD sampling based on the Fourier coefficients of the function data, $f(\bX_1), f(\bX_2), \ldots$.  The first kind determines a bound on $\abs{\mu-\mu_n}$ by inferring the roughness of $f$ from the decay of the Fourier coefficients \cite{HicJim16a,JimHic16a,HicEtal17a}.  The second kind relies on Bayesian credible intervals for $\abs{\mu-\mu_n}$ assuming that $f$ is an instance of a Gaussian process whose hyperparameters are tuned based on the function data \cite{HicJag18b,RatHic19a,JagHic22a}. For both kinds of stopping criteria, the cost of bounding the error $\abs{\mu-\mu_n}$ is only $\Order(n \log(n))$.  This achieved for the Bayesian approach by choosing covariance kernels that match the LD sampling schemes, and thus avoiding the typical $\Order(n^3)$ cost.
 
 
 \subsection{Limitations of Existing Methodology}
 
 There are several limitations to the methodolgy described above, which our proposed research addresses.
 
-Other problems of interest not of the  form \eqref{eq:prototype} include accurate computation of the quartiles of $Y$ or the (marginal) distributions of a possibly vector random variable $\bY = \bg(\bT) = \bff(\bX)$.
+\begin{itemize}
 
+\item Constructions of LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in Section \ref{??} 
 
+\item Given a random variable $\bT$ with a known distribution, there are usually multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform.  For example, mapping a uniform random $d$-vector to a $d$-dimensional multivariate Gaussian random vector relies on the choice of one of infinitely many possible square roots of the covariance matrix (for $d>1$).  Choosing $\bPsi$ to give an $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be data-based. This equivalent to the problem of adaptive importance sampling. We address this limitation in Section \ref{??}.
 
-One limitation of LD sampling is that their constructions require extensive offline computational work.  Furthermore, their needs to be some understanding of which coordinate directions are more significant. We address this limitation in Section \ref{??} Another limitation is determining a good variable transformation $\bPsi$ in \eqref{eq:vartrans} that yields a $f$, with low variation $\norm[\calf]{f - \mu}$ to ensure a small error.  We address this limitation in Section \ref{??}.
+\item For many practical problems, the random quantity of interest $Y_\fidparam = f_\fidparam(\bX_\fidparam)$ is parameterized by some vector $\fidparam$, and the true quantity of interest is $\mu_\infty = \lim_{\fidparam \to \fidparam_\infty} \bbE(Y_\fidparam)$.  Here, $\fidparam$ is the \emph{fidelity} parameter and may describe, for example, the mesh size of a solver for a partial differential equation with random coefficients.  Typically, the cost of evaluating $f_\fidparam(\bX_\fidparam)$ depends on $\fidparam$, and so evaluating many high fidelity $f_\fidparam(\bX_\fidparam)$ to approximate $\mu_\infty$ is costly.
 
+Multifidelity methods choose a sequence of fidelity parameters, $\fidparam_1, \fidparam_2, \ldots$ and write the desired answer as a telescoping sum: 
+\[
+\mu = \mu_\infty = [\mu_{\fidparam_1} - \mu_{\fidparam_0}] + [\mu_{\fidparam_2} - \mu_{\fidparam_1}] + \cdots +
+[\mu_{\fidparam_L} - \mu_{\fidparam_{L-1}}] + [\mu_{\infty} - \mu_{\fidparam_{L}}], \qquad \mu_{\fidparam_0} = 0.
+\]
+The sequence of fidelity parameters is chosen so that the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$  increases with $l$ (greater fidelity), and that the sample size required to estimate $\mu_{\fidparam_l} - \mu_{\fidparam_{l-1}}$ accurately decreases with $l$. The term  $\mu_{\infty} - \mu_{\fidparam_{L}}$ is approximated by zero. Substantial cost efficiency is gained by using many samples to approximate the low fidelity terms and relatively fewer samples to compute the high fidelity terms.  The measures of confidence or the stopping criteria mentioned in Sect.\ \ref{sec:stopcrit} do not yet extend to multifidelity methods.  This is addressed in Sect.\ \ref{??}
 
-\cmtS{clearly highlight limitations: scope of QMC (for broader scientific applications), practical considerations for gauging confidence.}
+\item Problems of interest not of the  form \eqref{eq:prototype} include accurate computation of the quartiles of $Y$ or the (marginal) distributions of a possibly vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous data-based stopping criteria are non-existent. We address this limitation in Section \ref{??}.
+
+\end{itemize}
+
 
 \subsection{Proposed Framework} How does our proposed framework tackle the aforementioned motivating limitations? What are specific objectives we aim to address? Should highlight QMCPy as a vessel for dissemination of our product to the broader scientific community. Should also tout our credentials in software development and collaborative experience with cutting-edge scientific \& big data applications. \cmtS{add workflow figure going from applications to tasks.}
 
