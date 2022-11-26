@@ -1,4 +1,4 @@
-%Fred, Simon, Sou-Cheng, Yuhan, NSF Grant Sep 2021
+%Fred, Simon, Sou-Cheng, Yuhan, NSF Grant Dec 2022
 % GitHub: https://github.com/fjhickernell/NSF_CompMath2018Nov
 % Overleaf: https://www.overleaf.com/9576964687whkhbmrrvhsd
 \documentclass[11pt]{NSFamsart}
@@ -580,31 +580,33 @@ PI Hickernell and his collaborators have developed two kinds of theoretically ju
 
 \subsection{Software Implementation} LD sequences in their basic form are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014,UQLab}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}.  
 
-\FH, \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort has been focused on \QMCPy, and includes tutorials, and 
+\FH, \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort has been focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
 
 
 \subsection{Limitations of Existing Methodology and Software}
 
-There are several limitations to the methodology described above, which our proposed research addresses.
+There are several limitations to the methodology and software, described above, which our proposed research addresses.
 
-\begin{itemize}
+\begin{description}
 
-\item Constructions of LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in Section \ref{??} 
+\item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in Section \ref{??} 
 
-\item Given a random variable $\bT$ with a known distribution, there are usually multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform.  For example, mapping a uniform random $d$-vector to a $d$-dimensional multivariate Gaussian random vector relies on the choice of one of infinitely many possible square roots of the covariance matrix (for $d>1$).  Choosing $\bPsi$ to give an $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be data-based. This equivalent to the problem of adaptive importance sampling. We address this limitation in Section \ref{??}.
+\item[Automatic variable transformations]  Given a random variable $\bT$ with a known distribution, there are usually multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform.  For example, mapping a uniform random $d$-vector to a $d$-dimensional multivariate Gaussian random vector relies on the choice of one of infinitely many possible square roots of the covariance matrix (for $d>1$).  Choosing $\bPsi$ to give an $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be data-based. This equivalent to the problem of adaptive importance sampling. We address this limitation in Section \ref{??}.
 
-\item For many practical problems, the random quantity of interest $Y_\fidparam = f_\fidparam(\bX_\fidparam)$ is parameterized by some vector $\fidparam$, and the true quantity of interest is $\mu_\infty = \lim_{\fidparam \to \fidparam_\infty} \bbE(Y_\fidparam)$.  Here, $\fidparam$ is the \emph{fidelity} parameter and may describe, for example, the mesh size of a solver for a partial differential equation with random coefficients.  Typically, the cost of evaluating $f_\fidparam(\bX_\fidparam)$ depends on $\fidparam$, and so evaluating many high fidelity $f_\fidparam(\bX_\fidparam)$ to approximate $\mu_\infty$ is costly.
+\item[Multifidelity] For many practical problems, the random variable of interest $Y_\fidparam = f_\fidparam(\bX_\fidparam)$ is parameterized by a \emph{fidelity} parameter $\fidparam$, and the desired quantity of interest is $\mu_\infty = \lim_{\fidparam \to \fidparam_\infty} \bbE(Y_\fidparam)$.  For example, $f_\fidparam(\bX_\fidparam)$ may represent the numerical solution of  a partial differential equation with random coefficients $\bX_\fidparam$ and mesh-size represented by $\fidparam$.  Typically, the cost of evaluating $Y_\fidparam$ increases with increasing fidelity, and evaluating many high fidelity $Y_{\fidparam,i}$ to approximate $\mu_\infty$ is costly.
 
-Multifidelity methods choose a sequence of fidelity parameters, $\fidparam_1, \fidparam_2, \ldots$ and write the desired answer as a telescoping sum: 
+Multifidelity (also known as multi-level or multi-index) methods \cite{Hei01a, Gil15a, HajNobTem16a} choose a sequence of fidelity parameters, $\fidparam_1, \fidparam_2, \ldots$ and write the desired answer as a telescoping sum: 
 \[
 \mu = \mu_\infty = [\mu_{\fidparam_1} - \mu_{\fidparam_0}] + [\mu_{\fidparam_2} - \mu_{\fidparam_1}] + \cdots +
 [\mu_{\fidparam_L} - \mu_{\fidparam_{L-1}}] + [\mu_{\infty} - \mu_{\fidparam_{L}}], \qquad \mu_{\fidparam_0} = 0.
 \]
 The sequence of fidelity parameters is chosen so that the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$  increases with $l$ (greater fidelity), and that the sample size required to estimate $\mu_{\fidparam_l} - \mu_{\fidparam_{l-1}}$ accurately decreases with $l$. The term  $\mu_{\infty} - \mu_{\fidparam_{L}}$ is approximated by zero. Substantial cost efficiency is gained by using many samples to approximate the low fidelity terms and relatively fewer samples to compute the high fidelity terms.  The measures of confidence or the stopping criteria mentioned in Sect.\ \ref{sec:stopcrit} do not yet extend to multifidelity methods.  This is addressed in Sect.\ \ref{??}
 
-\item Problems of interest not of the  form \eqref{eq:prototype} include accurate computation of the quartiles of $Y$ or the (marginal) distributions of a possibly vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous data-based stopping criteria are non-existent. We address this limitation in Section \ref{??}.
+\item[Problems other than expectations] Problems of interest not of the  form \eqref{eq:prototype} include accurate computation of the quartiles of $Y$ or the (marginal) distributions of a possibly vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous data-based stopping criteria are non-existent. We address this limitation in Section \ref{??}.
 
-\end{itemize}
+\item[Software connectivity] 
+
+\end{description}
 
 
 \subsection{Proposed Framework} How does our proposed framework tackle the aforementioned motivating limitations? What are specific objectives we aim to address? Should highlight QMCPy as a vessel for dissemination of our product to the broader scientific community. Should also tout our credentials in software development and collaborative experience with cutting-edge scientific \& big data applications. \cmtS{add workflow figure going from applications to tasks.}
