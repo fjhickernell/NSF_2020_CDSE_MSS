@@ -73,6 +73,7 @@
 \newcommand{\SCTC}{\hyperlink{SCTClink}{SCTC}\xspace}
 \newcommand{\AO}{\hyperlink{AOlink}{AO}\xspace}
 \newcommand{\MM}{\hyperlink{MMlink}{MM}\xspace}
+\newcommand{\CH}{\hyperlink{CHlink}{CH}\xspace}
 \newcommand{\TS}{\hyperlink{TSlink}{TS}\xspace}
 \newcommand{\IJi}{\hyperlink{IJlink}{IJ}\xspace}
 \newcommand{\TT}{\hyperlink{TTlink}{TT}\xspace}
@@ -231,6 +232,7 @@
 \newcommand{\mPhi}{\mathsf{\Phi}}
 \newcommand{\mPsi}{\mathsf{\Psi}}
 \newcommand{\mLambda}{\mathsf{\Lambda}}
+\newcommand{\mSigma}{\mathsf{\Sigma}}
 \newcommand{\cube}{[0,1]^d}
 \newcommand{\design}{\{\bx_i\}_{i=1}^n}
 
@@ -365,6 +367,7 @@
 
 
 \setlist[description]{font=\normalfont\itshape, labelindent = 0.4cm}
+\renewcommand{\descriptionlabel}[1]{\hspace{\labelsep}\textit{#1.}}
 \setlist[itemize]{leftmargin=3ex}
 \setlist[enumerate]{leftmargin=5ex}
 
@@ -470,7 +473,21 @@ With breakthroughs in experimental methods and computational technology, there a
 
 This project will develop a novel and timely suite of methods which jointly addresses this crucial need for cost-efficient and confident sampling for scientific discovery. Our framework features methodology (with supporting theory and algorithms) which extend classical low discrepancy (i.e., highly stratified) sampling techniques for a broad range of challenging scenarios encountered in modern scientific problems, including cost-efficient Bayesian inference, efficient subsampling of massive data for statistical learning, and \cmtS{...}. Major emphasis is placed on demonstrating the effectiveness of these methods for tackling a wide array of complex scientific and engineering problems, specifically the PIs' ongoing collaborations on the study of heavy-ion collisions, design of rocket engines for spaceflight, and real-time engine control of unmanned aircraft systems.
 
-This project will be led by \hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), \hypertarget{SMlink}{Simon Mak} (\SM, PI from Duke University), \hypertarget{YDlink}{Yuhan Ding} (\YD, co-PI from Illinois Tech), and \hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (\SCTC, Senior Personnel).
+This project will be led by 
+\hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), 
+\hypertarget{SMlink}{Simon Mak} (\SM, PI from Duke University), 
+\hypertarget{YDlink}{Yuhan Ding} (\YD, co-PI from Illinois Tech), and 
+\hypertarget{SCTClink}{Sou-Cheng Terrya Choi} (\SCTC, SAS \& Illinois Tech, Senior Personnel).  
+Our collaborators include  
+\hypertarget{MMlink}{Michael McCourt} (\MM, Intel), 
+\hypertarget{DNlink}{Dirk Nuyens} (\DN,  Katholieke Universiteit Leuven),
+\hypertarget{AOlink}{Art Owen} (\AO, Stanford University), 
+\hypertarget{PRlink}{Pieterjan Robbe} (\PR, Sandia National Laboratories and Katholieke Universiteit Leuven),  
+\hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), 
+\hypertarget{ASlink}{Aleksei Sorokin} (\AS, PhD student, Illinois Tech),
+\hypertarget{CHlink}{Claude Hall, Jr.} (\CH, African-American PhD student, Illinois Tech)
+\hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke University), 
+\hypertarget{TTlink}{Tao Tang} (\TT, PhD student, Duke University), as well as other students, alumni, and friends. \cmtS{to modify}
 
 %  We, \, \cmtS{...}
  
@@ -504,7 +521,7 @@ The second limitation is that the increasing sophistication of scientific experi
 
 These bottlenecks necessitate two crucial ingredients to facilitate scientific discovery: cost-efficiency and confidence. The first, \textit{cost-efficiency}, refers to statistical methods which aim to maximize model performance given a limited cost (e.g., computational) budget. For the earlier nuclear physics problem, a cost-efficient method strives to provide an accurate solution to the inverse problem given a limited computational budget (and thus limited simulation runs). The second, \textit{confidence}, refers to methods which provide a reliable and estimable measure (or quantification) of model error. Such confidence is essential for verifiable scientific discovery: it provides a quantification of uncertainty for findings, thus protecting against spurious findings. This further allows for theoretically sound stopping rules which guarantees model performance, which is particularly crucial for the current cost-constrained setting. For our nuclear physics problem, a confident method yields a measure of uncertainty for the inverse problem, which can be used to guide the amount of simulation runs needed to ensure a desired error tolerance.
 
-Both of the above limitations can be alleviated via a careful integration of novel \textit{sampling} algorithms within the statistical learning framework. Here, ``sampling'' refers to the drawing of representative samples $\bT_1, \cdots, \bT_n$ from a (potentially) complex probability distribution $\Pi$, and the use of such samples for scientific inference and decision-making. For limitation (i), a careful sampling design of the input parameters for the expensive simulator can enable accurate and precise scientific inference in reasonable turnaround times. For limitation (ii), a judicious sampling of the massive data streams from scientific experiments can allow for timely scientific discovery for useful decision-making. There is, however, much to be done on \textit{cost-efficient} and \textit{confident} sampling algorithms, given the complexities present in modern scientific problems. We will propose a suite of methods, with supporting theory and algorithms, which address this important gap. We first present the prototypical problem of interest, then provide a survey of \textit{low-discrepancy} sampling methods \citep{niederreiter1992random}, which we extend for the proposed suite of methods.
+Both of the above limitations can be alleviated via a careful integration of novel \textit{sampling} algorithms within the statistical learning framework. Here, ``sampling'' refers to the drawing of representative samples $\bT_1, \dots, \bT_n$ from a (potentially) complex probability distribution $\Pi$, and the use of such samples for scientific inference and decision-making. For limitation (i), a careful sampling design of the input parameters for the expensive simulator can enable accurate and precise scientific inference in reasonable turnaround times. For limitation (ii), a judicious sampling of the massive data streams from scientific experiments can allow for timely scientific discovery for useful decision-making. There is, however, much to be done on \textit{cost-efficient} and \textit{confident} sampling algorithms, given the complexities present in modern scientific problems. We will propose a suite of methods, with supporting theory and algorithms, which address this important gap. We first present the prototypical problem of interest, then provide a survey of \textit{low-discrepancy} sampling methods \citep{niederreiter1992random}, which we extend for the proposed suite of methods.
 
 
 % Why cost-efficient simulation? Lay out scope clearly. We need a pipeline for tackling scientific problems. Software \& interfacing for uncertainty propagation.
@@ -572,15 +589,15 @@ The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitr
 Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  Note that a grid of $64$ points would only have $8$ different values in each coordinate direction, whereas  the LD sample covers $64$ different values in each coordinate direction.
 
 \subsection{Stopping Criteria} \label{sec:stopcrit}
-Numerical algorithms based on efficient LD sampling are commonly called \hypertarget{QMClink}{\emph{quasi-Monte Carlo}} (\QMC) algorithms. To construct a \QMC algorithm one  also needs reliable bounds on $\abs{\mu - \hmu_n}$  based on the function data, $f(\bX_1), f(\bX_2), \ldots$.  Such data-based error bounds inform the stopping criteria that determine a suitable sample size $n$  to satisfy  error tolerance \eqref{eq:error_crit}.
+Numerical algorithms based on efficient LD sampling are commonly called \hypertarget{QMClink}{\emph{quasi-Monte Carlo}} (\QMC) algorithms. To construct a \QMC algorithm one  needs not only an LD sequence, but also reliable and practical bounds on the error $\abs{\mu - \hmu_n}$, which are    based on the function data, $f(\bX_1), f(\bX_2), \ldots$.  Such data-based error bounds inform the stopping criteria that determine a suitable sample size $n$  to satisfy  error tolerance \eqref{eq:error_crit}.
 
-A common approach is to use $N$ different randomizations of a single LD sequence to compute $N$ sample means, and then estimate the error of the grand sample mean, $\hmu_{nN} = (\hmu_n^{(1)} +  \cdots \hmu_n^{(N)})/N$, via bootstrap or the variance of these $N$ sample means.  However, theory to justify this approach is lacking, and the sample size of $nN$ may be costly.
+One approach is to use $N$ different randomizations of a single LD sequence to compute $N$ sample means, and then estimate the error of the grand sample mean, $\hmu_{nN} = (\hmu_n^{(1)} +  \cdots \hmu_n^{(N)})/N$, via bootstrap or the variance of these $N$ sample means.  However, finite sample theory to justify this approach is lacking, and the sample size of $nN$ may be costly.
 
-PI Hickernell and his collaborators have developed two kinds of theoretically justified stopping criteria for LD sampling based on the Fourier coefficients of the function data, $f(\bX_1), f(\bX_2), \ldots$.  The first kind determines a bound on $\abs{\mu-\mu_n}$ by inferring the roughness of $f$ from the decay of the Fourier coefficients \cite{HicJim16a,JimHic16a,HicEtal17a}.  The second kind relies on Bayesian credible intervals for $\abs{\mu-\mu_n}$ assuming that $f$ is an instance of a Gaussian process whose hyperparameters are tuned based on the function data \cite{HicJag18b,RatHic19a,JagHic22a}. For both kinds of stopping criteria, the cost of bounding the error $\abs{\mu-\mu_n}$ is only $\Order(n \log(n))$.  This achieved for the Bayesian approach by choosing covariance kernels that match the LD sampling schemes, and thus avoiding the typical $\Order(n^3)$ cost.
+\FH and his collaborators have developed two kinds of theoretically justified stopping criteria for LD sampling based on the Fourier coefficients of the function data, $f(\bX_1), f(\bX_2), \ldots$.  The first kind determines a bound on $\abs{\mu-\mu_n}$ by inferring the roughness of $f$ from the decay of the discrete Fourier coefficients \cite{HicJim16a,JimHic16a,HicEtal17a}.  The second kind uses  Bayesian credible intervals for $\abs{\mu-\mu_n}$ assuming that $f$ is an instance of a Gaussian process whose hyperparameters are tuned by the function data \cite{HicJag18b,RatHic19a,JagHic22a}. The cost of bounding the error $\abs{\mu-\mu_n}$ is only $\Order(n \log(n))$ for both kinds of stopping criteria.  This achieved for the Bayesian approach by choosing covariance kernels that match the LD sampling schemes, and thus avoiding the typical $\Order(n^3)$ cost.
 
-\subsection{Software Implementation} LD sequences in their basic form are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014,UQLab}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}.  
+\subsection{Software Implementation} LD sequences are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014,UQLab}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}.  
 
-\FH, \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort has been focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
+\FH, \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
 
 
 \subsection{Limitations of Existing Methodology and Software}
@@ -591,20 +608,23 @@ There are several limitations to the methodology and software, described above, 
 
 \item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in Section \ref{??} 
 
-\item[Automatic variable transformations]  Given a random variable $\bT$ with a known distribution, there are usually multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform.  For example, mapping a uniform random $d$-vector to a $d$-dimensional multivariate Gaussian random vector relies on the choice of one of infinitely many possible square roots of the covariance matrix (for $d>1$).  Choosing $\bPsi$ to give an $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be data-based. This equivalent to the problem of adaptive importance sampling. We address this limitation in Section \ref{??}.
+\item[Automatic variable transformations]  There are often multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform random variable $\bX$ as in \eqref{eq:vartrans}.  For example, mapping $\bX \sim \calu[0,1]^d$ to $\bT \sim \caln(\bzero,\mSigma)$  involves choosing one of infinitely many possible square roots of the covariance matrix, $\mSigma$, (for $d>1$).  Choosing transformation $\bPsi$ to give an integrand $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be based on function data. This may be addressed by adaptive importance sampling and/or  control variates. We address this limitation in Section \ref{??}.
 
-\item[Multifidelity] For many practical problems, the random variable of interest $Y_\fidparam = f_\fidparam(\bX_\fidparam)$ is parameterized by a \emph{fidelity} parameter $\fidparam$, and the desired quantity of interest is $\mu_\infty = \lim_{\fidparam \to \fidparam_\infty} \bbE(Y_\fidparam)$.  For example, $f_\fidparam(\bX_\fidparam)$ may represent the numerical solution of  a partial differential equation with random coefficients $\bX_\fidparam$ and mesh-size represented by $\fidparam$.  Typically, the cost of evaluating $Y_\fidparam$ increases with increasing fidelity, and evaluating many high fidelity $Y_{\fidparam,i}$ to approximate $\mu_\infty$ is costly.
+\item[Multifidelity] For many practical problems, the random variable of interest $Y_\fidparam = f_\fidparam(\bX_\fidparam)$ is parameterized by a \emph{fidelity} parameter $\fidparam$, and the desired quantity of interest is $\mu_\infty = \lim_{\fidparam \to \fidparam_\infty} \bbE(Y_\fidparam)$.  For example, $f_\fidparam(\bX_\fidparam)$ may represent the numerical solution of  a partial differential equation (PDE) with random coefficients $\bX_\fidparam$ and mesh-size represented by $\fidparam$.  Typically, the cost of evaluating $Y_\fidparam$ increases with increasing fidelity, and evaluating many high fidelity $Y_{\fidparam,i}$ to approximate $\mu_\infty$ is costly.
 
-Multifidelity (also known as multi-level or multi-index) methods \cite{Hei01a, Gil15a, HajNobTem16a} choose a sequence of fidelity parameters, $\fidparam_1, \fidparam_2, \ldots$ and write the desired answer as a telescoping sum: 
+Multifidelity (also known as multi-level or multi-index) methods \cite{Hei01a, Gil15a, HajNobTem16a} choose a sequence of fidelity parameters, $\fidparam_1, \fidparam_2, \ldots$, and write the  answer as a telescoping sum: 
 \[
-\mu = \mu_\infty = [\mu_{\fidparam_1} - \mu_{\fidparam_0}] + [\mu_{\fidparam_2} - \mu_{\fidparam_1}] + \cdots +
-[\mu_{\fidparam_L} - \mu_{\fidparam_{L-1}}] + [\mu_{\infty} - \mu_{\fidparam_{L}}], \qquad \mu_{\fidparam_0} = 0.
+\mu = \mu_\infty = (\mu_{\fidparam_1} - \mu_{\fidparam_0}) + (\mu_{\fidparam_2} - \mu_{\fidparam_1}) + \cdots +
+(\mu_{\fidparam_L} - \mu_{\fidparam_{L-1}}) + (\mu_{\infty} - \mu_{\fidparam_{L}}), \qquad \mu_{\fidparam_0} = 0.
 \]
-The sequence of fidelity parameters is chosen so that the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$  increases with $l$ (greater fidelity), and that the sample size required to estimate $\mu_{\fidparam_l} - \mu_{\fidparam_{l-1}}$ accurately decreases with $l$. The term  $\mu_{\infty} - \mu_{\fidparam_{L}}$ is approximated by zero. Substantial cost efficiency is gained by using many samples to approximate the low fidelity terms and relatively fewer samples to compute the high fidelity terms.  The measures of confidence or the stopping criteria mentioned in Sect.\ \ref{sec:stopcrit} do not yet extend to multifidelity methods.  This is addressed in Sect.\ \ref{??}
+The sequence of fidelity parameters is chosen so that the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$  increases with $l$ (greater fidelity), but  the sample size required to estimate $\mu_{\fidparam_l} - \mu_{\fidparam_{l-1}}$ accurately decreases with $l$. The term  $\mu_{\infty} - \mu_{\fidparam_{L}}$ is approximated by zero. Substantial cost efficiency is gained by using many cheap samples to approximate the low fidelity terms and relatively fewer expensive samples to compute the high fidelity terms.  The measures of confidence or the stopping criteria mentioned in Sect.\ \ref{sec:stopcrit} do not yet extend to multifidelity methods.  This is addressed in Sect.\ \ref{??}
 
-\item[Problems other than expectations] Problems of interest not of the  form \eqref{eq:prototype} include accurate computation of the quartiles of $Y$ or the (marginal) distributions of a possibly vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous data-based stopping criteria are non-existent. We address this limitation in Section \ref{??}.
+\item[More general problems than expectations] There are several problems  of interest that do not take the  form \eqref{eq:prototype}, including  computing  the quartiles of $Y$ or the (marginal) distributions of a vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous, data-based stopping criteria are non-existent. We address this limitation in Section \ref{??}.
 
-\item[Software connectivity] 
+\item[Software reliability] \QMC software implemented by non-experts may be flawed.  \FH found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a}.  This was due to a lack of double precision, as pointed out by \MM.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  discovered  that \MATLAB's Sobol' sequence scrambling was incorrect.  \MATLAB corrected this after being notified.  After a vigorous discussion on the \PyTorch issues site \cite{PyTorchFirstPt2020a} and the \SciPy issues site \cite{scipySobol2020a}, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is important~\cite{owen2020dropping}.  Unfortunately, some libraries still drop the first point of their LD sequences.  The need for a vigilant \QMC software community is addressed in Sect.\ \ref{??}.
+
+
+\item[Software connectivity] Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in Sect.\ \ref{}
 
 \end{description}
 
