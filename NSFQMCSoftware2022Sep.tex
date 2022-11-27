@@ -98,6 +98,8 @@
 \newcommand{\BO}{\hyperlink{BOlink}{BO}\xspace}
 \newcommand{\QMC}{\hyperlink{QMClink}{QMC}\xspace}
 
+\newcommand{\SEC}{Sect.\xspace}
+
 
 \newcommand{\QMCSoft}{QMCSoft\xspace}
 \newcommand{\QMCPy}{QMCPy\xspace}
@@ -595,20 +597,21 @@ One approach is to use $N$ different randomizations of a single LD sequence to c
 
 \FH and his collaborators have developed two kinds of theoretically justified stopping criteria for LD sampling based on the Fourier coefficients of the function data, $f(\bX_1), f(\bX_2), \ldots$.  The first kind determines a bound on $\abs{\mu-\mu_n}$ by inferring the roughness of $f$ from the decay of the discrete Fourier coefficients \cite{HicJim16a,JimHic16a,HicEtal17a}.  The second kind uses  Bayesian credible intervals for $\abs{\mu-\mu_n}$ assuming that $f$ is an instance of a Gaussian process whose hyperparameters are tuned by the function data \cite{HicJag18b,RatHic19a,JagHic22a}. The cost of bounding the error $\abs{\mu-\mu_n}$ is only $\Order(n \log(n))$ for both kinds of stopping criteria.  This achieved for the Bayesian approach by choosing covariance kernels that match the LD sampling schemes, and thus avoiding the typical $\Order(n^3)$ cost.
 
-\subsection{Software Implementation} LD sequences are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}.  
+\subsection{Software Implementation} \label{sec:software}
+LD sequences are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}.  
 
 \FH, \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
 
 
-\subsection{Limitations of Existing Methodology and Software}
+\subsection{Limitations of Existing Methodology and Software} \label{sec:limit}
 
 There are several limitations to the methodology and software, described above, which our proposed research addresses.
 
 \begin{description}
 
-\item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in Section \ref{??} 
+\item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in \SEC \ref{??} 
 
-\item[Automatic variable transformations]  There are often multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform random variable $\bX$ as in \eqref{eq:vartrans}.  For example, mapping $\bX \sim \calu[0,1]^d$ to $\bT \sim \caln(\bzero,\mSigma)$  involves choosing one of infinitely many possible square roots of the covariance matrix, $\mSigma$, (for $d>1$).  Choosing transformation $\bPsi$ to give an integrand $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be based on function data. This may be addressed by adaptive importance sampling and/or  control variates. We address this limitation in Section \ref{??}.
+\item[Automatic variable transformations]  There are often multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform random variable $\bX$ as in \eqref{eq:vartrans}.  For example, mapping $\bX \sim \calu[0,1]^d$ to $\bT \sim \caln(\bzero,\mSigma)$  involves choosing one of infinitely many possible square roots of the covariance matrix, $\mSigma$, (for $d>1$).  Choosing transformation $\bPsi$ to give an integrand $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be based on function data. This may be addressed by adaptive importance sampling and/or  control variates. We address this limitation in \SEC \ref{??}.
 
 \item[Multifidelity] For many practical problems, the random variable of interest $Y_\fidparam = f_\fidparam(\bX_\fidparam)$ is parameterized by a \emph{fidelity} parameter $\fidparam$, and the desired quantity of interest is $\mu_\infty = \lim_{\fidparam \to \fidparam_\infty} \bbE(Y_\fidparam)$.  For example, $f_\fidparam(\bX_\fidparam)$ may represent the numerical solution of  a partial differential equation (PDE) with random coefficients $\bX_\fidparam$ and mesh-size represented by $\fidparam$.  Typically, the cost of evaluating $Y_\fidparam$ increases with increasing fidelity, and evaluating many high fidelity $Y_{\fidparam,i}$ to approximate $\mu_\infty$ is costly.
 
@@ -617,14 +620,14 @@ Multifidelity (also known as multi-level or multi-index) methods \cite{Hei01a, G
 \mu = \mu_\infty = (\mu_{\fidparam_1} - \mu_{\fidparam_0}) + (\mu_{\fidparam_2} - \mu_{\fidparam_1}) + \cdots +
 (\mu_{\fidparam_L} - \mu_{\fidparam_{L-1}}) + (\mu_{\infty} - \mu_{\fidparam_{L}}), \qquad \mu_{\fidparam_0} = 0.
 \]
-The sequence of fidelity parameters is chosen so that the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$  increases with $l$ (greater fidelity), but  the sample size required to estimate $\mu_{\fidparam_l} - \mu_{\fidparam_{l-1}}$ accurately decreases with $l$. The term  $\mu_{\infty} - \mu_{\fidparam_{L}}$ is approximated by zero. Substantial cost efficiency is gained by using many cheap samples to approximate the low fidelity terms and relatively fewer expensive samples to compute the high fidelity terms.  The measures of confidence or the stopping criteria mentioned in Sect.\ \ref{sec:stopcrit} do not yet extend to multifidelity methods.  This is addressed in Sect.\ \ref{??}
+The sequence of fidelity parameters is chosen so that the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$  increases with $l$ (greater fidelity), but  the sample size required to estimate $\mu_{\fidparam_l} - \mu_{\fidparam_{l-1}}$ accurately decreases with $l$. The term  $\mu_{\infty} - \mu_{\fidparam_{L}}$ is approximated by zero. Substantial cost efficiency is gained by using many cheap samples to approximate the low fidelity terms and relatively fewer expensive samples to compute the high fidelity terms.  The measures of confidence or the stopping criteria mentioned in \SEC \ref{sec:stopcrit} do not yet extend to multifidelity methods.  This is addressed in \SEC \ref{??}
 
-\item[More general problems than expectations] There are several problems  of interest that do not take the  form \eqref{eq:prototype}, including  computing  the quartiles of $Y$ or the (marginal) distributions of a vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous, data-based stopping criteria are non-existent. We address this limitation in Section \ref{??}.
+\item[More general problems than expectations] There are several problems  of interest that do not take the  form \eqref{eq:prototype}, including  computing  the quartiles of $Y$ or the (marginal) distributions of a vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous, data-based stopping criteria are non-existent. We address this limitation in \SEC \ref{??}.
 
-\item[Software reliability] \QMC software implemented by non-experts may be flawed.  \FH found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a}.  This was due to a lack of double precision, as pointed out by \MM.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  discovered  that \MATLAB's Sobol' sequence scrambling was incorrect.  \MATLAB corrected this after being notified.  After a vigorous discussion on the \PyTorch issues site \cite{PyTorchFirstPt2020a} and the \SciPy issues site \cite{scipySobol2020a}, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is important~\cite{owen2020dropping}.  Unfortunately, some libraries still drop the first point of their LD sequences.  The need for a vigilant \QMC software community is addressed in Sect.\ \ref{??}.
+\item[Software reliability] \QMC software implemented by non-experts may be flawed.  \FH found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a}.  This was due to a lack of double precision, as pointed out by \MM.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  discovered  that \MATLAB's Sobol' sequence scrambling was incorrect.  \MATLAB corrected this after being notified.  After a vigorous discussion on the \PyTorch issues site \cite{PyTorchFirstPt2020a} and the \SciPy issues site \cite{scipySobol2020a}, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is important~\cite{owen2020dropping}.  Unfortunately, some libraries still drop the first point of their LD sequences.  The need for a vigilant \QMC software community is addressed in \SEC \ref{??}.
 
 
-\item[Software connectivity] Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in Sect.\ \ref{}
+\item[Software connectivity] Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in \SEC \ref{}
 
 \end{description}
 
@@ -640,9 +643,9 @@ The sequence of fidelity parameters is chosen so that the cost of evaluating $f_
 % \item Bayesian optimization (Fred, Mike McCourt). Applications in food science: Simon will ping a collaborator (former student) in industry.
 % \item \cmtS{Fred: random coefficients in PDE, for engineering applications.}
 % \end{itemize}
-% Should also talk about broader impacts of an open-source software and its impact on scientific progress. Can reiterate some of Section 4 here in the context of addressing aforementioned applications and problems.
+% Should also talk about broader impacts of an open-source software and its impact on scientific progress. Can reiterate some of onon 4 here in the context of addressing aforementioned applications and problems.
 
-The theoretical and methodological questions addressed by this project will include \cmtS{to modify, move later into Section 1? and have this has a one-paragraph abstract on the overarching framework \& broader impacts?}
+The theoretical and methodological questions addressed by this project will include \cmtS{to modify, move later into \SEC 1? and have this has a one-paragraph abstract on the overarching framework \& broader impacts?}
 \begin{enumerate}[i)]
 \item Reliable adaptive importance for QMC cubature (\cref{sec:imp});
 \item $\Order(n^{-3/2})$ convergence with scrambled nets for integrals over $\reals^d$ (\cref{sec:threehalves});
@@ -652,15 +655,6 @@ The theoretical and methodological questions addressed by this project will incl
 \item LD posterior sampling methods for expensive Bayesian modeling problems (\cref{sec:bayes}).
 \end{enumerate}
 
-Our collaborators include  
-\hypertarget{MMlink}{Michael McCourt} (\MM, SigOpt), 
-\hypertarget{DNlink}{Dirk Nuyens} (\DN,  Katholieke Universiteit Leuven),
-\hypertarget{AOlink}{Art Owen} (\AO, Stanford University), 
-\hypertarget{PRlink}{Pieterjan Robbe} (\PR, Sandia National Laboratories and Katholieke Universiteit Leuven),  
-\hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), 
-\hypertarget{ASlink}{Aleksei Sorokin} (\AS, PhD student, Illinois Tech),
-\hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke University), 
-\hypertarget{TTlink}{Tao Tang} (\TT, PhD student, Duke University), as well as other students, alumni, and friends. \cmtS{to modify}
 
 
 
@@ -668,7 +662,7 @@ Our collaborators include
 % \section*{Overview of QMC and LD Sampling}
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \cmtS{should we shorten this \& integrate as a subsection in Section 1?}
+% \cmtS{should we shorten this \& integrate as a subsection in \SEC 1?}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \subsection{Applications of (Q)MC and of IID and LD Sampling}
