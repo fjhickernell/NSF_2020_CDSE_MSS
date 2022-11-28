@@ -609,9 +609,9 @@ There are several limitations to the methodology and software, described above, 
 
 \begin{description}
 
-\item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in \SEC \ref{??} 
+\item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in  \cref{??} 
 
-\item[Automatic variable transformations]  There are often multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform random variable $\bX$ as in \eqref{eq:vartrans}.  For example, mapping $\bX \sim \calu[0,1]^d$ to $\bT \sim \caln(\bzero,\mSigma)$  involves choosing one of infinitely many possible square roots of the covariance matrix, $\mSigma$, (for $d>1$).  Choosing transformation $\bPsi$ to give an integrand $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be based on function data. This may be addressed by adaptive importance sampling and/or  control variates. We address this limitation in \SEC \ref{??}.
+\item[Automatic variable transformations]  There are often multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform random variable $\bX$ as in \eqref{eq:vartrans}.  For example, mapping $\bX \sim \calu[0,1]^d$ to $\bT \sim \caln(\bzero,\mSigma)$  involves choosing one of infinitely many possible square roots of the covariance matrix, $\mSigma$, (for $d>1$).  Choosing transformation $\bPsi$ to give an integrand $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be based on function data. This may be addressed by adaptive importance sampling and/or  control variates. We address this limitation in \cref{??}.
 
 \item[Multifidelity] For many practical problems, the random variable of interest $Y_\fidparam = f_\fidparam(\bX_\fidparam)$ is parameterized by a \emph{fidelity} parameter $\fidparam$, and the desired quantity of interest is $\mu_\infty = \lim_{\fidparam \to \fidparam_\infty} \bbE(Y_\fidparam)$.  For example, $f_\fidparam(\bX_\fidparam)$ may represent the numerical solution of  a partial differential equation (PDE) with random coefficients $\bX_\fidparam$ and mesh-size represented by $\fidparam$.  Typically, the cost of evaluating $Y_\fidparam$ increases with increasing fidelity, and evaluating many high fidelity $Y_{\fidparam,i}$ to approximate $\mu_\infty$ is costly.
 
@@ -620,14 +620,14 @@ Multifidelity (also known as multi-level or multi-index) methods \cite{Hei01a, G
 \mu = \mu_\infty = (\mu_{\fidparam_1} - \mu_{\fidparam_0}) + (\mu_{\fidparam_2} - \mu_{\fidparam_1}) + \cdots +
 (\mu_{\fidparam_L} - \mu_{\fidparam_{L-1}}) + (\mu_{\infty} - \mu_{\fidparam_{L}}), \qquad \mu_{\fidparam_0} = 0.
 \]
-The sequence of fidelity parameters is chosen so that the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$  increases with $l$ (greater fidelity), but  the sample size required to estimate $\mu_{\fidparam_l} - \mu_{\fidparam_{l-1}}$ accurately decreases with $l$. The term  $\mu_{\infty} - \mu_{\fidparam_{L}}$ is approximated by zero. Substantial cost efficiency is gained by using many cheap samples to approximate the low fidelity terms and relatively fewer expensive samples to compute the high fidelity terms.  The measures of confidence or the stopping criteria mentioned in \SEC \ref{sec:stopcrit} do not yet extend to multifidelity methods.  This is addressed in \SEC \ref{??}
+The sequence of fidelity parameters is chosen so that the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$  increases with $l$ (greater fidelity), but  the sample size required to estimate $\mu_{\fidparam_l} - \mu_{\fidparam_{l-1}}$ accurately decreases with $l$. The term  $\mu_{\infty} - \mu_{\fidparam_{L}}$ is approximated by zero. Substantial cost efficiency is gained by using many cheap samples to approximate the low fidelity terms and relatively fewer expensive samples to compute the high fidelity terms.  The measures of confidence or the stopping criteria mentioned in  \cref{sec:stopcrit} do not yet extend to multifidelity methods.  This is addressed in  \cref{??}
 
-\item[More general problems than expectations] There are several problems  of interest that do not take the  form \eqref{eq:prototype}, including  computing  the quartiles of $Y$ or the (marginal) distributions of a vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous, data-based stopping criteria are non-existent. We address this limitation in \SEC \ref{??}.
+\item[More general problems than expectations] There are several problems  of interest that do not take the  form \eqref{eq:prototype}, including  computing  the quartiles of $Y$ or the (marginal) distributions of a vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous, data-based stopping criteria are non-existent. We address this limitation in  \cref{??}.
 
-\item[Software reliability] \QMC software implemented by non-experts may be flawed.  \FH found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a}.  This was due to a lack of double precision, as pointed out by \MM.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  discovered  that \MATLAB's Sobol' sequence scrambling was incorrect.  \MATLAB corrected this after being notified.  After a vigorous discussion on the \PyTorch issues site \cite{PyTorchFirstPt2020a} and the \SciPy issues site \cite{scipySobol2020a}, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is important~\cite{owen2020dropping}.  Unfortunately, some libraries still drop the first point of their LD sequences.  The need for a vigilant \QMC software community is addressed in \SEC \ref{??}.
+\item[Software reliability] \QMC software implemented by non-experts may be flawed.  \FH found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a}.  This was due to a lack of double precision, as pointed out by \MM.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  discovered  that \MATLAB's Sobol' sequence scrambling was incorrect.  \MATLAB corrected this after being notified.  After a vigorous discussion on the \PyTorch issues site \cite{PyTorchFirstPt2020a} and the \SciPy issues site \cite{scipySobol2020a}, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is important~\cite{owen2020dropping}.  Unfortunately, some libraries still drop the first point of their LD sequences.  The need for a vigilant \QMC software community is addressed in  \cref{??}.
 
 
-\item[Software connectivity] Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in \SEC \ref{}
+\item[Software connectivity] Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in  \cref{??}
 
 \end{description}
 
@@ -840,9 +840,25 @@ We will investigate key theoretical properties for RSP sampling. One property to
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{\sout{Performance}Improving Cost Efficiency for Complex Problems} [\FH lead, \SCTC, \YD, \MM, \DN, \AO, \AS{}] \label{sec:performance}
+\subsection{Stopping Rules for Multifidelity Problems} [\FH lead, \SCTC, \YD, \MM, \DN, \CH, \AO, \AS{}] \label{sec:performance}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cmtS{ideas on gauging confidence, adaptive algorithms, uncertainty quantification.} \cmtS{structure: Motivation \& preliminary results, Action tasks, Application \& implementation?}
+
+\subsubsection{Motivation and Preliminary Results} A common form of uncertainty quantification involves computing $\mu = \bbE(Y)$, where $Y=f(\bX)$ and $f$ may only be evaluated approximately.  E.g., $f$ is the solution of a (partial) differential equation whose coefficients and/or boundary conditions are given by a random field.  In such situations, $f$ is approximated by $f_\fidparam$, where $\fidparam$ denotes the fidelity of the approximation.  As mentioned in \cref{sec:limit}, approximating the true solution, by a single expectation of high fidelity is costly.  Rather multifidelity methods consider a sequence of problems, $\{\mu_l = \bbE(Y_{\fidparam_l})=\bbE[f_{\fidparam_l}(\bX_{\fidparam_l})] \}_{l=0}^L$, where the fidelity increases with $l$ as does the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$.  By a proper balance of samples, one can efficiently approximate $\mu$ by using more cheap samples to approximate $\mu_l - \mu_{l-1}$ for small $l$ and fewer  expensive samples to approximate $\mu_l - \mu_{l-1}$ for large $l$.  Such methods popular and the object of active research \cite{Hei01a, Gil15a, HajNobTem16a}.
+
+As summarized in \cref{sec:stopcrit}, the PIs and collaborators have developed stopping criteria for single expectations.  \FH, \AS,  \JR, and collaborators have also developed stopping criteria for functions of several expectations \cite{HicEtal17a, JagSor23a}, which appear in computing Bayesian posterior means \cite{GelEtal13} or sensitivity indices \cite{Sob01,Sal02a,SalEtal08a}.  However, for these stopping criteria there is only a single random vector, $\bX$, used to define multiple expectations, where as for multifidelity problems there is a sequence of random vectors $\{\bX_{\fidparam_l}\}$ of whose dimensions increase with $l$, and the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$ also increases with  $l$.
+
+\subsubsection{Extending Stopping Rules to Multifidelity Problems}[Years 1-2]
+
+
+
+\subsubsection{Testing the Efficacy of Random Generators}[Years 1-2]
+
+
+
+
+
+because in the former case there is only a single random vector, $\bX$, used to define multiple expectations, where  has a fix
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Richer LD Sequence Generators } [Years 1--2] \label{sec:richLD}
