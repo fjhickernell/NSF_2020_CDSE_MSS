@@ -628,7 +628,7 @@ The sequence of fidelity parameters is chosen so that the cost of evaluating $f_
 \item[Software reliability] \QMC software implemented by non-experts may be flawed.  \FH found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a}.  This was due to a lack of double precision, as pointed out by \MM.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  discovered  that \MATLAB's Sobol' sequence scrambling was incorrect.  \MATLAB corrected this after being notified.  After a vigorous discussion on the \PyTorch issues site \cite{PyTorchFirstPt2020a} and the \SciPy issues site \cite{scipySobol2020a}, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is important~\cite{owen2020dropping}.  Unfortunately, some libraries still drop the first point of their LD sequences.  The need for a vigilant \QMC software community is addressed in  \cref{??}.
 
 
-\item[Software connectivity] Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in  \cref{??}
+\item[Software connectivity] Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in  \cref{sec:playwell}.
 
 \end{description}
 
@@ -841,7 +841,7 @@ We will investigate key theoretical properties for RSP sampling. One property to
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Adaptive Quasi-Monte Carlo Algorithms for Multifidelity Problems} [\FH lead, \SCTC, \YD, \MM, \DN, \CH, \AO, \AS{}] \label{sec:performance}
+\subsection{Adaptive Algorithms for Multifidelity Problems} [\FH lead, \SCTC, \YD, \MM, \DN, \CH, \AO, \AS{}] \label{sec:performance}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \cmtS{ideas on gauging confidence, adaptive algorithms, uncertainty quantification.} \cmtS{structure: Motivation \& preliminary results, Action tasks, Application \& implementation?}
 
@@ -854,64 +854,6 @@ Adaptive algorithms for these multifidelity problems use ad hoc stopping criteri
 
 For multifidelity problems each $\mu_l$ depends on a different $\bX_{\fidparam_l} \sim \calu[0,1]^{d_l}$ with a different $d_l$.   Thus, adaptive algorithms need to manage LD sequences of different dimensions as well as different sample sizes.  Adaptive decisions must be made on whether to devote more effort to sampling the low fidelity or high fidelity terms.  The wealth of literature in on multifidelity methods and our experience on developing rigorous stopping criteria for single fidelity problems gives us confidence in success.
 
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Connecting with Other Libraries} [Years 1--2] \label{sec:playwell}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The complex multifidelity problems that we want to solve will often receive $f_{\fidparam}(\bX_{\fidparam})$ as the output of another library.  We will work with popular library developers to provide demos that show  how our \QMCPy library connects with theirs.  
-
-
-
-
-\begin{equation} \label{eq:imp}
-	\mu = \int_{\reals^d} g(\bt)  \, \lambda(\bt) \dif \bt
-	=   \int_{[0,1]^d} f_{\bT}(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
-\end{equation}
-By the same token, those methods in QMCPy that become more widely accepted will be pushed into the broad-scope libraries such as \SciPy, \PyTorch, and \TensorFlow.
-
-
-
-
-
-
-because in the former case there is only a single random vector, $\bX$, used to define multiple expectations, where  has a fix
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Richer LD Sequence Generators } [Years 1--2] \label{sec:richLD}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Although QMCPy already includes the most popular LD sequences, we will implement more flexibility.  We will expand our generators to include \emph{higher-order digital sequences} \cite{Dic09a, Dic11a}, which yield  faster convergence rates  $n \to \infty$ for smooth integrands, such as those arising in computing multivariate probabilities.  Higher-order nets are not yet available in popular libraries.
-
-For flexibility, the random digital scrambling and shifting of digital nets will be implemented so that either one or both can be turned on or off.  Linear matrix scrambling (LMS) \cite{Mat98,HonHic00a} is the simpler and more common method for randomizing digital sequences (e.g., the Sobol' sequence).  The original nested uniform scrambling (NUS) proposed by \AO \cite{Owe95} requires more complex code and a longer computation time, but it has a \CLT  \cite{Loh01}.  We will \emph{implement NUS} in QMCPy.
-
-Implementing a richer class of LD sequence generators with QMCPy's growing set of use cases will allow us to test which LD sequence generators perform better in practice, e.g., Niederreiter vs.\ Sobol' or LMS vs.\ NUS. If we detect that certain sequences or scrambling methods substantially outperform in practice, then we will develop a \emph{theoretical description} of when that happens.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Speed-Up} [Years 2--3] \label{sec:speedup}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C or utilizing GPUs.  For example, this is done for some of the \PyTorch code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.
-
-There have been attempts at parallel implementations of LD sequences \cite{LiMul00a,OktSri02, SchUhl01,WanEtal06a,LiuHic04a}.  \TensorFlow \cite{tfqf2021a} implements Sobol' sequences using GPUs.  However, parallel or GPU implementations have issues with load balancing. Does one give different processors different segments of the same LD sequence?  Or does one combine the results of several randomized LD sequences, each from a different processor?  We will \emph{implement LD sequences taking advantage of multiple cores} of the same CPU.  We will also explore the possibility of GPU implementations.  Python parallel computing resources \cite{ParallelPython} such as Numba \cite{Numba} will prove invaluable.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Playing Well with Other Python Libraries} [Years 1--2] \label{sec:playwell}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-When it makes more sense to \emph{write wrappers} around the code in other Python libraries to make them compatible with QMCPy, we will.  E.g., \SciPy \cite{SCIPY} has a wealth of probability distributions, some with inverse distribution functions, which can be used for the variable transformations, $\bT$, required to obtain a QMC-friendly integral over the unit cube from the original integral (see \eqref{eq:KeisterAlt}, for an example of a $\bT$):
-\begin{equation} \label{eq:imp}
-	\mu = \int_{\reals^d} g(\bt)  \, \lambda(\bt) \dif \bt
-	=   \int_{[0,1]^d} f_{\bT}(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
-\end{equation}
-By the same token, those methods in QMCPy that become more widely accepted will be pushed into the broad-scope libraries such as \SciPy, \PyTorch, and \TensorFlow.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Theoretical Issues Surrounding Discrepancy and Convergence} [\FH lead, \AO, \AS{}]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Variance/Variation Reduction Through Importance Sampling} \label{sec:imp} %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [Years 1--3]  The discrepancy \eqref{eq:KH} measures the difference between the empirical distribution of the sampling sites and the uniform distribution.  In many cases, the original problem is posed as an integral over $\reals^d$, as on the left side of \eqref{eq:imp}, and a variable transformation must be performed to obtain an integral over $[0,1]^d$.  Note that $f_{\bT}(\bx) = g(\bT(\bx)) \lambda(\bT(\bx)) / \varrho(\bT(\bx))$, where $\varrho$ is the density of $\bT(\bX)$ with $\bX \sim \calu[0,1]^d$.  While in some cases one may choose $\bT$ such that $\varrho(\bt) = \lambda(\bt)$, this is not the only choice and may not be the best choice.  Choosing the transformation $\bT$ is equivalent to performing importance sampling.   
 
@@ -920,7 +862,7 @@ The Koksma-Hlawka inequality, \eqref{eq:KH}, tells us to choose $\bT$ to make th
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{Attaining $\Order(n^{-3/2})$ Convergence for Scrambled Nets} \label{sec:threehalves}
- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [Years 2--3] \AO showed that for moderately smooth integrands, $f$, integrated over the unit cube, the RMSE using randomly scrambled digital nets is $\Order(n^{-3/2})$ \cite{Owe97}.  \FH and collaborators extended this work \cite{HicYue00,HeiHicYue02a}.  However, this convergence rate does not always hold up when the original integrand is over $\reals^d$ because the natural transformation, $\bT$,  in \eqref{eq:imp} and \cref{sec:imp} introduces singularities into $f_{\bT}$.
 
 Consider the following two integrals:
@@ -942,11 +884,26 @@ It is not clear how to obtain $\Order(n^{-3/2})$ error using scrambled net cubat
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [Years 2--3] Josef Dick introduced the concept of higher order nets, and showed how these give $\Order(n^{-\alpha})$ convergence rates for QMC cubature, where $\alpha$ reflects the smoothness of the integrand and the order of the net \cite{Dic08a,Dic09a,Dic11a}.  The stopping criteria developed by PI \FH and his collaborators \cite{HicJim16a,HicEtal17a,Jag19a}, are not designed for these higher order nets because they only track the decay of the Walsh coefficients of the integrand. We will \emph{develop stopping criteria for higher order net cubature}, by extending \cite{HicJim16a} in tracking a more nuanced measure of these fast Walsh coefficients that matches the definition of higher order nets.  We will extend the Bayesian stopping criterion in \cite{Jag19a} by identifying smoother digital shift invariant covariance kernels whose Gram matrices can be decomposed by a fast Walsh transform.
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Stopping Criteria for MLQMC Cubature} \label{sec:stopML}
-[Years 1--3]
+\subsubsection{Connecting with Other Libraries} [Years 1--2] \label{sec:playwell}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-For high or infinite-dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. We will \textit{strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case.
+The complex multifidelity problems that we want to solve will often receive $f_{\fidparam}(\bX_{\fidparam})$ as the output of another library.  We will work with popular library developers to provide demos that show  how our \QMCPy library connects with theirs.  We recently collaborated with Uncertainty Quantification and Model Bridge (UM-Bridge) effort \cite{umbridge} to make \QMCPy compatible with UM-Bridge.
+
+We will also connect QMCPy to other libraries such as PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a}, taking advantage of what they offer in \QMCPy and pushing our more widely accepted developments into them.  A recent lunch gathering at an international \QMC conference initiated by \FH raised the need to standardize formats for LD generators to allow them to be shared across software libraries.  We will pursue this and other initiatives that promote same look-and-feel across \QMC software.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Adaptive Algorithms for Quantile and Distribution Estimation} [\FH lead, \AO, \AS{}]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsubsection{Motivation and Preliminary Results}
+
+\cite{AbdEtal21a}
 
 
 
@@ -1261,4 +1218,39 @@ There is no theory that says when small  $D(\{\bX_i\}_{i=1}^n)$ implies small  $
 		function approximation (top) and minimization (bottom) algorithms in \cite{ChoEtal17a}.  Sampling is denser where $\abs{f''}$ is larger.  For minimization it is also denser where the function values are smaller. \label{localadaptfig}}
 \end{wrapfigure}
 \fi
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Speed-Up} [Years 2--3] \label{sec:speedup}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Python's advantages are ease of coding and the rapidly growing code base.  However, Python code does not execute particularly quickly.  Python can be made to execute more quickly by re-writing it in C or utilizing GPUs.  For example, this is done for some of the \PyTorch code.  We will speed up critical QMCPy code by \emph{re-writing it in C}.
+
+There have been attempts at parallel implementations of LD sequences \cite{LiMul00a,OktSri02, SchUhl01,WanEtal06a,LiuHic04a}.  \TensorFlow \cite{tfqf2021a} implements Sobol' sequences using GPUs.  However, parallel or GPU implementations have issues with load balancing. Does one give different processors different segments of the same LD sequence?  Or does one combine the results of several randomized LD sequences, each from a different processor?  We will \emph{implement LD sequences taking advantage of multiple cores} of the same CPU.  We will also explore the possibility of GPU implementations.  Python parallel computing resources \cite{ParallelPython} such as Numba \cite{Numba} will prove invaluable.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Playing Well with Other Python Libraries} [Years 1--2] \label{sec:playwell}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+When it makes more sense to \emph{write wrappers} around the code in other Python libraries to make them compatible with QMCPy, we will.  E.g., \SciPy \cite{SCIPY} has a wealth of probability distributions, some with inverse distribution functions, which can be used for the variable transformations, $\bT$, required to obtain a QMC-friendly integral over the unit cube from the original integral (see \eqref{eq:KeisterAlt}, for an example of a $\bT$):
+\begin{equation} \label{eq:imp}
+	\mu = \int_{\reals^d} g(\bt)  \, \lambda(\bt) \dif \bt
+	=   \int_{[0,1]^d} f_{\bT}(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
+\end{equation}
+By the same token, those methods in QMCPy that become more widely accepted will be pushed into the broad-scope libraries such as PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a}.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Richer LD Sequence Generators } [Years 1--2] \label{sec:richLD}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Although QMCPy already includes the most popular LD sequences, we will implement more flexibility.  We will expand our generators to include \emph{higher-order digital sequences} \cite{Dic09a, Dic11a}, which yield  faster convergence rates  $n \to \infty$ for smooth integrands, such as those arising in computing multivariate probabilities.  Higher-order nets are not yet available in popular libraries.
+
+For flexibility, the random digital scrambling and shifting of digital nets will be implemented so that either one or both can be turned on or off.  Linear matrix scrambling (LMS) \cite{Mat98,HonHic00a} is the simpler and more common method for randomizing digital sequences (e.g., the Sobol' sequence).  The original nested uniform scrambling (NUS) proposed by \AO \cite{Owe95} requires more complex code and a longer computation time, but it has a \CLT  \cite{Loh01}.  We will \emph{implement NUS} in QMCPy.
+
+Implementing a richer class of LD sequence generators with QMCPy's growing set of use cases will allow us to test which LD sequence generators perform better in practice, e.g., Niederreiter vs.\ Sobol' or LMS vs.\ NUS. If we detect that certain sequences or scrambling methods substantially outperform in practice, then we will develop a \emph{theoretical description} of when that happens.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Stopping Criteria for MLQMC Cubature} \label{sec:stopML}
+[Years 1--3]
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+For high or infinite-dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. We will \textit{strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case.
+
 
