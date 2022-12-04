@@ -2,30 +2,19 @@
 
 %% Set-Up
 format long
-gail.InitializeDisplay
-
-%% Experiment
-% hold on
-% nrep = 100;
-% tsp = 3/nrep;
-% x = (0:0.01:1)';
-% npts = length(x);
-% y = x+0.1*randn(npts,nrep);
-% for ii = 1:nrep
-%   plot(x,y(:,ii),'Color',[MATLABBlue 3/nrep]);
-% end
+gail.InitializeWorkspaceDisplay
 
 %% Plotting empirical distribution function
 f = {@(x) cos(pi*x), @(x) cos(100*pi*x)};
 ftitle = ["\(Y = f(X) = \cos(\pi X)\)";"\(Y = f(X) = \cos(100\pi X)\)"];
 F = @(y) asin(y)/pi - 1/2;
 Ftitle = "\(F_Y(y) = \sin^{-1}(y)/\pi - 1/2\)";
-n = 2^7;
+n = 2^6;
 probval = ((0:n-1)+1/2)/n;
 quantval = [0.1 0.5 0.75];
 nq = length(quantval);
 rep = 100;
-tsp = 3/rep;
+tsp = 0.3;
 lw = 3;
 
 rng(47)
@@ -82,7 +71,10 @@ for j = 1:2
    title('LD')
 end
 
-print -depsc distribExper.eps
+
+print('distribExper.eps','-depsc')
+print('distribExper.pdf','-dpdf')
+print -dpng distribExper.png
 
 
 
