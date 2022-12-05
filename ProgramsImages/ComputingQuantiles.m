@@ -2,19 +2,23 @@
 
 %% Set-Up
 format long
-gail.InitializeWorkspaceDisplay
+close all %close all figures
+set(0,'defaultaxesfontsize',18,'defaulttextfontsize',18, ... %make font larger
+      'defaultLineLineWidth',3, ... %thick lines
+      'defaultLineMarkerSize',40) %big dots
+LatexInterpreter %LaTeX interpreted axis labels, tick labels, and legends
 
 %% Plotting empirical distribution function
 f = {@(x) cos(pi*x), @(x) cos(100*pi*x)};
 ftitle = ["\(Y = f(X) = \cos(\pi X)\)";"\(Y = f(X) = \cos(100\pi X)\)"];
-F = @(y) asin(y)/pi - 1/2;
-Ftitle = "\(F_Y(y) = \sin^{-1}(y)/\pi - 1/2\)";
+F = @(y) asin(y)/pi + 1/2;
+Ftitle = "\(F_Y(y) = \sin^{-1}(y)/\pi + 1/2\)";
 n = 2^6;
 probval = ((0:n-1)+1/2)/n;
 quantval = [0.1 0.5 0.75];
 nq = length(quantval);
 rep = 100;
-tsp = 0.3;
+tsp = 1/rep;
 lw = 3;
 
 rng(47)
@@ -55,7 +59,7 @@ for j = 1:2
       plot(fiid(:,ii),probval,'Color',[MATLABBlue tsp],'LineWidth',lw);
    end
    xlabel("\(y\)")
-   ylabel("\(F_Y(y)\)")
+   ylabel("\(F_{\mathrm{emp}}(y)\)")
    title('IID')
    k = k + 2;
 
@@ -67,14 +71,14 @@ for j = 1:2
       plot(fnet(:,ii),probval,'Color',[MATLABBlue tsp],'LineWidth',lw)
    end
    xlabel("\(y\)")
-   ylabel("\(F_Y(y)\)")
+   ylabel("\(F_{\mathrm{emp}}(y)\)")
    title('LD')
 end
 
 
 print('distribExper.eps','-depsc')
 print('distribExper.pdf','-dpdf')
-print -dpng distribExper.png
+exportgraphics(gcf,'distribExperEG.pdf')
 
 
 

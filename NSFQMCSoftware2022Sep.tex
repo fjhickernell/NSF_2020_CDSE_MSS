@@ -16,6 +16,8 @@
 \usepackage{wrapfig}
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage[normalem]{ulem}
+\usepackage{bbm}
+\crefformat{equation}{(#2#1#3)}
 
 \voffset 0.23in
 \hoffset 0in
@@ -228,6 +230,7 @@
 \newcommand{\mL}{\mathsf{L}}
 \newcommand{\mM}{\mathsf{M}}
 \newcommand{\mP}{\mathsf{P}}
+\newcommand{\bbP}{\mathbb{P}}
 \newcommand{\mQ}{\mathsf{Q}}
 \newcommand{\mR}{\mathsf{R}}
 \newcommand{\mX}{\mathsf{X}}
@@ -237,6 +240,7 @@
 \newcommand{\mSigma}{\mathsf{\Sigma}}
 \newcommand{\cube}{[0,1]^d}
 \newcommand{\design}{\{\bx_i\}_{i=1}^n}
+\newcommand{\bbone}{\mathbbm{1}}
 
 
 
@@ -546,28 +550,34 @@ Complex problems need multiple packages that must fit together
 
 \subsection{Prototypical Problem}
 
-A typical problem of interest is the expectation of a random variable $Y$ (e.g., option payoff, pixel intensity, flow velocity at a certain location) whose distribution is some complicated function, $f$, of a \emph{standard uniform} random vector random variable:
+A typical problem of interest is the \emph{expectation of a random variable} $Y$ (e.g., option payoff, pixel intensity, flow velocity at a certain location) whose distribution is some complicated function, $f$, of a \emph{standard uniform} random vector random variable:
 \begin{equation} \label{eq:prototype}
     \mu := \bbE(Y) = \bbE[f(\bX)] = \int_{\cube} f(\bx) \, \dif \bx = \, ?, \qquad \bX \sim \calu[0,1]^d.
 \end{equation}
+This can also be thought of as a \emph{multivariate integration} problem.
 
-We assume that $\bX$ is uniform because the low discrepancy sequences that we intend to use mimic uniform random vectors.  If the problem originates as $Y=g(\bT)$ for some $\bT$ with a known distribution that is not standard uniform, then we use a variable transformation to re-write the problem in the form of \eqref{eq:prototype}:
+We assume that $\bX$ is uniform because the low discrepancy sequences that we intend to use mimic uniform random vectors.  If the problem originates as $Y=g(\bT)$ for some $\bT$ that is not standard uniform, then we re-write the problem via a variable transformation:
 \begin{equation} \label{eq:vartrans}
-\bt = \bPsi(\bx), \qquad f(\bx) = g(\bPsi(\bx)) \abs{\partial \bPsi(\bx)/\partial \bx}.
+\bT = \bPsi(\bX), \qquad f(\bx) = g(\bPsi(\bx)) \abs{\partial \bPsi(\bx)/\partial \bx}.
 \end{equation}
 
-For many problems, this population mean or multivariate integral, $\mu$, cannot be evaluated by analytic means, but it may be estimated by the sample mean, $\hmu_n$, i.e., 
+Besides the expectation or integral problem described in \cref{eq:prototype},  it is often also useful to know the \emph{distribution}, $F$, \emph{density}\footnote{We use $\varrho$ to designate the probabilty density because $f$ is typically used for the integrand in the numerical integration literature.}, $\varrho$, and/or \emph{quantile} function, $Q$, of $Y$, i.e.,
+\begin{subequations} \label{eq:distdensquant}
+	\begin{gather}
+		F(y) := \bbP(Y \le y) = \bbP[F(\bX) \le y] = \int_{[0,1]^d} \bbone_{(-\infty,y]}(f(\bx)) \, \dif \bx, \\ \varrho(y) := F'(y), \qquad Q(p) := F^{-1}(p).
+	\end{gather}
+\end{subequations}
+We address this problem in \cref{sec:distdensquant}.
+
+In many cases, the population mean or multivariate integral, $\mu$, cannot be evaluated by analytic means, but it may be estimated by the sample mean, $\hmu_n$, i.e., 
 \begin{equation} \label{eq:mean}
     \mu \approx
 \hmu_n := \frac 1n \sum_{i=1}^n Y_i = \frac 1n, \qquad Y_i = f(\bX_i).
 \end{equation}
-Given an error tolerance, $\varepsilon$, one wants to choose the sampling scheme, $\bX_1, \ldots, \bX_n$, to mimic $\calu[0,1]^d$ and satisfy
+Given an error tolerance, $\varepsilon$, we want to choose the sampling scheme, $\bX_1, \ldots, \bX_n$, to mimic $\calu[0,1]^d$ and satisfy
 \begin{equation} \label{eq:error_crit}
 	\abs{\mu -\hmu_n} \le \varepsilon \qquad \text{with high confidence}.
 \end{equation}
-
-\cmtS{should we talk briefly about some of the complexities in the problem formulation (e.g., distributions, quantiles) which we'll tackle later?}
-
 
 \subsection{Low discrepancy sampling}
 
@@ -591,7 +601,7 @@ The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitr
 
 Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  Note that a grid of $64$ points would only have $8$ different values in each coordinate direction, whereas  the LD sample covers $64$ different values in each coordinate direction.
 
-\subsection{Stopping Criteria} \label{sec:stopcrit}
+\subsection{Error Bounds and Stopping Criteria} \label{sec:stopcrit}
 Numerical algorithms based on efficient LD sampling are commonly called \hypertarget{QMClink}{\emph{quasi-Monte Carlo}} (\QMC) algorithms. To construct a \QMC algorithm one  needs not only an LD sequence, but also reliable and practical bounds on the error $\abs{\mu - \hmu_n}$, which are    based on the function data, $f(\bX_1), f(\bX_2), \ldots$.  Such data-based error bounds inform the stopping criteria that determine a suitable sample size $n$  to satisfy  error tolerance \eqref{eq:error_crit}.
 
 One approach is to use $N$ different randomizations of a single LD sequence to compute $N$ sample means, and then estimate the error of the grand sample mean, $\hmu_{nN} = (\hmu_n^{(1)} +  \cdots \hmu_n^{(N)})/N$, via bootstrap or the variance of these $N$ sample means.  However, finite sample theory to justify this approach is lacking, and the sample size of $nN$ may be costly.
@@ -608,13 +618,13 @@ LD sequences are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG
 
 There are several limitations to the methodology and software, described above, which our proposed research addresses. \cmtS{Bayesian \& big data}
 
-\begin{description}
+%\begin{description}
 
-\item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in  \cref{??} 
+%\item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in  \cref{??} 
 
-\item[Automatic variable transformations]  There are often multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform random variable $\bX$ as in \eqref{eq:vartrans}.  For example, mapping $\bX \sim \calu[0,1]^d$ to $\bT \sim \caln(\bzero,\mSigma)$  involves choosing one of infinitely many possible square roots of the covariance matrix, $\mSigma$, (for $d>1$).  Choosing transformation $\bPsi$ to give an integrand $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be based on function data. This may be addressed by adaptive importance sampling and/or  control variates. We address this limitation in \cref{??}.
+\subsubsection{Automatic variable transformations}  There are often multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform random variable $\bX$ as in \eqref{eq:vartrans}.  For example, mapping $\bX \sim \calu[0,1]^d$ to $\bT \sim \caln(\bzero,\mSigma)$  involves choosing one of infinitely many possible square roots of the covariance matrix, $\mSigma$, (for $d>1$).  Choosing transformation $\bPsi$ to give an integrand $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be based on function data. This may be addressed by adaptive importance sampling and/or  control variates. We address this limitation in \cref{??}.
 
-\item[Multifidelity] For many practical problems, the random variable of interest $Y_\fidparam = f_\fidparam(\bX_\fidparam)$ is parameterized by a \emph{fidelity} parameter $\fidparam$, and the desired quantity of interest is $\mu_\infty = \lim_{\fidparam \to \fidparam_\infty} \bbE(Y_\fidparam)$.  For example, $f_\fidparam(\bX_\fidparam)$ may represent the numerical solution of  a partial differential equation (PDE) with random coefficients $\bX_\fidparam$ and mesh-size represented by $\fidparam$.  Typically, the cost of evaluating $Y_\fidparam$ increases with increasing fidelity, and evaluating many high fidelity $Y_{\fidparam,i}$ to approximate $\mu_\infty$ is costly.
+\subsubsection{Multifidelity} For many practical problems, the random variable of interest $Y_\fidparam = f_\fidparam(\bX_\fidparam)$ is parameterized by a \emph{fidelity} parameter $\fidparam$, and the desired quantity of interest is $\mu_\infty = \lim_{\fidparam \to \fidparam_\infty} \bbE(Y_\fidparam)$.  For example, $f_\fidparam(\bX_\fidparam)$ may represent the numerical solution of  a partial differential equation (PDE) with random coefficients $\bX_\fidparam$ and mesh-size represented by $\fidparam$.  Typically, the cost of evaluating $Y_\fidparam$ increases with increasing fidelity, and evaluating many high fidelity $Y_{\fidparam,i}$ to approximate $\mu_\infty$ is costly.
 
 Multifidelity (also known as multi-level or multi-index) methods \cite{Hei01a, Gil15a, HajNobTem16a} choose a sequence of fidelity parameters, $\fidparam_1, \fidparam_2, \ldots$, and write the  answer as a telescoping sum: 
 \[
@@ -623,14 +633,14 @@ Multifidelity (also known as multi-level or multi-index) methods \cite{Hei01a, G
 \]
 The sequence of fidelity parameters is chosen so that the cost of evaluating $f_{\fidparam_l}(\bX_{\fidparam_l})$  increases with $l$ (greater fidelity), but  the sample size required to estimate $\mu_{\fidparam_l} - \mu_{\fidparam_{l-1}}$ accurately decreases with $l$. The term  $\mu_{\infty} - \mu_{\fidparam_{L}}$ is approximated by zero. Substantial cost efficiency is gained by using many cheap samples to approximate the low fidelity terms and relatively fewer expensive samples to compute the high fidelity terms.  The measures of confidence or the stopping criteria mentioned in  \cref{sec:stopcrit} do not yet extend to multifidelity methods.  This is addressed in  \cref{sec:stopmulti}.
 
-\item[More general problems than expectations] There are several problems  of interest that do not take the  form \eqref{eq:prototype}, including  computing  the quartiles of $Y$ or the (marginal) distributions of a vector random variable $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis such problems is underdeveloped and the rigorous, data-based stopping criteria are non-existent. We address this limitation in  \cref{??}.
+\subsubsection{Distribution, Density, and Quantile Estimation} As mentioned above one might want to know  the distribution, density or quantile of $Y$ as defined in \cref{eq:distdensquant}.  In Bayesian inference one may want to compute the marginal distributions of a random vector $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis for such problems, especially for LD sequences, is underdeveloped and the rigorous, data-based stopping criteria are non-existent. We address this limitation in  \cref{sec:distdensquant}.
 
-\item[Software reliability] \QMC software implemented by non-experts may be flawed.  \FH found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a}.  This was due to a lack of double precision, as pointed out by \MM.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  discovered  that \MATLAB's Sobol' sequence scrambling was incorrect.  \MATLAB corrected this after being notified.  After a vigorous discussion on the \PyTorch issues site \cite{PyTorchFirstPt2020a} and the \SciPy issues site \cite{scipySobol2020a}, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is important~\cite{owen2020dropping}.  Unfortunately, some libraries still drop the first point of their LD sequences.  The need for a vigilant \QMC software community is addressed in  \cref{??}.
+\subsubsection{Software reliability} \QMC software implemented by non-experts may be flawed.  \FH found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a}.  This was due to a lack of double precision, as pointed out by \MM.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  discovered  that \MATLAB's Sobol' sequence scrambling was incorrect.  \MATLAB corrected this after being notified.  After a vigorous discussion on the \PyTorch issues site \cite{PyTorchFirstPt2020a} and the \SciPy issues site \cite{scipySobol2020a}, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is important~\cite{owen2020dropping}.  Unfortunately, some libraries still drop the first point of their LD sequences.  The need for a vigilant \QMC software community is addressed in  \cref{??}.
 
 
-\item[Software connectivity] Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in  \cref{sec:playwell}.
+\subsubsection{Software connectivity} Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in  \cref{sec:playwell}.
 
-\end{description}
+%\end{description}
 
 
 \subsection{Proposed Framework} How does our proposed framework tackle the aforementioned motivating limitations? What are specific objectives we aim to address? Should highlight QMCPy as a vessel for dissemination of our product to the broader scientific community. Should also tout our credentials in software development and collaborative experience with cutting-edge scientific \& big data applications. \cmtS{add workflow figure going from applications to tasks.}
@@ -860,29 +870,6 @@ For multifidelity problems each $\mu_l$ depends on a different $\bX_{\fidparam_l
 The Koksma-Hlawka inequality, \eqref{eq:KH}, tells us to choose $\bT$ to make the variation, $\norm[\calf]{f_{\bT} - \mu}$, small.  For randomized QMC we want to make the variance of $\hmu_n$ small.  Intuitively, variance/variation reduction is making $f_{\bT}$ as flat as possible. As illustrated in the Keister example \eqref{eq:KeisterAlt}, finding a better $f_{\bT}$ may significantly reduce the computation time.  We will \emph{implement adaptive importance sampling}, drawing on the work of  
 \AO \cite{owen2000safe} for safe importance sampling, the  annealed importance sampler \cite{neal2001annealed}, and the bridge sampler \cite{gelman1998simulating}.  Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering.  In \cite{huling2020energy}, PI \SM extends importance sampling for covariate balancing in causal inference.  \FH's PhD student, \KZ, has shown how importance sampling with QMC can beat MCMC in computing the posterior means of logistic regression coefficients \cite{Zha21a}.  We will determine \emph{theoretically and empirically} under what conditions adaptive importance sampling makes \emph{significant improvement in computation times.}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Attaining $\Order(n^{-3/2})$ Convergence for Scrambled Nets} \label{sec:threehalves}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[Years 2--3] \AO showed that for moderately smooth integrands, $f$, integrated over the unit cube, the RMSE using randomly scrambled digital nets is $\Order(n^{-3/2})$ \cite{Owe97}.  \FH and collaborators extended this work \cite{HicYue00,HeiHicYue02a}.  However, this convergence rate does not always hold up when the original integrand is over $\reals^d$ because the natural transformation, $\bT$,  in \eqref{eq:imp} and \cref{sec:imp} introduces singularities into $f_{\bT}$.
-
-Consider the following two integrals:
-\begin{equation} \label{eq:getthreehalves}
-	\mu_1 = \int_{[0,1]^3} g(\bt) \, \dif \bt, \quad \mu_2 = \int_{\reals^3} g(\bt) \phi(\bt) \, \dif \bt, \qquad \text{where } g(\bt) = \exp(t_1 + 0.0625 t_2 + 0.0123t_3), 
-\end{equation}
-\begin{wrapfigure}{r}{0.65\textwidth}
-	\centering
-	\includegraphics[width = 0.32\textwidth] {ProgramsImages/ConvergeRateStrat_exp_uniform_natural_d3_m20.eps}
-	\includegraphics[width = 0.32\textwidth] {ProgramsImages/ConvergeRateStrat_exp_stdGauss_logistic_d3_m20.eps}
-	\caption{The relative RMSE  for scrambled Sobol' cubature for integrals $\mu_1$ (left) and $\mu_2$ (right) defined in \eqref{eq:getthreehalves}.  For $\mu_1$ the natural transformation of $\bT(\bx) = \bx$ yields the expected $\Order(n^{-3/2})$ error, whereas for $\mu_2$ the natural inverse normal distribution function transformation, yields only $\Order(n^{-1})$  error. \label{fig:obtainthreehalf}}
-\end{wrapfigure}
-where $\phi$ is the standard trivariate normal density.  IID cubature for $\mu_1$ and $\mu_2$ yields an RMSE of $\Order(n^{-1/2})$ as shown in \cref{fig:obtainthreehalf}.  For $\mu_1$, scrambled Sobol' cubature yields an $\Order(n^{-3/2})$ RMSE.  However, for $\mu_2$, the natural transformation of variables, corresponding to the inverse distribution function, gives only $\Order(n^{-1})$ RMSE.  Importance sampling with the heavier tailed logistic distribution reclaims the desired $\Order(n^{-3/2})$ error.  
-
-It is not clear how to obtain $\Order(n^{-3/2})$ error using scrambled net cubature for integrals of the form $\mu_2$ and \emph{general} $g$ and dimension, $d$.  We will return to the original work cited above that proves $\Order(n^{-3/2})$ error for integrals of the form $\mu_1$, and \emph{extend this theory to integrals of the form $\mu_2$.}  Prudent importance sampling seems necessary.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Stopping Criteria for Higher Order Net Cubature} \label{sec:HONstop} 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[Years 2--3] Josef Dick introduced the concept of higher order nets, and showed how these give $\Order(n^{-\alpha})$ convergence rates for QMC cubature, where $\alpha$ reflects the smoothness of the integrand and the order of the net \cite{Dic08a,Dic09a,Dic11a}.  The stopping criteria developed by PI \FH and his collaborators \cite{HicJim16a,HicEtal17a,Jag19a}, are not designed for these higher order nets because they only track the decay of the Walsh coefficients of the integrand. We will \emph{develop stopping criteria for higher order net cubature}, by extending \cite{HicJim16a} in tracking a more nuanced measure of these fast Walsh coefficients that matches the definition of higher order nets.  We will extend the Bayesian stopping criterion in \cite{Jag19a} by identifying smoother digital shift invariant covariance kernels whose Gram matrices can be decomposed by a fast Walsh transform.
 
 
 
@@ -896,14 +883,34 @@ We will also connect QMCPy to other libraries such as PyTorch \cite{paszke2019py
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Adaptive Algorithms for Quantile and Distribution Estimation} [\FH lead, \AO, \AS{}]
+\subsection{Algorithms for Distribution, Density  and Quantile  Estimation} \label{sec:distdensquant}  [\FH lead, \AO, \AS{}]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Motivation and Preliminary Results}
+Besides computing expectations, we may wish to know the distribution, density, and/or quantile function of $Y = f(\bX)$.  As opposed to computing a scalar, $\mu$, we now need to approximate functions our error criteria will be in terms of functions norms.
 
-\cite{AbdEtal21a}
+Although the distribution, $F$, is defined as an integral in \cref{eq:distdensquant}, the integrand as it stands, $\bbone_{(-\infty,y]}(f(\cdot))$, is not smooth enough for  QMC theory to apply directly.  Approximating the density (derivative of $F$) and quantile function, (inverse of $F$) are harder problems.
+
+\begin{wrapfigure}{r}{0.65\textwidth}
+	\centering
+	\includegraphics[width = 0.65\textwidth]{ProgramsImages/distribExperEG.pdf}
+	\caption{Comparison of the empirical distribution functions of $Y = f(X)$ using $n=64$ IID and LD $X_i$ and for two definitions of $f$. The empirical distributions generated by LD points are closer to the true} \label{fig:empdistcomp}
+\end{wrapfigure}
+
+Despite the theoretical challenges, LD sequences show promise in approximating distributions, densities, and quantiles.  Consider two different definitions of $Y = f(X)$, $X \sim \calu[0,1]$ as shown in \cref{fig:empdistcomp}.  For both choices of $f$ the distribution function of $Y$ is given by $F(y) = \sin^{-1}(y)/\pi + 1/2$.  \cref{fig:empdistcomp} displays $N = 100$ replications of the empirical distribution, $F_{\mathrm{emp}}$ based on $n=64$ IID and LD samples.  The  LD points provide better approximations of the distribution, and they provide better approximations for smoother $f$.
+
+A recent study of LD sequences for kernel density estimation \cite{AbdEtal21a} has demonstrated that in practice they outperform IID sequences.  They also derive some theoretical error bounds on the estimator for LD sequences, but these bounds seem to be too loose.  Effective dimension is defined roughly as the number of coordinates of $\bX$ that make substantial contributions to $f(\bX)$.  Small effective dimension seems important in the success of approximating  $\varrho$ with LD sequences, just as it is in approximating  $\mu = \bbE[f(\bX)]$ with LD sequences.
+
+\subsubsection{Exploring the Effectiveness of LD Sequences}
+
+
+
+\subsubsection{Deriving Data-Based Error Bounds}
+
+
+
 
 
 
@@ -1253,4 +1260,27 @@ Implementing a richer class of LD sequence generators with QMCPy's growing set o
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 For high or infinite-dimensional integration problems, the computational cost of the integrand is often proportional to $d$, which makes the cost of the sample mean $\Order(dn)$.  Multilevel (Q)MC \cite{Gil15a} decomposes the original integral into a sum of several integrals with different numbers of variables, $d_1 < \dots < d_L$.  The total cost is then $\Order(d_1 n_1 + \cdots + d_L n_L)$. When done well, error criterion \eqref{eq:error_crit} can be met for a decreasing sequence $n_1 > \dots > n_L$, which results in an overall large cost savings compared to a single level (Q)MC algorithm requiring $\Order(d_Ln_1)$ operations. We will \textit{strengthen} QMCPy's rudimentary MLQMC, including extending the theory and implementation of the single level stopping criteria developed by PI \FH, \SCTC, and their collaborators \cite{HicEtal14a,HicJim16a,JimHic16a,HicEtal17a,RatHic19a} to the multilevel case.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Attaining $\Order(n^{-3/2})$ Convergence for Scrambled Nets} \label{sec:threehalves}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[Years 2--3] \AO showed that for moderately smooth integrands, $f$, integrated over the unit cube, the RMSE using randomly scrambled digital nets is $\Order(n^{-3/2})$ \cite{Owe97}.  \FH and collaborators extended this work \cite{HicYue00,HeiHicYue02a}.  However, this convergence rate does not always hold up when the original integrand is over $\reals^d$ because the natural transformation, $\bT$,  in \eqref{eq:imp} and \cref{sec:imp} introduces singularities into $f_{\bT}$.
+
+Consider the following two integrals:
+\begin{equation} \label{eq:getthreehalves}
+	\mu_1 = \int_{[0,1]^3} g(\bt) \, \dif \bt, \quad \mu_2 = \int_{\reals^3} g(\bt) \phi(\bt) \, \dif \bt, \qquad \text{where } g(\bt) = \exp(t_1 + 0.0625 t_2 + 0.0123t_3), 
+\end{equation}
+\begin{wrapfigure}{r}{0.65\textwidth}
+	\centering
+	\includegraphics[width = 0.32\textwidth] {ProgramsImages/ConvergeRateStrat_exp_uniform_natural_d3_m20.eps}
+	\includegraphics[width = 0.32\textwidth] {ProgramsImages/ConvergeRateStrat_exp_stdGauss_logistic_d3_m20.eps}
+	\caption{The relative RMSE  for scrambled Sobol' cubature for integrals $\mu_1$ (left) and $\mu_2$ (right) defined in \eqref{eq:getthreehalves}.  For $\mu_1$ the natural transformation of $\bT(\bx) = \bx$ yields the expected $\Order(n^{-3/2})$ error, whereas for $\mu_2$ the natural inverse normal distribution function transformation, yields only $\Order(n^{-1})$  error. \label{fig:obtainthreehalf}}
+\end{wrapfigure}
+where $\phi$ is the standard trivariate normal density.  IID cubature for $\mu_1$ and $\mu_2$ yields an RMSE of $\Order(n^{-1/2})$ as shown in \cref{fig:obtainthreehalf}.  For $\mu_1$, scrambled Sobol' cubature yields an $\Order(n^{-3/2})$ RMSE.  However, for $\mu_2$, the natural transformation of variables, corresponding to the inverse distribution function, gives only $\Order(n^{-1})$ RMSE.  Importance sampling with the heavier tailed logistic distribution reclaims the desired $\Order(n^{-3/2})$ error.  
+
+It is not clear how to obtain $\Order(n^{-3/2})$ error using scrambled net cubature for integrals of the form $\mu_2$ and \emph{general} $g$ and dimension, $d$.  We will return to the original work cited above that proves $\Order(n^{-3/2})$ error for integrals of the form $\mu_1$, and \emph{extend this theory to integrals of the form $\mu_2$.}  Prudent importance sampling seems necessary.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Stopping Criteria for Higher Order Net Cubature} \label{sec:HONstop} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+[Years 2--3] Josef Dick introduced the concept of higher order nets, and showed how these give $\Order(n^{-\alpha})$ convergence rates for QMC cubature, where $\alpha$ reflects the smoothness of the integrand and the order of the net \cite{Dic08a,Dic09a,Dic11a}.  The stopping criteria developed by PI \FH and his collaborators \cite{HicJim16a,HicEtal17a,Jag19a}, are not designed for these higher order nets because they only track the decay of the Walsh coefficients of the integrand. We will \emph{develop stopping criteria for higher order net cubature}, by extending \cite{HicJim16a} in tracking a more nuanced measure of these fast Walsh coefficients that matches the definition of higher order nets.  We will extend the Bayesian stopping criterion in \cite{Jag19a} by identifying smoother digital shift invariant covariance kernels whose Gram matrices can be decomposed by a fast Walsh transform.
 
