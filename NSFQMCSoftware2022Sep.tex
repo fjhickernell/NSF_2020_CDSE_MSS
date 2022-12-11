@@ -563,7 +563,7 @@ Given an error tolerance, $\varepsilon$, we want to choose the sampling scheme, 
 	\abs{\mu -\hmu_n} \le \varepsilon \qquad \text{with high confidence}.
 \end{equation}
 
-\subsubsection{Low discrepancy sampling}
+\subsubsection{Low discrepancy sampling}\label{sec:lowdiscrep}
 
 %\cmtS{Fred / Yuhan: pls shorten \& focus after my writing above.} 
 \begin{wrapfigure}{r}{0.4\textwidth}
@@ -821,7 +821,7 @@ Based on  our computational experiments, we will derive data-driven algorithms t
 
 \subsection{Disseminating Our Work} We will publish our theoretical and practical work in a variety of mathematics, statistics, and computer science journals and conference proceedings. We will present our work at conferences targeting theoreticians and practitioners.  We will offer tutorials.  Students will present at conferences and during group meetings, as part of their education. \cmtS{expand and discuss cross-disciplinary dissemination to the broad scientific community? some sample writing below from another proposal}
 
-\subsection*{Dissemination to the Broad Scientific Community}
+\subsubsection*{Dissemination to the Broad Scientific Community}
 In order for SCINPL to be an integral component in solving modern complex scientific problems, scientists need to be convinced that our modeling paradigm can faithfully represent useful scientific information as prior beliefs, and can provide models which are not only data-efficient, but also scientifically interpretable and meaningful for the problem at hand. This necessitates a \textit{strategic outreach} and \textit{targeted dissemination} of the proposed methodologies to a broad range of scientific communities, who may not be familiar with statistical modeling. We will achieve this outreach in two key ways: a multi-disciplinary publication plan for research dissemination, and an open-source software implementation plan. 
 
 Our publication plan will target a broad multi-disciplinary audience. We will publish our work in not only statistics, machine learning, and mathematics journals, but will also top subject-matter journals to make the proposed tools accessible and approachable to the scientific community. We will post all our work as freely accessible papers on arXiv, with links to open source and well documented code on GitHub to allow for easier dissemination of our methods to end-users. We will also give talks, tutorials and workshops at prominent statistics, machine learning, and scientific conferences, educating different communities on promising developments and exciting breakthroughs in science-integrated statistical learning.
@@ -830,7 +830,7 @@ Our publication plan will target a broad multi-disciplinary audience. We will pu
 \subsection{QMCPy as a Proving Ground} \label{sec:provingground}
 \cmtS{Fred \& Yuhan: maybe shorten the writing below, and focus on QMCPy as a vessel for connecting our new methods (\& existing state-of-the-art) to scientific practitioners who will use such tools for cost-efficient solutions to cutting-edge scientific problems.} \YDNote{shorten this part}  
 
-As mentioned in \cref{sec:lo}
+As mentioned in \cref{sec:lowdiscrep,sec:stopcrit}, \FH, \YD, \AS, \SCTC, \JR
 
 QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it will be simple to swap out the old for the new and measure performance while all other pieces remain the same.  Moreover, the theoretical developments will pave the way for QMC in new application areas.
 
