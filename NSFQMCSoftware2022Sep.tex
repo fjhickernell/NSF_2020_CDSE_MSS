@@ -462,7 +462,7 @@ Error bounds with less emphasis on the design, e.g.,
 
 \begin{center}
 \Large \textbf{
-Cost-Efficient and Confident Sampling for Modern Scientific Discovery
+Cost-Efficient and Confident Sampling for \\ Modern Scientific Discovery
 %Cost-Efficient Simulation of Scalable Scientific and Big Data Computation for Problems Involving Uncertainty.
 %Project Description
 }
@@ -498,26 +498,7 @@ Our collaborators include
 \hypertarget{CHlink}{Claude Hall, Jr.} (\CH, African-American PhD student, Illinois Tech),
 \hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke University), as well as other students, alumni, and friends. \cmtS{to modify, put later?}
 
-%  We, \, \cmtS{...}
- 
-%  Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points with low discrepancy (LD) points to improve computational efficiency.  Given rapid developments in science and engineering, the spectrum of use cases for QMC needs to be broadened, and crucial methodological and theoretical issues must be addressed.
 
-% propose to grow our toddler QMC software library QMCPy \cite{QMCPy2020a} into a mature library embraced by the community of QMC researchers and benefiting an expanding base of QMC practitioners.  As we grow QMCPy, we will address several unresolved methodological and theoretical questions core to QMC and inspired by new use cases.  
-
-% QMCPy will become
-% \begin{enumerate}[i)]
-%     \item A tightly-connected suite of the best QMC software from multiple sources:
-%     \begin{enumerate}[a)]
-%         \item A variety of high performance LD sequence generators (\cref{sec:richLD,sec:speedup}),
-%         \item QMC algorithms, including automatic stopping criteria, adaptive variance/variation reduction (\cref{sec:imp}), multilevel algorithms (\cref{sec:multilevel}), big data analytics (\cref{sec:bigdata}), and Bayesian computation (\cref{sec:bayes}), and
-%         \item Illuminating use cases in  areas including machine learning, uncertainty quantification, Bayesian methodology, quantitative finance, and other fields (\cref{sec:scopeapplication});
-%     \end{enumerate}
-%     \item A user-friendly, consistent interface to the contributions of many scholars, owned and cultivated by our QMC community and an easy on ramp for new QMC users (\cref{sec:provingground}); and
-%     \item \sloppypar A proving ground for new QMC ideas, which will migrate to other popular packages (\cref{sec:playwell,sec:provingground,sec:goodpractice}).
-% \end{enumerate}
-
-
-% This project description  provides an overview of QMC, a description of QMCPy to date, our plans to grow QMCPy, the key methodological and theoretical issues to be addressed,  why our team is ideal, and the broader impacts of this project. \cmtS{to modify}was theorized to have filled the Universe shortly after the Big Bang
 
 
 \section{The Need for Cost-Efficient and Confident Sampling}
@@ -555,11 +536,11 @@ Complex problems need multiple packages that must fit together
 
 \subsubsection{Prototypical Problem}
 
-A typical problem of interest is the \emph{expectation of a random variable} $Y$ (e.g., option payoff, pixel intensity, flow velocity at a certain location) whose distribution is some complicated function, $f$, of a \emph{standard uniform} random vector random variable:
+A problem arising in many applications is the \emph{expectation of a random variable} $Y$ (e.g., option payoff, pixel intensity, flow velocity at a certain location) whose distribution is some complicated function, $f$, of a \emph{standard uniform} random vector:
 \begin{equation} \label{eq:prototype}
     \mu := \bbE(Y) = \bbE[f(\bX)] = \int_{\cube} f(\bx) \, \dif \bx = \, ?, \qquad \bX \sim \calu[0,1]^d.
 \end{equation}
-This can also be thought of as a \emph{multivariate integration} problem. We assume that $\bX$ is uniform because the low discrepancy sequences that we intend to use (described later) mimic uniform random vectors.  If the problem originates as $Y=g(\bT)$ for some $\bT$ that is not standard uniform, then we re-write the problem via a variable transformation:
+Equivalently, this is a \emph{multivariate integration} problem. We assume that $\bX$ is uniform because the low discrepancy sequences that we intend to use (described later) mimic uniform random vectors.  If the problem originates as $Y=g(\bT)$ for some $\bT$ that is not standard uniform, then we re-write the problem via a variable transformation:
 \begin{equation} \label{eq:vartrans}
 \bT = \bPsi(\bX), \qquad f(\bx) = g(\bPsi(\bx)) \abs{\partial \bPsi(\bx)/\partial \bx}.
 \end{equation}
@@ -567,12 +548,12 @@ This can also be thought of as a \emph{multivariate integration} problem. We ass
 Besides the integral problem described in \cref{eq:prototype},  it is often useful to know the \emph{distribution}, $F$, \emph{density}\footnote{We use $\varrho$ to designate the probability density because $f$ is typically used for the integrand in the numerical integration literature.}, $\varrho$, and/or \emph{quantile} function, $Q$, of $Y$, i.e.,
 \begin{subequations} \label{eq:distdensquant}
 	\begin{gather}
-		F(y) := \bbP(Y \le y) = \bbP[F(\bX) \le y] = \int_{[0,1]^d} \bbone_{(-\infty,y]}(f(\bx)) \, \dif \bx, \\ \varrho(y) := F'(y), \qquad Q(p) := F^{-1}(p).
+		F(y) := \bbP(Y \le y) = \bbP[f(\bX) \le y] = \int_{[0,1]^d} \bbone_{(-\infty,y]}(f(\bx)) \, \dif \bx, \\ \varrho(y) := F'(y), \qquad Q(p) := F^{-1}(p).
 	\end{gather}
 \end{subequations}
-We will address this problem in \cref{sec:distdensquant} in the context of our motivating applications.
+We will address these problem in \cref{sec:distdensquant} in the context of our motivating applications.
 
-In practical problems, the population mean or multivariate integral, $\mu$, often cannot be evaluated by analytic means, but it may be estimated by the sample mean, $\hmu_n$, i.e., 
+In practice, the population mean or multivariate integral, $\mu$, often cannot be evaluated by analytic means, but it may be estimated by the sample mean, $\hmu_n$, i.e., 
 \begin{equation} \label{eq:mean}
     \mu \approx
 \hmu_n := \frac 1n \sum_{i=1}^n Y_i = \frac 1n, \qquad Y_i = f(\bX_i).
@@ -590,17 +571,16 @@ Given an error tolerance, $\varepsilon$, we want to choose the sampling scheme, 
 	\includegraphics[width = 0.35\textwidth]{ProgramsImages/lattice_scatter.eps}
 	\caption{LD lattice points, which have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{wrapfigure}
-Choosing $\bX_1, \bX_2, \ldots$, for evaluating the sample mean in \eqref{eq:mean} to be independent and identically distributed (IID) yields a root mean square error of $\sqrt{\bbE[\abs{\mu -\hmu_n}^2]} = \std(f(\bX))n^{-1/2}$, which is independent of the dimension, $d$, but slowly converging to zero. The computational cost to satisfy the error tolerance \eqref{eq:error_crit} is $\Order(\varepsilon^{-2})$. Tensor product generalizations of one-dimensional numerical integration rules using grid sampling give errors of $\abs{\mu -\hmu_n} = \Order(n^{-r/d})$ and a computational cost of $\Order(\varepsilon^{-d/r})$, where $r$ is limited by the sophistication of the rule and the smoothness of the integrand, $f$.  Such rules may be suited for small $d$, but they are inefficient for the larger $d$ that occurs in our applications of interest.
+Choosing $\bX_1, \bX_2, \ldots$, for evaluating the sample mean in \eqref{eq:mean} to be independent and identically distributed (IID) yields a root mean square error of $\sqrt{\bbE[\abs{\mu -\hmu_n}^2]} = \std(f(\bX))n^{-1/2}$, which is independent of the dimension, $d$, but slowly vanishing. The computational cost to satisfy the error tolerance \eqref{eq:error_crit} is $\Order(\varepsilon^{-2})$. Tensor product generalizations of one-dimensional numerical integration rules using grid sampling give errors of $\abs{\mu -\hmu_n} = \Order(n^{-r/d})$ and a computational cost of $\Order(\varepsilon^{-d/r})$, where $r$ is limited by the sophistication of the rule and the smoothness of the integrand, $f$.  Such rules may be suited for small $d$, but they are inefficient for the larger $d$ that occurs in our applications of interest.
 
 A superior approach that combines the intentional structure of a grid with the essentially dimensionless error bound or IID sampling is \hypertarget{LDlink}{\emph{low discrepancy}} (\LD)  sampling, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^d$, which has an error bound of \cite{Nie92,Hic99a}
 \begin{equation} \label{eq:KH}
  \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n) \norm[\calf]{f - \mu}.
 \end{equation}
-The discrepancy,  $D(\{\bX_i\}_{i=1}^n)$, corresponds to the norm of the cubature error functional \cite{Hic97a} for the function space $\calf$.  The discrepancy is also a measure of how close the empirical distribution\footnote{The empirical distribution assigns equal probability to each point.} is close to the uniform distribution. 
-The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitrarily small and positive. This faster convergen
-ce rate translates into a computational cost of $\Order(\varepsilon^{-1-\delta})$ to satisfy error criterion \eqref{eq:error_crit}, under mild smoothness conditions on $f$.  The norm $\norm[\calf]{\cdot}$ is called the \emph{variation} and is a measure of function roughness. 
+The discrepancy,  $D(\{\bX_i\}_{i=1}^n)$, corresponds to the norm of the cubature error functional \cite{Hic97a} for the function space $\calf$.  The discrepancy is also a measure of how close the empirical distribution\footnote{The empirical distribution assigns equal probability to each point.} is to the uniform distribution. 
+The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitrarily small and positive. This faster convergence rate translates into a computational cost of $\Order(\varepsilon^{-1-\delta})$ to satisfy error criterion \eqref{eq:error_crit}, under mild smoothness conditions on $f$.  The semi-norm $\norm[\calf]{\cdot - \mu}$ is called the \emph{variation} and is a measure of function roughness. 
 
-Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  Note that a grid of $64$ points would only have $8$ different values in each coordinate direction, whereas the LD sample covers $64$ different values in each coordinate direction.
+Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  A two-dimensional grid of $64$ points would only have $8$ different values in each coordinate direction, whereas the LD sample covers $64$ different values in each coordinate direction.
 
 LD sequences are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}. \FH, \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
 
@@ -616,9 +596,6 @@ Numerical algorithms based on efficient LD sampling are commonly called \hyperta
 
 There are several limitations to the methodology and software, described above, which our proposed research addresses.
 
-%\begin{description}
-
-%\item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in  \cref{??} 
 
 \subsubsection{Automatic variable transformations}  There are often multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform random variable $\bX$ as in \eqref{eq:vartrans}.  For example, mapping $\bX \sim \calu[0,1]^d$ to $\bT \sim \caln(\bzero,\mSigma)$  involves choosing one of infinitely many possible square roots of the covariance matrix, $\mSigma$, (for $d>1$).  Choosing transformation $\bPsi$ to give an integrand $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be based on function data. This may be addressed by adaptive importance sampling and/or  control variates. We address this limitation in \cref{??}.
 
@@ -633,10 +610,9 @@ The sequence of fidelity parameters is chosen so that the cost of evaluating $f_
 
 \subsubsection{Distribution, Density, and Quantile Estimation} As mentioned above one might want to know  the distribution, density or quantile of $Y$ as defined in \cref{eq:distdensquant}.  In Bayesian inference one may want to compute the marginal distributions of a random vector $\bY = \bg(\bT) = \bff(\bX)$.  The error analysis for such problems, especially for LD sequences, is underdeveloped and the rigorous, data-based stopping criteria are non-existent. We address this limitation in  \cref{sec:distdensquant}.
 
-\subsubsection{Software reliability} \QMC software implemented by non-experts may be flawed.  \FH found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a}.  This was due to a lack of double precision, as pointed out by \MM.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  discovered  that \MATLAB's Sobol' sequence scrambling was incorrect.  \MATLAB corrected this after being notified.  After a vigorous discussion on the \PyTorch issues site \cite{PyTorchFirstPt2020a} and the \SciPy issues site \cite{scipySobol2020a}, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is important~\cite{owen2020dropping}.  Unfortunately, some libraries still drop the first point of their LD sequences.  The need for a vigilant \QMC software community is addressed in  \cref{??}.
+\subsubsection{Software quality} \QMC software implemented by non-experts may be flawed.  \FH and \MM found  that randomized \PyTorch Sobol' points fell on the boundaries of $[0,1]^d$, when they never should \cite{PyTorchFirstPt2020a} due to a lack of double precision.  \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR), a former PhD student of \FH,  alerted  that \MATLAB's Sobol' sequence scrambling was incorrect; \MATLAB later corrected this error.  After a vigorous discussion on the \PyTorch \cite{PyTorchFirstPt2020a} and  \SciPy  \cite{scipySobol2020a} issues sites, \AO, \FH, and other \QMC researchers convinced the developers not to omit the first Sobol' point and to randomize by default. \AO explained why this is crucial~\cite{owen2020dropping}.   The need for a vigilant \QMC software community is addressed in  \cref{??}.
 
-
-\subsubsection{Software connectivity} Solving complex problems well and efficiently may require  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in  \cref{sec:playwell}.
+Solving complex problems well and efficiently often requires  multiple software libraries.  For example, in uncertainty quantification, one integrand value, $f(\bX_i)$, may be the output from a PDE  library.  Not all libraries connect well, nor are there yet standards even in the QMC software community on how to pass information from one library to the next.  We address this issue in  \cref{sec:playwell}.
 
 %\end{description}
 
@@ -709,50 +685,7 @@ The theoretical and methodological questions addressed by this project will incl
 \end{itemize}
 }
 
-% QMCPy has made a good start.  Yet, much must be done to establish the critical mass of algorithms and collaborators that will make QMCPy self-sustaining. Rapid developments in science and engineering have brought about novel methodological and theoretical issues which need to be addressed, especially on expanding the scope of applicability of QMC. The subsections below highlight those research problems that we will tackle. For each problem, we indicate the primary investigators and collaborators, as well as the time periods over which they will be addressed.
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsection{Multilevel QMC (MLQMC)} \label{sec:multilevel} [\SM lead, \FH, \YD, \PR, \IJi, \TT{}] 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \subsubsection{MLQMC for Function Approximation} \label{sec:MLAppx}
-% [Years 1--2]
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% An important extension of MLQMC is \textit{multilevel function approximation}. The set-up is as follows. Let $f: [0,1]^d \rightarrow \mathbb{R}$ be an unknown function that we wish to infer. In many problems, $f$ cannot be directly evaluated, but there are lower-accuracy (\textit{lower-fidelity}) representations of $f$ (call these $f_1, \ldots, f_L$) which can be simulated. A larger value of $l$ suggests the function $f_l$ provides a \textit{better} approximation of $f$, but also incurs a \textit{higher} cost per function evaluation. This scenario is widely encountered in physical sciences and engineering, e.g., $f_l$ can be the numerical solution of a partial differential equation (PDE) using a certain mesh of the domain, with a larger $l$ indicating a finer mesh choice for the PDE solver.
-
-% We employ the following \textit{multilevel} approach for predicting $f$. We first evaluate the lower-fidelity functions $f_l(\cdot)$ at design points $\{\bX_i^l\}_{i=1}^{n_l}$, $l=1, \ldots L$, then use the simulated data to train a predictive model for $f(\cdot)$. We make use of the following multilevel prediction model from \cite{haaland2011accurate}:
-% \begin{equation}
-% \hat{f}_L(\bx) = \sum_{l=1}^L \mathcal{P}_l(\bx), \;\; \text{where $\mathcal{P}_l(\bx)$ is a predictor for \textit{refinement} $f_l(\bx) - f_{l-1}(\bx)$, $f_0 \equiv 0$.}
-% \label{eq:mlpred}
-% \end{equation}
-% In what follows, we employ for each $\mathcal{P}_l(\bx)$ independent Gaussian process (GP) predictors \cite{santner2003design} using Mat\'ern correlations with smoothness parameter $\nu$ \cite{stein2012interpolation}. The placement of evaluation points $\{\bX_i^l\}_{i=1}^{n_l}$, $l=1, \ldots, L$ is paramount for maximizing predictive accuracy: these design points should be well spread out over $[0,1]^d$ for each level $l$, and the sample sizes $n_1, \ldots, n_L$ should be chosen to balance predictive accuracy and evaluation cost. We show next that a careful allocation of QMC points over each level allows for improved accuracy over the state-of-the-art. Related work on multilevel approximation \cite{kennedy2000predicting,haaland2011accurate,le2014recursive,le2015cokriging} deal largely with the \textit{modeling} of the multilevel predictor, but not the \textit{design} of the multilevel evaluation points, which we investigate here.
-
-% The preliminary theorem below shows that, when the design points are selected from a QMC sequence, this multilevel predictor can achieve low approximation error with reasonable cost.
-% \begin{theorem}
-% Let $\varepsilon > 0$ be a desired error tolerance. Assume the \textup{bias} of $f_l$ is bounded as $\sup_{\bx \in [0,1]^d} |f_l(\bx)-f(\bx)| = \mathcal{O}(T_1^{-\alpha l})$ for some $T_1 > 1$. Further assume $C_l$, the \textup{cost} of a single evaluation of $f_l$, is bounded as $C_l = \mathcal{O}(T_2^{\beta l})$ for some $T_2 > 1$. Suppose $\{\bX_i^l\}_{i=1}^{n_l}$ are taken from a \textup{low-dispersion} QMC sequence (see \cite{niederreiter1992random,yakowitz2000global}). Then, given a cost budget of $C_\varepsilon$ and under mild regularity conditions on $f$ and $\{f_l\}_{l=1}^L$, there exists a number of levels $L$ and sample sizes $n_1, \ldots, n_L$ such that $\sup_{\bx \in [0,1]^d} |f(\bx) - \hat{f}_L(\bx)| < \varepsilon$ with total evaluation cost $C_\varepsilon = \mathcal{O}(\varepsilon^{-d/\nu})$ if $\alpha d > 2 \beta \nu$.
-% \label{thm:mlqmc}
-% \end{theorem}
-% \noindent This theorem shows that, when the biases of the lower-fidelity functions $\{f_l (\cdot)\}_{l=1}^L$ and its evaluation costs are sufficiently bounded, a QMC sampling of design points, optimally allocated over each level, can yield the desired error tolerance $\varepsilon$ with total cost bounded by $C_\varepsilon = \mathcal{O}(\varepsilon^{-d/\nu})$. Under similar conditions, this rate on evaluation cost $C_\varepsilon$ can be shown to be faster than existing complexity rates using single-level predictors or Monte Carlo sampling \citep{wendland2004scattered}. This shows that QMC sampling is indeed effective at reducing cost complexity at a fixed error level $\varepsilon$, or equivalently, reducing approximation error given a fixed evaluation cost. This cost reduction is \textit{crucial} for a timely solution of expensive approximation problems in physical science applications (see below).
-
-% \subsubsection*{Adaptive Sampling} While \cref{thm:mlqmc} guarantees an optimal $L$ and sample sizes $n_1, \ldots,n_L$ achieving the desired cost complexity $C_\varepsilon = \mathcal{O}(\varepsilon^{-d/\nu})$, these depend on parameters of the underlying GP models, which are unknown in practice. Thus, this optimal allocation of points needs to be determined \textit{adaptively} via sequential sampling of the lower-fidelity functions $f_l(\cdot)$. We will develop an \textit{adaptive strategy} for sequentially allocating samples $n_1, \cdots, n_L$ and a \textit{stopping rule} for determining the number of levels $L$, which provably achieves the cost complexity guarantee in \cref{thm:mlqmc}.
-
-% \subsubsection*{Applications \& Implementation} 
-% \cmtS{Discuss preliminary simulation results. Application and preliminary results in multi-fidelity modeling for heavy-ion collision emulation in JETSCAPE: we have great need for this! }
-
-% We will demonstrate the effectiveness of this MLQMC approximation approach for a range of scientific computing problems. The PI \SM is active in multidisciplinary collaborations for nuclear physics \citep{ji2021graphical,everett2021multisystem,everett2021phenomenological,cao2021determining}, aerospace engineering \citep{mak2018efficient,yeh2018common,chang2019kernel,chang2021reduced}, and material sciences \citep{chen2020function,chen2019adaptive}, where such adaptive sampling would greatly improve predictive model building under computational budgets. We will \textit{apply this methodology for cutting-edge problems} in such applications.
-
-% why important: in practice, want to jointly reduce error and optimize cost.
-
-% \SMNote{
-% \begin{itemize}
-% \item \textit{Task 3.4.2}: \SMNote{mention curse of dimensionality: projectivity?}
-% \end{itemize}
-% }
-
-% An urgently-needed yet relatively unexplored area is the use of QMC as design points for multilevel functional approximation. These approximations are widely-used as efficient surrogate models for expensive scientific computations, which can be used for scientific investigation and decision-making in a timely manner (the PI \SM has ...). \SMNote{Add related work from Karen Willcox and Max Gunzburger} \SMNote{We have a nearly-finished paper applying multilevel QMC points as designs for multi-fidelity emulators. I can add in some preliminary results on this. Arc-sin \& experimental design. Dispersion scales terribly in dimension.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Big Data Analytics} [\SM lead, \AO, \RZ, \IJi{}] \label{sec:bigdata}
@@ -887,7 +820,7 @@ We will also connect QMCPy to other libraries such as PyTorch \cite{paszke2019py
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Motivation and Preliminary Results}
-Besides computing expectations, we may wish to know the distribution, density, and/or quantile function of $Y = f(\bX)$.  As opposed to computing a scalar, $\mu$, we now need to approximate functions our error criteria will be in terms of functions norms.
+Besides computing expectations, we may wish to know the distribution, density, and/or quantile function of $Y = f(\bX)$.  As opposed to computing a scalar, $\mu$, we now need to approximate functions, $F$, $\varrho$, and/or $Q$, which require function approximation algorithms and our error criteria involving functions norms.
 
 Although the distribution, $F$, is defined as an integral in \cref{eq:distdensquant}, the integrand as it stands, $\bbone_{(-\infty,y]}(f(\cdot))$, is not smooth enough for  QMC theory to apply directly.  Approximating the density (derivative of $F$) and quantile function, (inverse of $F$) are harder problems.
 
@@ -901,15 +834,11 @@ Despite the theoretical challenges, LD sequences show promise in approximating d
 
 A recent study of LD sequences for kernel density estimation \cite{AbdEtal21a} has demonstrated that in practice they outperform IID sequences.  They also derive some theoretical error bounds on the estimator for LD sequences, but these bounds seem to be too loose.  Effective dimension is defined roughly as the number of coordinates of $\bX$ that make substantial contributions to $f(\bX)$.  Small effective dimension seems important in the success of approximating  $\varrho$ with LD sequences, just as it is in approximating  $\mu = \bbE[f(\bX)]$ with LD sequences.
 
-\subsubsection{Exploring the Effectiveness of LD Sequences}
+\subsubsection{Exploring the Effectiveness of LD Sequences}[Year 1--3] The theory for using LD sequences to estimate distributions, densities, and quantiles is in its infancy, which tempers our ambitions for these problems.  
 
+Our first step will be to empirically compare the efficiency of LD sequences to IID sequences by inserting LD sequences into standard algorithms that use IID sequences, most likely some form of kernel smoothing \cite{WanJon95a}.  We will experimentally explore how to choose the band-width of kernel smoothing methods.  We will explore how the nominal dimension, the effective dimension, and the smoothness of $f$ influence the effectiveness of LD sequences.  We will choose various $f$ from Bingham's library of test functions \cite{VirLib17a}.
 
-
-\subsubsection{Deriving Data-Based Error Bounds}
-
-
-
-
+Based on  our computational experiments, we will derive data-driven algorithms that compute optimal bandwidth for smoothing and determine the sample size needed to satisfy the error criterion.  We will pursue the two approaches used for stopping criteria for computing $\mu$, namely i) analyzing the Fourier coefficients of $f$, and ii) assuming $f$ comes from a Gaussian process.
 
 
 
@@ -926,7 +855,11 @@ Our publication plan will target a broad multi-disciplinary audience. We will pu
 
 
 \subsection{QMCPy as a Proving Ground} \label{sec:provingground}
-\cmtS{Fred \& Yuhan: maybe shorten the writing below, and focus on QMCPy as a vessel for connecting our new methods (\& existing state-of-the-art) to scientific practitioners who will use such tools for cost-efficient solutions to cutting-edge scientific problems.} \YDNote{shorten this part}  QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it will be simple to swap out the old for the new and measure performance while all other pieces remain the same.  Moreover, the theoretical developments will pave the way for QMC in new application areas.
+\cmtS{Fred \& Yuhan: maybe shorten the writing below, and focus on QMCPy as a vessel for connecting our new methods (\& existing state-of-the-art) to scientific practitioners who will use such tools for cost-efficient solutions to cutting-edge scientific problems.} \YDNote{shorten this part}  
+
+As mentioned in \cref{sec:lo}
+
+QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it will be simple to swap out the old for the new and measure performance while all other pieces remain the same.  Moreover, the theoretical developments will pave the way for QMC in new application areas.
 
 QMCPy will \emph{stand in the breach} between research code from individual groups and large-scale software packages.  Research groups need to compare their new ideas with the best available.  Those who develop LD generators need to test them on a variety of use cases and as key components of various QMC algorithms.  Those with new QMC algorithms need to test them with the best generators.  Those with juicy use cases want to try the best that QMC offers.  Because large-scale software packages like \SciPy, \PyTorch, \TensorFlow, \NAG, or \MATLAB, do not offer QMCPy's options,  QMCPy \emph{will attract a significant number of QMC researchers as contributors.}
 
@@ -1278,3 +1211,74 @@ It is not clear how to obtain $\Order(n^{-3/2})$ error using scrambled net cubat
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [Years 2--3] Josef Dick introduced the concept of higher order nets, and showed how these give $\Order(n^{-\alpha})$ convergence rates for QMC cubature, where $\alpha$ reflects the smoothness of the integrand and the order of the net \cite{Dic08a,Dic09a,Dic11a}.  The stopping criteria developed by PI \FH and his collaborators \cite{HicJim16a,HicEtal17a,Jag19a}, are not designed for these higher order nets because they only track the decay of the Walsh coefficients of the integrand. We will \emph{develop stopping criteria for higher order net cubature}, by extending \cite{HicJim16a} in tracking a more nuanced measure of these fast Walsh coefficients that matches the definition of higher order nets.  We will extend the Bayesian stopping criterion in \cite{Jag19a} by identifying smoother digital shift invariant covariance kernels whose Gram matrices can be decomposed by a fast Walsh transform.
 
+% QMCPy has made a good start.  Yet, much must be done to establish the critical mass of algorithms and collaborators that will make QMCPy self-sustaining. Rapid developments in science and engineering have brought about novel methodological and theoretical issues which need to be addressed, especially on expanding the scope of applicability of QMC. The subsections below highlight those research problems that we will tackle. For each problem, we indicate the primary investigators and collaborators, as well as the time periods over which they will be addressed.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Multilevel QMC (MLQMC)} \label{sec:multilevel} [\SM lead, \FH, \YD, \PR, \IJi, \TT{}] 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsubsection{MLQMC for Function Approximation} \label{sec:MLAppx}
+% [Years 1--2]
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% An important extension of MLQMC is \textit{multilevel function approximation}. The set-up is as follows. Let $f: [0,1]^d \rightarrow \mathbb{R}$ be an unknown function that we wish to infer. In many problems, $f$ cannot be directly evaluated, but there are lower-accuracy (\textit{lower-fidelity}) representations of $f$ (call these $f_1, \ldots, f_L$) which can be simulated. A larger value of $l$ suggests the function $f_l$ provides a \textit{better} approximation of $f$, but also incurs a \textit{higher} cost per function evaluation. This scenario is widely encountered in physical sciences and engineering, e.g., $f_l$ can be the numerical solution of a partial differential equation (PDE) using a certain mesh of the domain, with a larger $l$ indicating a finer mesh choice for the PDE solver.
+
+% We employ the following \textit{multilevel} approach for predicting $f$. We first evaluate the lower-fidelity functions $f_l(\cdot)$ at design points $\{\bX_i^l\}_{i=1}^{n_l}$, $l=1, \ldots L$, then use the simulated data to train a predictive model for $f(\cdot)$. We make use of the following multilevel prediction model from \cite{haaland2011accurate}:
+% \begin{equation}
+	% \hat{f}_L(\bx) = \sum_{l=1}^L \mathcal{P}_l(\bx), \;\; \text{where $\mathcal{P}_l(\bx)$ is a predictor for \textit{refinement} $f_l(\bx) - f_{l-1}(\bx)$, $f_0 \equiv 0$.}
+	% \label{eq:mlpred}
+	% \end{equation}
+% In what follows, we employ for each $\mathcal{P}_l(\bx)$ independent Gaussian process (GP) predictors \cite{santner2003design} using Mat\'ern correlations with smoothness parameter $\nu$ \cite{stein2012interpolation}. The placement of evaluation points $\{\bX_i^l\}_{i=1}^{n_l}$, $l=1, \ldots, L$ is paramount for maximizing predictive accuracy: these design points should be well spread out over $[0,1]^d$ for each level $l$, and the sample sizes $n_1, \ldots, n_L$ should be chosen to balance predictive accuracy and evaluation cost. We show next that a careful allocation of QMC points over each level allows for improved accuracy over the state-of-the-art. Related work on multilevel approximation \cite{kennedy2000predicting,haaland2011accurate,le2014recursive,le2015cokriging} deal largely with the \textit{modeling} of the multilevel predictor, but not the \textit{design} of the multilevel evaluation points, which we investigate here.
+
+% The preliminary theorem below shows that, when the design points are selected from a QMC sequence, this multilevel predictor can achieve low approximation error with reasonable cost.
+% \begin{theorem}
+	% Let $\varepsilon > 0$ be a desired error tolerance. Assume the \textup{bias} of $f_l$ is bounded as $\sup_{\bx \in [0,1]^d} |f_l(\bx)-f(\bx)| = \mathcal{O}(T_1^{-\alpha l})$ for some $T_1 > 1$. Further assume $C_l$, the \textup{cost} of a single evaluation of $f_l$, is bounded as $C_l = \mathcal{O}(T_2^{\beta l})$ for some $T_2 > 1$. Suppose $\{\bX_i^l\}_{i=1}^{n_l}$ are taken from a \textup{low-dispersion} QMC sequence (see \cite{niederreiter1992random,yakowitz2000global}). Then, given a cost budget of $C_\varepsilon$ and under mild regularity conditions on $f$ and $\{f_l\}_{l=1}^L$, there exists a number of levels $L$ and sample sizes $n_1, \ldots, n_L$ such that $\sup_{\bx \in [0,1]^d} |f(\bx) - \hat{f}_L(\bx)| < \varepsilon$ with total evaluation cost $C_\varepsilon = \mathcal{O}(\varepsilon^{-d/\nu})$ if $\alpha d > 2 \beta \nu$.
+	% \label{thm:mlqmc}
+	% \end{theorem}
+% \noindent This theorem shows that, when the biases of the lower-fidelity functions $\{f_l (\cdot)\}_{l=1}^L$ and its evaluation costs are sufficiently bounded, a QMC sampling of design points, optimally allocated over each level, can yield the desired error tolerance $\varepsilon$ with total cost bounded by $C_\varepsilon = \mathcal{O}(\varepsilon^{-d/\nu})$. Under similar conditions, this rate on evaluation cost $C_\varepsilon$ can be shown to be faster than existing complexity rates using single-level predictors or Monte Carlo sampling \citep{wendland2004scattered}. This shows that QMC sampling is indeed effective at reducing cost complexity at a fixed error level $\varepsilon$, or equivalently, reducing approximation error given a fixed evaluation cost. This cost reduction is \textit{crucial} for a timely solution of expensive approximation problems in physical science applications (see below).
+
+% \subsubsection*{Adaptive Sampling} While \cref{thm:mlqmc} guarantees an optimal $L$ and sample sizes $n_1, \ldots,n_L$ achieving the desired cost complexity $C_\varepsilon = \mathcal{O}(\varepsilon^{-d/\nu})$, these depend on parameters of the underlying GP models, which are unknown in practice. Thus, this optimal allocation of points needs to be determined \textit{adaptively} via sequential sampling of the lower-fidelity functions $f_l(\cdot)$. We will develop an \textit{adaptive strategy} for sequentially allocating samples $n_1, \cdots, n_L$ and a \textit{stopping rule} for determining the number of levels $L$, which provably achieves the cost complexity guarantee in \cref{thm:mlqmc}.
+
+% \subsubsection*{Applications \& Implementation} 
+% \cmtS{Discuss preliminary simulation results. Application and preliminary results in multi-fidelity modeling for heavy-ion collision emulation in JETSCAPE: we have great need for this! }
+
+% We will demonstrate the effectiveness of this MLQMC approximation approach for a range of scientific computing problems. The PI \SM is active in multidisciplinary collaborations for nuclear physics \citep{ji2021graphical,everett2021multisystem,everett2021phenomenological,cao2021determining}, aerospace engineering \citep{mak2018efficient,yeh2018common,chang2019kernel,chang2021reduced}, and material sciences \citep{chen2020function,chen2019adaptive}, where such adaptive sampling would greatly improve predictive model building under computational budgets. We will \textit{apply this methodology for cutting-edge problems} in such applications.
+
+% why important: in practice, want to jointly reduce error and optimize cost.
+
+% \SMNote{
+	% \begin{itemize}
+		% \item \textit{Task 3.4.2}: \SMNote{mention curse of dimensionality: projectivity?}
+		% \end{itemize}
+	% }
+
+% An urgently-needed yet relatively unexplored area is the use of QMC as design points for multilevel functional approximation. These approximations are widely-used as efficient surrogate models for expensive scientific computations, which can be used for scientific investigation and decision-making in a timely manner (the PI \SM has ...). \SMNote{Add related work from Karen Willcox and Max Gunzburger} \SMNote{We have a nearly-finished paper applying multilevel QMC points as designs for multi-fidelity emulators. I can add in some preliminary results on this. Arc-sin \& experimental design. Dispersion scales terribly in dimension.}
+
+
+%\begin{description}
+
+%\item[Constructions] Identifying LD sequences, $\bX_1, \bX_2, \ldots$ require extensive offline computational work.  Furthermore, ideally they require some understanding of which coordinate directions are more significant. We address this limitation in  \cref{??} 
+
+
+%  We, \, \cmtS{...}
+
+%  Quasi-Monte Carlo (QMC) methods replace independent and identically distributed (IID) points with low discrepancy (LD) points to improve computational efficiency.  Given rapid developments in science and engineering, the spectrum of use cases for QMC needs to be broadened, and crucial methodological and theoretical issues must be addressed.
+
+% propose to grow our toddler QMC software library QMCPy \cite{QMCPy2020a} into a mature library embraced by the community of QMC researchers and benefiting an expanding base of QMC practitioners.  As we grow QMCPy, we will address several unresolved methodological and theoretical questions core to QMC and inspired by new use cases.  
+
+% QMCPy will become
+% \begin{enumerate}[i)]
+	%     \item A tightly-connected suite of the best QMC software from multiple sources:
+	%     \begin{enumerate}[a)]
+		%         \item A variety of high performance LD sequence generators (\cref{sec:richLD,sec:speedup}),
+		%         \item QMC algorithms, including automatic stopping criteria, adaptive variance/variation reduction (\cref{sec:imp}), multilevel algorithms (\cref{sec:multilevel}), big data analytics (\cref{sec:bigdata}), and Bayesian computation (\cref{sec:bayes}), and
+		%         \item Illuminating use cases in  areas including machine learning, uncertainty quantification, Bayesian methodology, quantitative finance, and other fields (\cref{sec:scopeapplication});
+		%     \end{enumerate}
+	%     \item A user-friendly, consistent interface to the contributions of many scholars, owned and cultivated by our QMC community and an easy on ramp for new QMC users (\cref{sec:provingground}); and
+	%     \item \sloppypar A proving ground for new QMC ideas, which will migrate to other popular packages (\cref{sec:playwell,sec:provingground,sec:goodpractice}).
+	% \end{enumerate}
+
+
+% This project description  provides an overview of QMC, a description of QMCPy to date, our plans to grow QMCPy, the key methodological and theoretical issues to be addressed,  why our team is ideal, and the broader impacts of this project. \cmtS{to modify}was theorized to have filled the Universe shortly after the Big Bang
