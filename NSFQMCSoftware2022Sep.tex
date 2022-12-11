@@ -99,6 +99,9 @@
 \newcommand{\DN}{\hyperlink{DNlink}{DN}\xspace}
 \newcommand{\BO}{\hyperlink{BOlink}{BO}\xspace}
 \newcommand{\QMC}{\hyperlink{QMClink}{QMC}\xspace}
+\newcommand{\Limone}{\hyperlink{Lim1link}{Limitation 1}\xspace}
+\newcommand{\Limtwo}{\hyperlink{Lim2link}{Limitation 2}\xspace}
+
 
 \newcommand{\SEC}{Sect.\xspace}
 
@@ -478,7 +481,7 @@ Cost-Efficient and Confident Sampling for Modern Scientific Discovery
 
 With breakthroughs in experimental methods and computational technology, there are now novel sources of high-quality data for tackling a broad array of pressing problems in science and engineering. However, the generation of such high-fidelity data often requires expensive experimentation and/or costly simulations, which can greatly limit the amount of data available for scientific investigation. Given this cost bottleneck, it is thus of critical importance to develop \textit{cost-efficient} sampling methods for data generation and model training. Furthermore, for scientific inference, such sampling methods need to be performed with \textit{confidence}; they need to be coupled with theoretically sound stopping rules which guarantee the resulting statistical model achieves a desired error tolerance. This confidence is paramount for reliable scientific discovery: it provides a quantification of uncertainty for scientific inference, thus protecting against erroneous or spurious findings.
 
-This project will develop a novel and timely suite of methods which jointly addresses this crucial need for cost-efficient and confident sampling for scientific discovery. Our framework features methodology (with supporting theory and algorithms) which extend classical low discrepancy (i.e., highly stratified) sampling techniques for a broad range of challenging scenarios encountered in modern scientific problems, including cost-efficient Bayesian inference, efficient subsampling of massive data for statistical learning, and \cmtS{...}. Major emphasis is placed on demonstrating the effectiveness of these methods for tackling a wide array of complex scientific and engineering problems, specifically the PIs' ongoing collaborations on the study of heavy-ion collisions, design of rocket engines for spaceflight, and real-time engine control of unmanned aircraft systems.
+This project will develop a novel and timely suite of methods which jointly addresses this crucial need for cost-efficient and confident sampling for scientific discovery. Our framework features methodology (with supporting theory and algorithms) which extend classical low discrepancy (i.e., highly stratified) sampling techniques for a broad range of challenging scenarios encountered in modern scientific problems, including cost-efficient Bayesian inference, efficient subsampling of massive data, and multi-fidelity modeling, and density estimation. Major emphasis is placed on demonstrating the effectiveness of these methods for tackling a wide array of complex scientific and engineering problems, specifically the PIs' ongoing collaborations on the study of heavy-ion collisions and real-time engine control of unmanned aircraft vehicles.
 
 This project will be led by 
 \hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), 
@@ -492,9 +495,8 @@ Our collaborators include
 \hypertarget{PRlink}{Pieterjan Robbe} (\PR, Sandia National Laboratories and Katholieke Universiteit Leuven),  
 \hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), 
 \hypertarget{ASlink}{Aleksei Sorokin} (\AS, PhD student, Illinois Tech),
-\hypertarget{CHlink}{Claude Hall, Jr.} (\CH, African-American PhD student, Illinois Tech)
-\hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke University), 
-\hypertarget{TTlink}{Tao Tang} (\TT, PhD student, Duke University), as well as other students, alumni, and friends. \cmtS{to modify}
+\hypertarget{CHlink}{Claude Hall, Jr.} (\CH, African-American PhD student, Illinois Tech),
+\hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke University), as well as other students, alumni, and friends. \cmtS{to modify, put later?}
 
 %  We, \, \cmtS{...}
  
@@ -520,15 +522,15 @@ Our collaborators include
 
 \section{The Need for Cost-Efficient and Confident Sampling}
 
-\subsection{Motivation \& Background} The nature of scientific discovery has undergone a radical paradigm shift over the past decades. With tremendous advances in experimental methodology and computational technology, scientists now have the capability to generate high-quality data for solving challenging problems which were once thought to be impossible or prohibitively expensive. In the physical sciences, complex phenomena such as universe expansions \citep{kaufman2011efficient} and rocket propulsion \citep{mak2018efficient,yeh2018common} can now be reliably studied via fine-scale virtual (i.e., computer) simulations on high performance computing systems. Similarly, in the biological sciences, fundamental developments in high throughput sequencing have led to key advances in genomics and epidemiology.
+\subsection{Motivation} The nature of scientific discovery has undergone a radical paradigm shift over the past decades. With tremendous advances in experimental methodology and computational technology, scientists now have the capability to generate high-quality data for solving challenging problems which were once thought to be impossible or prohibitively expensive. In the physical sciences, complex phenomena such as universe expansions \citep{kaufman2011efficient} and rocket propulsion \citep{mak2018efficient,yeh2018common} can now be reliably studied via fine-scale virtual (i.e., computer) simulations on high performance computing systems. Similarly, in the biological sciences, fundamental developments in high throughput sequencing have led to key advances in genomics and epidemiology.
 
-There are, however, two critical limitations which greatly hinders the use of this high-quality data for scientific discovery. The first limitation is that, for complex problems, \textit{such data can be very costly to generate}, requiring a large investment of computational and/or experimental resources. Take, e.g., the study of the Quark-Gluon Plasma (QGP), a deconfined phase of nuclear matter which filled the Universe shortly after the Big Bang (see work by PI \SM \cite{everett2021multisystem,everett2021phenomenological,liyanage2022efficient,ji2021graphical}). With advances in nuclear physics modeling, this plasma can be simulated by virtually colliding heavy ions together at near-light speeds. The goal is to perform an {inverse problem}, which uses such simulations with physical measurements from particle colliders to learn plausible properties of this plasma (call this $\bt$) and hence shed light on the origins of matter. But such simulations are very costly: a single run at parameter $\bt$, yielding simulation output $g(\bt)$, can take on the order of {thousands} of CPU hours \citep{everett2021multisystem}. This inverse problem may require {thousands} of simulation runs at different choices of $\bt$, in order to find suitable parameters which best match cosmological measurements. Such a study can thus require \textit{millions} of CPU hours, which places great strain on computational costs. Similar cost bottlenecks are faced in a broad variety of modern science and engineering problems. 
+There are, however, two critical limitations which greatly hinders the use of this high-quality data for scientific discovery. The first limitation \hypertarget{Lim1link}(\Limone) is that, for complex problems, \textit{such data can be very costly to generate}, requiring a large investment of computational and/or experimental resources. Take, e.g., the study of the Quark-Gluon Plasma (QGP), a deconfined phase of nuclear matter which filled the Universe shortly after the Big Bang (see work by PI \SM \cite{everett2021multisystem,everett2021phenomenological,liyanage2022efficient,ji2021graphical}). With advances in nuclear physics modeling, this plasma can be simulated by virtually colliding heavy ions together at near-light speeds. The ultimate goal is to perform an {inverse problem}, which uses such simulations with physical measurements from particle colliders to learn plausible properties of this plasma (call this $\bt$) and hence shed light on the origins of matter. But such simulations are very costly: a single run at parameter $\bt$, yielding simulation output $g(\bt)$, can take on the order of {thousands} of CPU hours \citep{everett2021multisystem}. This inverse problem may require {thousands} of simulation runs at different choices of $\bt$, in order to find suitable parameters which best match cosmological measurements. Such a study can thus require \textit{millions} of CPU hours, which places great strain on computational costs. Similar cost bottlenecks are faced in a broad variety of modern science and engineering problems. 
 
-The second limitation is that the increasing sophistication of scientific experiments results in \textit{massive data streams which take on highly complex forms}. In the nuclear physics application, the simulated output $g(\bt)$ consists of fine-scale spatiotemporal flows for the hydrodynamic evolution of the plasma, which can take up exabytes ($10^{18}$ bytes) of computer storage. The efficient modeling and analysis of such massive data is thus critical for timely scientific inference and decision-making. \cmtS{UAV application}
+The second limitation \hypertarget{Lim2link}(\Limtwo) is that the increasing sophistication of scientific experiments results in \textit{massive datasets which take on highly complex forms}. In our nuclear physics application, the simulated output $g(\bt)$ consists of fine-scale spatiotemporal flows for the hydrodynamic evolution of the plasma, which can take up exabytes ($10^{18}$ bytes) of storage. The efficient use of such massive data is thus critical for timely scientific inference and decision-making. Similar challenges arise in our current collaboration on real-time engine control of unmanned aircraft vehicles (UAVs). Here, we aim to train a real-time control system for UAV engines with low cetane numbers, an important objective for U.S. Army’s single fuel concept. Due to expensive prototyping and experimental costs, these control systems are typically trained via complex computational fluid dynamics (CFD) simulations, which output a wide range of fine-scale engine characteristics. The key bottleneck is that such simulation outputs are massive datasets, consisting of hundreds of response variables and millions of timesteps. The use of such big data for training a statistical model for \textit{real-time} engine control is thus a critical need for practical implementation of such systems.
 
-These bottlenecks necessitate two crucial ingredients to facilitate scientific discovery: cost-efficiency and confidence. The first, \textit{cost-efficiency}, refers to statistical methods which aim to maximize model performance given a limited cost (e.g., computational) budget. For the earlier nuclear physics problem, a cost-efficient method strives to provide an accurate solution to the inverse problem given a limited computational budget (and thus limited simulation runs). The second, \textit{confidence}, refers to methods which provide a reliable and estimable measure (or quantification) of model error. Such confidence is essential for verifiable scientific discovery: it provides a quantification of uncertainty for findings, thus protecting against spurious findings. This further allows for theoretically sound stopping rules which guarantees model performance, which is particularly crucial for the current cost-constrained setting. For our nuclear physics problem, a confident method yields a measure of uncertainty for the inverse problem, which can be used to guide the amount of simulation runs needed to ensure a desired error tolerance.
+These challenges necessitate two crucial ingredients to facilitate scientific discovery: cost-efficiency and confidence. The first, \textit{cost-efficiency}, refers to statistical methods which aim to maximize model performance given a limited cost (e.g., computational) budget. For the earlier nuclear physics problem, a cost-efficient method strives to provide an accurate solution to the inverse problem given a limited computational budget (and thus limited simulation runs). The second, \textit{confidence}, refers to methods which provide a reliable and estimable measure (or quantification) of model error. Such confidence is essential for verifiable scientific discovery: it provides a quantification of uncertainty for findings, thus protecting against spurious findings. This further allows for theoretically sound stopping rules which guarantees model performance, which is particularly crucial for the current cost-constrained setting. For our nuclear physics problem, a confident method yields a measure of uncertainty for the inverse problem, which can be used to guide the amount of simulation runs needed to ensure a desired error tolerance.
 
-Both of the above limitations can be alleviated via a careful integration of novel \textit{sampling} algorithms within the statistical learning framework. Here, ``sampling'' refers to the drawing of representative samples $\bT_1, \dots, \bT_n$ from a (potentially) complex probability distribution $\Pi$, and the use of such samples for scientific inference and decision-making. For limitation (i), a careful sampling design of the input parameters for the expensive simulator can enable accurate and precise scientific inference in reasonable turnaround times. For limitation (ii), a judicious sampling of the massive data streams from scientific experiments can allow for timely scientific discovery for useful decision-making. There is, however, much to be done on \textit{cost-efficient} and \textit{confident} sampling algorithms, given the complexities present in modern scientific problems. We will propose a suite of methods, with supporting theory and algorithms, which address this important gap. We first present the prototypical problem of interest, then provide a survey of \textit{low-discrepancy} sampling methods \citep{niederreiter1992random}, which we extend for the proposed suite of methods.
+Both of the above limitations can be alleviated via a careful integration of novel \textit{sampling} algorithms within the statistical learning framework. Here, ``sampling'' refers to the drawing of representative samples $\bT_1, \dots, \bT_n$ from a (potentially) complex probability distribution $\Pi$, and the use of such samples for scientific inference and decision-making. For limitation (i), a careful sampling design of the input parameters for the expensive simulator can enable accurate and precise scientific inference in reasonable turnaround times. For limitation (ii), a judicious sampling of the massive datasets from scientific experiments can allow for timely scientific discovery for useful decision-making. There is, however, much to be done on \textit{cost-efficient} and \textit{confident} sampling algorithms, given the complexities present in modern scientific problems. We will propose a suite of methods, with supporting theory and algorithms, which address this important gap. We first present the prototypical problem of interest, then provide a survey of \textit{low-discrepancy} sampling methods \citep{niederreiter1992random}, which we extend for the proposed suite of methods.
 
 
 % Why cost-efficient simulation? Lay out scope clearly. We need a pipeline for tackling scientific problems. Software \& interfacing for uncertainty propagation.
@@ -548,28 +550,29 @@ Coarse simulations may contain a lot of the info, but not all
 Complex problems need multiple packages that must fit together
 \fi
 
-\subsection{Prototypical Problem}
+\subsection{Background}
+\label{sec:background}
+
+\subsubsection{Prototypical Problem}
 
 A typical problem of interest is the \emph{expectation of a random variable} $Y$ (e.g., option payoff, pixel intensity, flow velocity at a certain location) whose distribution is some complicated function, $f$, of a \emph{standard uniform} random vector random variable:
 \begin{equation} \label{eq:prototype}
     \mu := \bbE(Y) = \bbE[f(\bX)] = \int_{\cube} f(\bx) \, \dif \bx = \, ?, \qquad \bX \sim \calu[0,1]^d.
 \end{equation}
-This can also be thought of as a \emph{multivariate integration} problem.
-
-We assume that $\bX$ is uniform because the low discrepancy sequences that we intend to use mimic uniform random vectors.  If the problem originates as $Y=g(\bT)$ for some $\bT$ that is not standard uniform, then we re-write the problem via a variable transformation:
+This can also be thought of as a \emph{multivariate integration} problem. We assume that $\bX$ is uniform because the low discrepancy sequences that we intend to use (described later) mimic uniform random vectors.  If the problem originates as $Y=g(\bT)$ for some $\bT$ that is not standard uniform, then we re-write the problem via a variable transformation:
 \begin{equation} \label{eq:vartrans}
 \bT = \bPsi(\bX), \qquad f(\bx) = g(\bPsi(\bx)) \abs{\partial \bPsi(\bx)/\partial \bx}.
 \end{equation}
 
-Besides the expectation or integral problem described in \cref{eq:prototype},  it is often also useful to know the \emph{distribution}, $F$, \emph{density}\footnote{We use $\varrho$ to designate the probabilty density because $f$ is typically used for the integrand in the numerical integration literature.}, $\varrho$, and/or \emph{quantile} function, $Q$, of $Y$, i.e.,
+Besides the integral problem described in \cref{eq:prototype},  it is often useful to know the \emph{distribution}, $F$, \emph{density}\footnote{We use $\varrho$ to designate the probability density because $f$ is typically used for the integrand in the numerical integration literature.}, $\varrho$, and/or \emph{quantile} function, $Q$, of $Y$, i.e.,
 \begin{subequations} \label{eq:distdensquant}
 	\begin{gather}
 		F(y) := \bbP(Y \le y) = \bbP[F(\bX) \le y] = \int_{[0,1]^d} \bbone_{(-\infty,y]}(f(\bx)) \, \dif \bx, \\ \varrho(y) := F'(y), \qquad Q(p) := F^{-1}(p).
 	\end{gather}
 \end{subequations}
-We address this problem in \cref{sec:distdensquant}.
+We will address this problem in \cref{sec:distdensquant} in the context of our motivating applications.
 
-In many cases, the population mean or multivariate integral, $\mu$, cannot be evaluated by analytic means, but it may be estimated by the sample mean, $\hmu_n$, i.e., 
+In practical problems, the population mean or multivariate integral, $\mu$, often cannot be evaluated by analytic means, but it may be estimated by the sample mean, $\hmu_n$, i.e., 
 \begin{equation} \label{eq:mean}
     \mu \approx
 \hmu_n := \frac 1n \sum_{i=1}^n Y_i = \frac 1n, \qquad Y_i = f(\bX_i).
@@ -579,44 +582,39 @@ Given an error tolerance, $\varepsilon$, we want to choose the sampling scheme, 
 	\abs{\mu -\hmu_n} \le \varepsilon \qquad \text{with high confidence}.
 \end{equation}
 
-\subsection{Low discrepancy sampling}
+\subsubsection{Low discrepancy sampling}
 
 %\cmtS{Fred / Yuhan: pls shorten \& focus after my writing above.} 
-Choosing $\bX_1, \bX_2, \ldots$, for evaluating the sample mean in \eqref{eq:mean} to be independent and identically distributed (IID) yields a root mean square error of $\sqrt{\bbE[\abs{\mu -\hmu_n}^2]} = \std(f(\bX))n^{-1/2}$, which is independent of the dimension, $d$, but slowly converging to zero. The computational cost to satisfy the error tolerance \eqref{eq:error_crit} is $\Order(\varepsilon^{-2})$.
-
-Tensor product generalizations of one-dimensional numerical integration rules using grid sampling give errors of $\abs{\mu -\hmu_n} = \Order(n^{-r/d})$ and a computational cost of $\Order(\varepsilon^{-d/r})$, where $r$ is limited by the sophistication of the rule and the smoothness of the integrand, $f$.  Such rules may be suited for small $d$, but they are inefficient for the larger $d$ that occurs in our applications of interest.
-
 \begin{wrapfigure}{r}{0.4\textwidth}
 	\centering
 	\includegraphics[width = 0.35\textwidth]{ProgramsImages/lattice_scatter.eps}
 	\caption{LD lattice points, which have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{wrapfigure}
+Choosing $\bX_1, \bX_2, \ldots$, for evaluating the sample mean in \eqref{eq:mean} to be independent and identically distributed (IID) yields a root mean square error of $\sqrt{\bbE[\abs{\mu -\hmu_n}^2]} = \std(f(\bX))n^{-1/2}$, which is independent of the dimension, $d$, but slowly converging to zero. The computational cost to satisfy the error tolerance \eqref{eq:error_crit} is $\Order(\varepsilon^{-2})$. Tensor product generalizations of one-dimensional numerical integration rules using grid sampling give errors of $\abs{\mu -\hmu_n} = \Order(n^{-r/d})$ and a computational cost of $\Order(\varepsilon^{-d/r})$, where $r$ is limited by the sophistication of the rule and the smoothness of the integrand, $f$.  Such rules may be suited for small $d$, but they are inefficient for the larger $d$ that occurs in our applications of interest.
 
-A superior approach that combines the intentional structure of a grid with the essentially dimensionless error bound or IID sampling is \hypertarget{LDlink}{ \emph{low discrepancy}} (\LD)  sampling, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^d$, which has an error bound of \cite{Nie92,Hic99a}
+A superior approach that combines the intentional structure of a grid with the essentially dimensionless error bound or IID sampling is \hypertarget{LDlink}{\emph{low discrepancy}} (\LD)  sampling, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^d$, which has an error bound of \cite{Nie92,Hic99a}
 \begin{equation} \label{eq:KH}
-    \hspace{-40ex} \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n) \norm[\calf]{f - \mu}.
+ \abs{\mu - \hmu_n} \le D(\{\bX_i\}_{i=1}^n) \norm[\calf]{f - \mu}.
 \end{equation}
 The discrepancy,  $D(\{\bX_i\}_{i=1}^n)$, corresponds to the norm of the cubature error functional \cite{Hic97a} for the function space $\calf$.  The discrepancy is also a measure of how close the empirical distribution\footnote{The empirical distribution assigns equal probability to each point.} is close to the uniform distribution. 
-The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitrarily small and positive. This faster convergence rate translates into a computational cost of $\Order(\varepsilon^{-1-\delta})$ to satisfy error criterion \eqref{eq:error_crit}, under mild smoothness conditions on $f$.  The norm $\norm[\calf]{\cdot}$ is called the \emph{variation} and is a measure of function roughness.
+The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitrarily small and positive. This faster convergen
+ce rate translates into a computational cost of $\Order(\varepsilon^{-1-\delta})$ to satisfy error criterion \eqref{eq:error_crit}, under mild smoothness conditions on $f$.  The norm $\norm[\calf]{\cdot}$ is called the \emph{variation} and is a measure of function roughness. 
 
-Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  Note that a grid of $64$ points would only have $8$ different values in each coordinate direction, whereas  the LD sample covers $64$ different values in each coordinate direction.
+Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  Note that a grid of $64$ points would only have $8$ different values in each coordinate direction, whereas the LD sample covers $64$ different values in each coordinate direction.
 
-\subsection{Error Bounds and Stopping Criteria} \label{sec:stopcrit}
-Numerical algorithms based on efficient LD sampling are commonly called \hypertarget{QMClink}{\emph{quasi-Monte Carlo}} (\QMC) algorithms. To construct a \QMC algorithm one  needs not only an LD sequence, but also reliable and practical bounds on the error $\abs{\mu - \hmu_n}$, which are    based on the function data, $f(\bX_1), f(\bX_2), \ldots$.  Such data-based error bounds inform the stopping criteria that determine a suitable sample size $n$  to satisfy  error tolerance \eqref{eq:error_crit}.
+LD sequences are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}. \FH, \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
 
-One approach is to use $N$ different randomizations of a single LD sequence to compute $N$ sample means, and then estimate the error of the grand sample mean, $\hmu_{nN} = (\hmu_n^{(1)} +  \cdots \hmu_n^{(N)})/N$, via bootstrap or the variance of these $N$ sample means.  However, finite sample theory to justify this approach is lacking, and the sample size of $nN$ may be costly.
+\subsubsection{Error Bounds and Stopping Criteria} \label{sec:stopcrit}
+Numerical algorithms based on efficient LD sampling are commonly called \hypertarget{QMClink}{\emph{quasi-Monte Carlo}} (\QMC) algorithms. To construct a \QMC algorithm, one needs not only an LD sequence but also \textit{reliable} and \textit{practical} bounds on the error $\abs{\mu - \hmu_n}$ which are based on the function data, $f(\bX_1), f(\bX_2), \ldots$.  Such \textit{data-based} error bounds inform the stopping criteria which guide the determination of sample size $n$ needed to satisfy the error tolerance \eqref{eq:error_crit}. One approach is to use $N$ different randomizations of a single LD sequence to compute $N$ sample means, and then estimate the error of the grand sample mean, $\hmu_{nN} = (\hmu_n^{(1)} +  \cdots \hmu_n^{(N)})/N$, via bootstrap or the variance of these $N$ sample means. Such an approach would be prohibitively costly for our motivating applications since it requires $nN$ evaluations of the potentially expensive function $f$ (see \Limone).
 
-\FH and his collaborators have developed two kinds of theoretically justified stopping criteria for LD sampling based on the Fourier coefficients of the function data, $f(\bX_1), f(\bX_2), \ldots$.  The first kind determines a bound on $\abs{\mu-\mu_n}$ by inferring the roughness of $f$ from the decay of the discrete Fourier coefficients \cite{HicJim16a,JimHic16a,HicEtal17a}.  The second kind uses  Bayesian credible intervals for $\abs{\mu-\mu_n}$ assuming that $f$ is an instance of a Gaussian process whose hyperparameters are tuned by the function data \cite{HicJag18b,RatHic19a,JagHic22a}. The cost of bounding the error $\abs{\mu-\mu_n}$ is only $\Order(n \log(n))$ for both kinds of stopping criteria.  This achieved for the Bayesian approach by choosing covariance kernels that match the LD sampling schemes, and thus avoiding the typical $\Order(n^3)$ cost.
+\FH and his collaborators have developed two kinds of theoretically justified stopping criteria for LD sampling based on the Fourier coefficients of the data $f(\bX_1), f(\bX_2), \ldots$.  The first kind determines a bound on $\abs{\mu-\mu_n}$ by inferring the roughness of $f$ from the decay of the discrete Fourier coefficients \cite{HicJim16a,JimHic16a,HicEtal17a}.  The second kind uses  Bayesian credible intervals for $\abs{\mu-\mu_n}$ assuming that $f$ is an instance of a Gaussian process whose hyperparameters are tuned by the function data \cite{HicJag18b,RatHic19a,JagHic22a}. The cost of bounding the error $\abs{\mu-\mu_n}$ is only $\Order(n \log(n))$ for both kinds of stopping criteria.  This can be achieved for the Bayesian approach by choosing covariance kernels that match the LD sampling schemes, and thus avoiding the typical $\Order(n^3)$ cost.
 
-\subsection{Software Implementation} \label{sec:software}
-LD sequences are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}.  
-
-\FH, \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
+% \subsection{Software Implementation} \label{sec:software}
 
 
 \subsection{Limitations of Existing Methodology and Software} \label{sec:limit}
 
-There are several limitations to the methodology and software, described above, which our proposed research addresses. \cmtS{Bayesian \& big data}
+There are several limitations to the methodology and software, described above, which our proposed research addresses.
 
 %\begin{description}
 
@@ -928,7 +926,7 @@ Our publication plan will target a broad multi-disciplinary audience. We will pu
 
 
 \subsection{QMCPy as a Proving Ground} \label{sec:provingground}
-\cmtS{Fred \& Yuhan: maybe shorten the writing below, and focus on QMCPy as a vessel for connecting our new methods (\& existing state-of-the-art) to scientific practitioners who will use such tools for cost-efficient solutions to cutting-edge scientific problems.} QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it will be simple to swap out the old for the new and measure performance while all other pieces remain the same.  Moreover, the theoretical developments will pave the way for QMC in new application areas.
+\cmtS{Fred \& Yuhan: maybe shorten the writing below, and focus on QMCPy as a vessel for connecting our new methods (\& existing state-of-the-art) to scientific practitioners who will use such tools for cost-efficient solutions to cutting-edge scientific problems.} \YDNote{shorten this part}  QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it will be simple to swap out the old for the new and measure performance while all other pieces remain the same.  Moreover, the theoretical developments will pave the way for QMC in new application areas.
 
 QMCPy will \emph{stand in the breach} between research code from individual groups and large-scale software packages.  Research groups need to compare their new ideas with the best available.  Those who develop LD generators need to test them on a variety of use cases and as key components of various QMC algorithms.  Those with new QMC algorithms need to test them with the best generators.  Those with juicy use cases want to try the best that QMC offers.  Because large-scale software packages like \SciPy, \PyTorch, \TensorFlow, \NAG, or \MATLAB, do not offer QMCPy's options,  QMCPy \emph{will attract a significant number of QMC researchers as contributors.}
 
@@ -1185,22 +1183,20 @@ PhD students supported by this project will work with the senior personnel to ad
 \end{document}
 
 
-\iffalse
+
 https://media.ed.ac.uk/playlist/dedicated/51612401/1_0z0wec2z/1_jkdkrau0
 
 https://drive.google.com/file/d/1UfZinskltBhhAQcYFAzf26FIPFje5aM-/edit
 
-\fi
 
-\iffalse
+
+
 \subsection{Uncertainty Quantification}
 Uncertainty quantification is the science of quantifying, characterizing, tracing, and managing uncertainty in computational and real worlds systems \cite{smartuq, Smi14a}. Since data from such systems are typically expensive to simulate or collect, a key focus in this area is the sampling design for data collection, which can greatly benefit from QMC methods.
 
 A recent application of QMC for uncertainty quantification is to compute the expectation of a functional of solution of a partial differential equation with random coefficients \cite{HerSch20a}. This has broad applications in engineering problems, e.g., fluid flow through a porous medium. \SMNote{emphasize win here} QMCPy will implement a typical use case, which may show how to link QMCPy code with a PDE solver from another package. The PI \SM has done extensive work on uncertainty quantification, for rocket engine design \cite{li2017two,li2018uncertainty,chang2019kernel,yeh2018common,mak2018efficient}, neuroscience modeling \cite{wang2020uncertainty}, and active learning \cite{mak2018maximum}. We will explore the performance of LD sampling for these applications.
-\fi
 
 
-\iffalse
 A perspective is that we transform our sampling points to mimic the original distribution, $F$, and work with  the error bound derived by \FH in \cite{Hic99a}:
 \begin{equation}
 	\abs{ \mu  - \frac 1n \sum_{i=1}^n g(\bT(\bX_i))} \le  D(\{\bT(\bX_i)\}_{i=1}^n,F ) \norm[\calg]{g - \mu},
@@ -1210,9 +1206,7 @@ where the discrepancy $D(\{\bT(\bX_i)\}_{i=1}^n,F )$ is a distance between the e
 
 There is no theory that says when small  $D(\{\bX_i\}_{i=1}^n)$ implies small  $D(\{\bT(\bX_i)\}_{i=1}^n,F )$.  Indeed our recent study \cite{LiKanHic20a} suggests that this is not always the case.  We will derive conditions under which the transformation of low discrepancy points yields low discrepancy points.  This will involve assumptions on the reproducing kernel $K$ and the distribution $F$.
 
-\fi
 
-\iffalse
 \begin{wrapfigure}{r}{0.4\textwidth}
 	\centering
 	\vspace{-1ex}
@@ -1224,7 +1218,7 @@ There is no theory that says when small  $D(\{\bX_i\}_{i=1}^n)$ implies small  $
 	\caption{The function data ({\color{\MATLABOrange}$\bullet$}) for the locally adaptive
 		function approximation (top) and minimization (bottom) algorithms in \cite{ChoEtal17a}.  Sampling is denser where $\abs{f''}$ is larger.  For minimization it is also denser where the function values are smaller. \label{localadaptfig}}
 \end{wrapfigure}
-\fi
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
