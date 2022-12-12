@@ -784,17 +784,6 @@ The Koksma-Hlawka inequality, \eqref{eq:KH}, tells us to choose $\bT$ to make th
 \AO \cite{owen2000safe} for safe importance sampling, the  annealed importance sampler \cite{neal2001annealed}, and the bridge sampler \cite{gelman1998simulating}.  Recent work includes \cite{mueller2019neural}, which uses deep neural networks for importance sampling in image rendering.  In \cite{huling2020energy}, PI \SM extends importance sampling for covariate balancing in causal inference.  \FH's PhD student, \KZ, has shown how importance sampling with QMC can beat MCMC in computing the posterior means of logistic regression coefficients \cite{Zha21a}.  We will determine \emph{theoretically and empirically} under what conditions adaptive importance sampling makes \emph{significant improvement in computation times.}
 
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Connecting with Other Libraries} [Years 1--2] \label{sec:playwell}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-The complex multifidelity problems that we want to solve will often receive $f_{\fidparam}(\bX_{\fidparam})$ as the output of another library.  We will work with popular library developers to provide demos that show  how our \QMCPy library connects with theirs.  We recently collaborated with Uncertainty Quantification and Model Bridge (UM-Bridge) effort \cite{umbridge} to make \QMCPy compatible with UM-Bridge.
-
-We will also connect QMCPy to other libraries such as PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a}, taking advantage of what they offer in \QMCPy and pushing our more widely accepted developments into them.  A recent lunch gathering at an international \QMC conference initiated by \FH raised the need to standardize formats for LD generators to allow them to be shared across software libraries.  We will pursue this and other initiatives that promote same look-and-feel across \QMC software.
-
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Algorithms for Distribution, Density  and Quantile  Estimation} \label{sec:distdensquant}  [\FH lead, \AO, \AS{}]
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -839,52 +828,14 @@ Our publication plan will target a broad multi-disciplinary audience. We will pu
 \subsection{QMCPy as a Proving Ground} \label{sec:provingground}
 \cmtS{Fred \& Yuhan: maybe shorten the writing below, and focus on QMCPy as a vessel for connecting our new methods (\& existing state-of-the-art) to scientific practitioners who will use such tools for cost-efficient solutions to cutting-edge scientific problems.} \YDNote{shorten this part. Done.}  
 
-As mentioned in \cref{sec:lowdiscrep,sec:stopcrit}, \FH, \YD, \SCTC, \AS, \MM, \JR, \PR, and collaborators have created the Python QMC library QMCPy.  QMCPy includes LD sequences, basic variable transformations, and stopping rules
+As mentioned in \cref{sec:lowdiscrep,sec:stopcrit}, \FH, \YD, \SCTC, \AS, \MM, \JR, \PR, and collaborators have created the open source Python QMC library \QMCPy.  \QMCPy has a clear architecture and consistent user interface. It includes LD sequences,  variable transformations, and stopping rules.  \QMCPy is hosted on a GitHub repository with documentation, a suite of doctests and unit tests, Jupyter notebook demos, and an issues board.
 
-QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it will be simple to swap out the old for the new and measure performance while all other pieces remain the same.  Moreover, the theoretical developments will pave the way for QMC in new application areas. \YDNote{Better to modify after finishing Section 2.4}
+QMCPy  \emph{stands in the breach} between research code from individual groups and large-scale software packages.  Research groups need to compare their new ideas with the best available.  Those who develop LD generators need to test them on a variety of use cases and as key components of various QMC algorithms.  Those with new QMC algorithms need to test them with the best generators.  \QMCPy facilitates all of these
 
-QMCPy will \emph{stand in the breach} between research code from individual groups and large-scale software packages.  Research groups need to compare their new ideas with the best available.  Those who develop LD generators need to test them on a variety of use cases and as key components of various QMC algorithms.  Those with new QMC algorithms need to test them with the best generators.  Those with juicy use cases want to try the best that QMC offers.  Because large-scale software packages like \SciPy, \PyTorch, \TensorFlow, \NAG, or \MATLAB, do not offer QMCPy's options,  QMCPy \emph{will attract a significant number of QMC researchers as contributors.}
+This project will continue to grow \QMCPy.  As we and our collaborators develop new methodology, these will be integrated into \QMCPy.  We will connect \QMCPy to other libraries mentioned in \cref{sec:lowdiscrep}, taking advantage of what they offer in \QMCPy and pushing our more established developments into them.  A recent lunch gathering at an international \QMC conference initiated by \FH raised the need to standardize formats for LD generators to allow them to be shared across software libraries.  We will pursue this and other initiatives that promote same look-and-feel across \QMC software.
 
-Although large-scale software packages cannot adopt every new QMCPy wrinkle, QMCPy algorithms attracting broad interest will be folded into these large-scale packages. \MATLAB adopted \FH's TOMS LD generators from \cite{HonHic00a}. As a library that strives to connect the best of QMC software to the scientific community, the success of QMCPy will be gauged by how well such a connection is made. We will thus measure project success via a variety of \emph{engagement} metrics (e.g., number of package downloads, GitHub pull requests), as well as the degree of integration into large-scale packages.  A recent conference special session including the QMC developers for \SciPy, \PyTorch, and \TensorFlow has already opened dialogue on further collaboration.
+The evaluation of complex integrands $f(\bX)$ or $f_{\fidparam}(\bX_{\fidparam})$ may need to come from another  library, such as a PDE solver.  We will work with popular library developers to provide demos that show  how our \QMCPy library connects with theirs.  We recently collaborated with Uncertainty Quantification and Model Bridge (UM-Bridge) effort \cite{umbridge} to make \QMCPy compatible with UM-Bridge.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{The Start of QMCPy}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{wrapfigure}{r}{0.35\textwidth}
-	\includegraphics[width = 0.34\textwidth]{ProgramsImages/QMCSoftwarePlot.eps}
-	\caption{A comparison of the scopes of libraries containing QMC software.  Some libraries with broad scope have limited QMC coverage, and vice versa.}
-	\vspace{-0.3cm}
-\end{wrapfigure}
-
-\sloppypar The better existing QMC software packages include
-BRODA \cite{BRODA20a}, GAIL by \FH, \SCTC, \YD, and collaborators \cite{ChoEtal21a}, LatNet Builder \cite{LatNet} and Stochastic Simulation in Java (SSJ) \cite{SSJ}, \MATLAB \cite{MAT9.10}, NAG \cite{NAG27}, multilevel (Quasi-)Monte Carlo routines  by Giles \cite{GilesSoft}, Magic Point Shop (MPS) \cite{Nuy17a}, OpenTURNS \cite{OpenTURNS}, randomized Halton sequences by \AO \cite{Owe20a}, \PyTorch \cite{paszke2019pytorch}, QMC4PDE (QMC for elliptic PDEs with random diffusion coefficients) \cite{KuoNuy16a}, QRNG \cite{QRNG2020}, LD Sequences by Robbe \cite{Rob20a}, \SciPy \cite{virtanen2020scipy},  \TensorFlow Quant Finance \cite{tfqf2021a}, and
-UQLab \cite{UQLab2014}.  These software packages are written in various languages.  
-Each focuses on just certain aspects of QMC, such as the generation of LD sequences, fundamental QMC algorithms, or particular applications.  Some are small libraries, while others have broad scope, but mostly with only a small QMC part.  Whereas \SciPy, \PyTorch, and \TensorFlow are community efforts, most of the other software packages are the efforts of individual research groups or companies.
-
-\MM's company, SigOpt, funded the early-stage development of  QMCPy starting in 2019. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high-tech industry.  \AS,  at the time a co-terminal BS/MS student at Illinois Tech, and now an applied mathematics PhD student at Illinois Tech, was hired to create the QMCPy code.  QMCPy was released initially in the summer of 2020 and has had several upgrades since then. 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{QMCPy Architecture}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-QMCPy consists of four major abstract classes:
-% \vspace{-0.4cm}
-\begin{itemize}
-	\item \pyinline{DiscreteDistribution} for generating LD and IID sequences,
-	\item \pyinline{TrueMeasure} to accommodate more general distributions or measures,
-	\item \pyinline{Integrand} to define the particular function, $f$, of interest, and
-	\item \pyinline{StoppingCriterion} to determine when to stop the simulation.
-\end{itemize}
-% \vspace{-0.4cm}
-An auxiliary class, \pyinline{AccumulateData}, keeps track of intermediate and final results.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection*{QMCPy Options and Support}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-QMCPy supports digital nets and lattices with generating vectors from several sources.  There are also stopping criteria based on the work of \FH, \SCTC, and their collaborators \cite{HicEtal14a, HicJim16a, JimHic16a,RatHic19a}.  QMCPy is hosted on GitHub \cite{QMCPy2020a}. Bugs can be reported and features requested on the issues page.  Pull requests can be made by those who wish to add features.  All features are documented \cite{QMCPyDocs} using ReadtheDocs.  Doctests ensure that features work as expected. Features are illustrated by Jupyter notebooks.  \FH gave a tutorial on QMC software---with a focus on QMCPy---at MCQMC 2020 \cite{MCQMC2020QMCPyTut}.  A Google Colaboratory Notebook \cite{QMCPyTutColab2020} is available so that those watching  can try out QMCPy themselves in real time.  \FH, \SCTC, \AO, \AS \MM, and \PR wrote  blogs \cite{QMCBlog} to introduce QMC and QMCPy to the broader community.
 
 \subsection{Educating and Mentoring Cross-Disciplinary Computational Researchers}
 Computational mathematics and statistics require the use of others' code, hopefully in the form of well-developed software packages.  New scholars need to be trained not only on how to use such packages, but how to contribute to them as well.  QMCPy students supported by this project will learn to write clean, efficient code that fits the package architecture, is documented, and passes doctests.  Some will learn how to combine code from different packages and even different languages.  QMCPy students will learn about repositories and software engineering tools that need to become second nature, just like Beamer became second nature to many a generation ago, and \LaTeX\ two generations ago.
