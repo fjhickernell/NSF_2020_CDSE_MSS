@@ -509,7 +509,7 @@ Our collaborators include
 
 There are, however, two critical limitations which greatly hinders the use of this high-quality data for scientific discovery. The first limitation \hypertarget{Lim1link}(\Limone) is that, for complex problems, \textit{such data can be very costly to generate}, requiring a large investment of computational and/or experimental resources. Take, e.g., the study of the Quark-Gluon Plasma (QGP), a deconfined phase of nuclear matter which filled the Universe shortly after the Big Bang (see work by PI \SM \cite{everett2021multisystem,everett2021phenomenological,liyanage2022efficient,ji2021graphical}). With advances in nuclear physics modeling, this plasma can be simulated by virtually colliding heavy ions together at near-light speeds. The ultimate goal is to perform an {inverse problem}, which uses such simulations with physical measurements from particle colliders to learn plausible properties of this plasma (call this $\bt$) and hence shed light on the origins of matter. But such simulations are very costly: a single run at parameter $\bt$, yielding simulation output $g(\bt)$, can take on the order of {thousands} of CPU hours \citep{everett2021multisystem}. This inverse problem may require {thousands} of simulation runs at different choices of $\bt$, in order to find suitable parameters which best match cosmological measurements. Such a study can thus require \textit{millions} of CPU hours, which places great strain on computational costs. Similar cost bottlenecks are faced in a broad variety of modern science and engineering problems. 
 
-The second limitation \hypertarget{Lim2link}(\Limtwo) is that the increasing sophistication of scientific experiments results in \textit{massive datasets which take on highly complex forms}. In our nuclear physics application, the simulated output $g(\bt)$ consists of fine-scale spatiotemporal flows for the hydrodynamic evolution of the plasma, which can take up exabytes ($10^{18}$ bytes) of storage. The efficient use of such massive data is thus critical for timely scientific inference and decision-making. Similar challenges arise in our current collaboration on real-time engine control of unmanned aircraft vehicles (UAVs). Here, we aim to train a real-time control system for UAV engines with low cetane numbers, an important objective for U.S. Army’s single fuel concept. Due to expensive prototyping and experimental costs, these control systems are typically trained via complex computational fluid dynamics (CFD) simulations, which output a wide range of fine-scale engine characteristics. The key bottleneck is that such simulation outputs are massive datasets, consisting of hundreds of response variables and millions of timesteps. The use of such big data for training a statistical model for \textit{real-time} engine control is thus a critical need for practical implementation of such systems.
+The second limitation \hypertarget{Lim2link}(\Limtwo) is that the increasing sophistication of scientific experiments results in \textit{massive datasets which take on highly complex forms}. In our nuclear physics application, the simulated output $g(\bt)$ consists of fine-scale spatiotemporal flows for the hydrodynamic evolution of the plasma, which can take up exabytes ($10^{18}$ bytes) of storage. The efficient use of such massive data is thus critical for timely scientific inference and decision-making. Similar challenges arise in our current collaboration on real-time engine control of unmanned aircraft vehicles (UAVs). Here, we wish to train a real-time control system for UAV engines with low cetane numbers, an important objective for U.S. Army’s single fuel concept. Due to expensive prototyping and experimental costs, these control systems are typically trained via complex computational fluid dynamics (CFD) simulations, which output a wide range of fine-scale engine characteristics. The key bottleneck is that such simulation outputs are massive datasets, consisting of hundreds of response variables and millions of timesteps. The use of such big data for training a statistical model for \textit{real-time} engine control is thus a critical need for practical implementation.
 
 These challenges necessitate two crucial ingredients to facilitate scientific discovery: cost-efficiency and confidence. The first, \textit{cost-efficiency}, refers to statistical methods which aim to maximize model performance given a limited cost (e.g., computational) budget. For the earlier nuclear physics problem, a cost-efficient method strives to provide an accurate solution to the inverse problem given a limited computational budget (and thus limited simulation runs). The second, \textit{confidence}, refers to methods which provide a reliable and estimable measure (or quantification) of model error. Such confidence is essential for verifiable scientific discovery: it provides a quantification of uncertainty for findings, thus protecting against spurious findings. This further allows for theoretically sound stopping rules which guarantees model performance, which is particularly crucial for the current cost-constrained setting. For our nuclear physics problem, a confident method yields a measure of uncertainty for the inverse problem, which can be used to guide the amount of simulation runs needed to ensure a desired error tolerance.
 
@@ -536,24 +536,27 @@ Complex problems need multiple packages that must fit together
 \subsection{Background}
 \label{sec:background}
 
+We first provide a brief background on the prototypical problem we aim to address, then discuss existing literature and its limitations for our motivating applications. 
+
 \subsubsection{Prototypical Problem}
 
-A problem arising in many applications is the \emph{expectation of a random variable} $Y$ (e.g., option payoff, pixel intensity, flow velocity at a certain location) whose distribution is some complicated function, $f$, of a \emph{standard uniform} random vector:
+A problem arising in many applications is the \emph{expectation of a random variable} $Y$ whose distribution is some complicated function, $f$, of a \emph{standard uniform} random vector:
 \begin{equation} \label{eq:prototype}
     \mu := \bbE(Y) = \bbE[f(\bX)] = \int_{\cube} f(\bx) \, \dif \bx = \, ?, \qquad \bX \sim \calu[0,1]^d.
 \end{equation}
-Equivalently, this is a \emph{multivariate integration} problem. We assume that $\bX$ is uniform because the low discrepancy sequences that we intend to use (described later) mimic uniform random vectors.  If the problem originates as $Y=g(\bT)$ for some $\bT$ that is not standard uniform, then we re-write the problem via a variable transformation:
+Equivalently, this is a \emph{multivariate integration} problem. We assume that $\bX$ is uniform because the low discrepancy sequences that we intend to use (described later) mimic uniform random vectors.  If the problem originates as $Y=g(\bT)$ for some $\bT$ with distribution $\Pi$ that is not standard uniform, then we re-write the problem via a variable transformation:
 \begin{equation} \label{eq:vartrans}
 \bT = \bPsi(\bX), \qquad f(\bx) = g(\bPsi(\bx)) \abs{\partial \bPsi(\bx)/\partial \bx}.
 \end{equation}
+For example, in our UAV application, $\bT$ may represent uncertainties in engine operating conditions, $g(\bt)$ may denote the engine thrust at operating conditions $\bt$, and we wish to learn the expected engine thrust $\mathbb{E}[g(\bT)]$ under uncertain conditions.
 
-Besides the integral problem described in \cref{eq:prototype},  it is often useful to know the \emph{distribution}, $F$, \emph{density}\footnote{We use $\varrho$ to designate the probability density because $f$ is typically used for the integrand in the numerical integration literature.}, $\varrho$, and/or \emph{quantile} function, $Q$, of $Y$, i.e.,
+Besides the integral problem in \cref{eq:prototype},  it is often useful to know the \emph{distribution}, $F$, \emph{density}\footnote{We use $\varrho$ to designate the probability density because $f$ is typically used for the integrand in the numerical integration literature.}, $\varrho$, and/or \emph{quantile} function, $Q$, of $Y$, i.e.,
 \begin{subequations} \label{eq:distdensquant}
 	\begin{gather}
 		F(y) := \bbP(Y \le y) = \bbP[f(\bX) \le y] = \int_{[0,1]^d} \bbone_{(-\infty,y]}(f(\bx)) \, \dif \bx, \\ \varrho(y) := F'(y), \qquad Q(p) := F^{-1}(p).
 	\end{gather}
 \end{subequations}
-We will address these problem in \cref{sec:distdensquant} in the context of our motivating applications.
+In the UAV problem, we may wish to learn the distribution or quantiles of engine thrust $Y$ under uncertain operating conditions - these are the primary quantities of interest when designing for robust engines. We will address the problems in \cref{sec:distdensquant} in the context of our motivating applications.
 
 In practice, the population mean or multivariate integral, $\mu$, often cannot be evaluated by analytic means, but it may be estimated by the sample mean, $\hmu_n$, i.e., 
 \begin{equation} \label{eq:mean}
@@ -568,11 +571,6 @@ Given an error tolerance, $\varepsilon$, we want to choose the sampling scheme, 
 \subsubsection{Low discrepancy sampling}\label{sec:lowdiscrep}
 
 %\cmtS{Fred / Yuhan: pls shorten \& focus after my writing above.} 
-\begin{wrapfigure}{r}{0.4\textwidth}
-	\centering
-	\includegraphics[width = 0.35\textwidth]{ProgramsImages/lattice_scatter.eps}
-	\caption{LD lattice points, which have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
-\end{wrapfigure}
 Choosing $\bX_1, \bX_2, \ldots$, for evaluating the sample mean in \eqref{eq:mean} to be independent and identically distributed (IID) yields a root mean square error of $\sqrt{\bbE[\abs{\mu -\hmu_n}^2]} = \std(f(\bX))n^{-1/2}$, which is independent of the dimension, $d$, but slowly vanishing. The computational cost to satisfy the error tolerance \eqref{eq:error_crit} is $\Order(\varepsilon^{-2})$. Tensor product generalizations of one-dimensional numerical integration rules using grid sampling give errors of $\abs{\mu -\hmu_n} = \Order(n^{-r/d})$ and a computational cost of $\Order(\varepsilon^{-d/r})$, where $r$ is limited by the sophistication of the rule and the smoothness of the integrand, $f$.  Such rules may be suited for small $d$, but they are inefficient for the larger $d$ that occurs in our applications of interest.
 
 A superior approach that combines the intentional structure of a grid with the essentially dimensionless error bound or IID sampling is \hypertarget{LDlink}{\emph{low discrepancy}} (\LD)  sampling, $\bX_1, \bX_2,  \ldots \LDSim \calu[0,1]^d$, which has an error bound of \cite{Nie92,Hic99a}
@@ -582,20 +580,27 @@ A superior approach that combines the intentional structure of a grid with the e
 The discrepancy,  $D(\{\bX_i\}_{i=1}^n)$, corresponds to the norm of the cubature error functional \cite{Hic97a} for the function space $\calf$.  The discrepancy is also a measure of how close the empirical distribution\footnote{The empirical distribution assigns equal probability to each point.} is to the uniform distribution. 
 The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitrarily small and positive. This faster convergence rate translates into a computational cost of $\Order(\varepsilon^{-1-\delta})$ to satisfy error criterion \eqref{eq:error_crit}, under mild smoothness conditions on $f$.  The semi-norm $\norm[\calf]{\cdot - \mu}$ is called the \emph{variation} and is a measure of function roughness. 
 
-Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  A two-dimensional grid of $64$ points would only have $8$ different values in each coordinate direction, whereas the LD sample covers $64$ different values in each coordinate direction.
+\begin{wrapfigure}{r}{0.4\textwidth}
+	\centering
+	\includegraphics[width = 0.35\textwidth]{ProgramsImages/lattice_scatter.eps}
+	\caption{LD lattice points, which have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
+\end{wrapfigure}
 
-LD sequences are available in BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}. \FH, \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
+Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  A two-dimensional grid of $64$ points would only have $8$ different values in each coordinate direction, whereas the LD sample covers $64$ different values in each coordinate direction. Such schemes are available in broad array of softwares, including BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}. PI \FH, co-PI \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
 
 \subsubsection{Error Bounds and Stopping Criteria} \label{sec:stopcrit}
 Numerical algorithms based on efficient LD sampling are commonly called \hypertarget{QMClink}{\emph{quasi-Monte Carlo}} (\QMC) algorithms. To construct a \QMC algorithm, one needs not only an LD sequence but also \textit{reliable} and \textit{practical} bounds on the error $\abs{\mu - \hmu_n}$ which are based on the function data, $f(\bX_1), f(\bX_2), \ldots$.  Such \textit{data-based} error bounds inform the stopping criteria which guide the determination of sample size $n$ needed to satisfy the error tolerance \eqref{eq:error_crit}. One approach is to use $N$ different randomizations of a single LD sequence to compute $N$ sample means, and then estimate the error of the grand sample mean, $\hmu_{nN} = (\hmu_n^{(1)} +  \cdots \hmu_n^{(N)})/N$, via bootstrap or the variance of these $N$ sample means. Such an approach would be prohibitively costly for our motivating applications since it requires $nN$ evaluations of the potentially expensive function $f$ (see \Limone).
 
-\FH and his collaborators have developed two kinds of theoretically justified stopping criteria for LD sampling based on the Fourier coefficients of the data $f(\bX_1), f(\bX_2), \ldots$.  The first kind determines a bound on $\abs{\mu-\mu_n}$ by inferring the roughness of $f$ from the decay of the discrete Fourier coefficients \cite{HicJim16a,JimHic16a,HicEtal17a}.  The second kind uses  Bayesian credible intervals for $\abs{\mu-\mu_n}$ assuming that $f$ is an instance of a Gaussian process whose hyperparameters are tuned by the function data \cite{HicJag18b,RatHic19a,JagHic22a}. The cost of bounding the error $\abs{\mu-\mu_n}$ is only $\Order(n \log(n))$ for both kinds of stopping criteria.  This can be achieved for the Bayesian approach by choosing covariance kernels that match the LD sampling schemes, and thus avoiding the typical $\Order(n^3)$ cost.
+PI \FH and his collaborators have developed two kinds of theoretically justified stopping criteria for LD sampling based on the Fourier coefficients of the data $f(\bX_1), f(\bX_2), \ldots$.  The first kind determines a bound on $\abs{\mu-\mu_n}$ by inferring the roughness of $f$ from the decay of the discrete Fourier coefficients \cite{HicJim16a,JimHic16a,HicEtal17a}.  The second kind uses  Bayesian credible intervals for $\abs{\mu-\mu_n}$ assuming that $f$ is an instance of a Gaussian process whose hyperparameters are tuned by the function data \cite{HicJag18b,RatHic19a,JagHic22a}. The cost of bounding the error $\abs{\mu-\mu_n}$ is only $\Order(n \log(n))$ for both kinds of stopping criteria.  This can be achieved for the Bayesian approach by choosing covariance kernels that match the LD sampling schemes, and thus avoiding the typical $\Order(n^3)$ cost.
 
 
 \subsection{Limitations of Existing Methodology and Software} \label{sec:limit}
 
-There are several limitations to the methodology and software, described above, which our proposed research addresses.
+Despite this literature, there are fundamental limitations which prevent the effective use of such methods (and their associated theory, algorithms, and software) for tackling our motivating applications. These limitations, which we detail below, are gaps which we will address in the current proposal.
 
+\subsubsection{Bayesian Inference} Bayesian inference \citep{gelman1995bayesian} is a popular statistical paradigm which becoming increasingly popular for tackling scientific problems. Here, parameters of interest are sampled from a ``posterior'' probability distribution $\varrho$, which captures both the the prior belief of the modeler and evidence from the collected data. In practical problems, the posterior distribution $\Pi$ is often highly complex and available only in proportional form (i.e., its normalizing constant is unknown). This is further complicated by the fact that each evaluation of the posterior $\Pi$ can be very \textit{costly} (see \Limone). For example, \textit{each} evaluation of $\Pi$ in our aforementioned heavy-ion physics inverse problem requires thousands of CPU hours \cite{everett2021multisystem}. Existing work on LD sampling, however, focuses largely on the setting of $\Pi$ uniform (a comprehensive literature review for non-uniform posteriors $\Pi$ is provided later). There is thus an urgent need to extend LD sampling for this expensive Bayesian setting widely encountered in modern scientific problems. We will develop a novel cost-efficient LD posterior sampling framework in Section \ref{sec:bayes} which addresses this need.
+
+\subsubsection{Big Data Analysis} Given the increasing sophistication of computing technology, the outputs from scientific simulators are typically massive datasets with highly complex forms. The efficient use of such big data for timely scientific discovery and decision-making is thus paramount. 
 
 \subsubsection{Automatic variable transformations}  There are often multiple possible transformation $\bPsi$ that map to $\bT$ from a standard uniform random variable $\bX$ as in \eqref{eq:vartrans}.  For example, mapping $\bX \sim \calu[0,1]^d$ to $\bT \sim \caln(\bzero,\mSigma)$  involves choosing one of infinitely many possible square roots of the covariance matrix, $\mSigma$, (for $d>1$).  Choosing transformation $\bPsi$ to give an integrand $f$ with small roughness, i.e., small variation, $\norm[\calf]{f - \mu}$ is nontrivial and ideally should be based on function data. This may be addressed by adaptive importance sampling and/or  control variates. We address this limitation in \cref{??}.
 
@@ -830,11 +835,11 @@ Our publication plan will target a broad multi-disciplinary audience. We will pu
 
 
 \subsection{QMCPy as a Proving Ground} \label{sec:provingground}
-\cmtS{Fred \& Yuhan: maybe shorten the writing below, and focus on QMCPy as a vessel for connecting our new methods (\& existing state-of-the-art) to scientific practitioners who will use such tools for cost-efficient solutions to cutting-edge scientific problems.} \YDNote{shorten this part}  
+\cmtS{Fred \& Yuhan: maybe shorten the writing below, and focus on QMCPy as a vessel for connecting our new methods (\& existing state-of-the-art) to scientific practitioners who will use such tools for cost-efficient solutions to cutting-edge scientific problems.} \YDNote{shorten this part. Done.}  
 
 As mentioned in \cref{sec:lowdiscrep,sec:stopcrit}, \FH, \YD, \AS, \SCTC, \JR
 
-QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it will be simple to swap out the old for the new and measure performance while all other pieces remain the same.  Moreover, the theoretical developments will pave the way for QMC in new application areas.
+QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it will be simple to swap out the old for the new and measure performance while all other pieces remain the same.  Moreover, the theoretical developments will pave the way for QMC in new application areas. \YDNote{Better to modify after finishing Section 2.4}
 
 QMCPy will \emph{stand in the breach} between research code from individual groups and large-scale software packages.  Research groups need to compare their new ideas with the best available.  Those who develop LD generators need to test them on a variety of use cases and as key components of various QMC algorithms.  Those with new QMC algorithms need to test them with the best generators.  Those with juicy use cases want to try the best that QMC offers.  Because large-scale software packages like \SciPy, \PyTorch, \TensorFlow, \NAG, or \MATLAB, do not offer QMCPy's options,  QMCPy \emph{will attract a significant number of QMC researchers as contributors.}
 
@@ -855,7 +860,7 @@ BRODA \cite{BRODA20a}, GAIL by \FH, \SCTC, \YD, and collaborators \cite{ChoEtal2
 UQLab \cite{UQLab2014}.  These software packages are written in various languages.  
 Each focuses on just certain aspects of QMC, such as the generation of LD sequences, fundamental QMC algorithms, or particular applications.  Some are small libraries, while others have broad scope, but mostly with only a small QMC part.  Whereas \SciPy, \PyTorch, and \TensorFlow are community efforts, most of the other software packages are the efforts of individual research groups or companies.
 
-\MM's company, SigOpt, funded the early-stage development of  QMCPy starting in 2019. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high-tech industry.  \AS,  at the time a co-terminal BS/MS student at Illinois Tech, and now an applied mathematics PhD student at Illinois Tech, was hired to create the QMCPy code.  QMCPy was released initially in the summer of 2020 and has had several upgrades since then.  QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
+\MM's company, SigOpt, funded the early-stage development of  QMCPy starting in 2019. Python 3 was chosen as the language because of its popularity among a broad spectrum of potential users, especially those in the high-tech industry.  \AS,  at the time a co-terminal BS/MS student at Illinois Tech, and now an applied mathematics PhD student at Illinois Tech, was hired to create the QMCPy code.  QMCPy was released initially in the summer of 2020 and has had several upgrades since then. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -873,56 +878,6 @@ QMCPy consists of four major abstract classes:
 % \vspace{-0.4cm}
 An auxiliary class, \pyinline{AccumulateData}, keeps track of intermediate and final results.
 
-\subsubsection*{\textup{\pyinline{DiscreteDistribution} and \pyinline{TrueMeasure}}} LD sequences are constructed by creating the object and then generating points.  The code below produces the center panel of \cref{fig:iid_vs_ld}.
-% \vspace{-0.7cm}
-\begin{pythoncode}
-lattice = qmcpy.Lattice(dimension = 2) #define a discrete LD distribution
-points = lattice.gen_samples(n = 64)   #construct points
-\end{pythoncode}
-% \vspace{-0.2cm}
-\indent LD generators provide points designed to mimic the distribution $\calu[0,1]^d$.  QMCPy also has \pyinline{Sobol} \cite{DicPil10a} and \pyinline{Halton} \cite{Hal60} LD generators whose syntax are comparable. QMCPy  has standard uniform and normal pseudorandom generators adopted from \pyinline{numpy} for comparison purposes.  
-
-\begin{wrapfigure}{r}{0.50\textwidth}
-	\centering
-	\includegraphics[height = 3.0cm]{ProgramsImages/Gauss_IID.eps}
-	\includegraphics[height = 3.0cm]{ProgramsImages/Gauss_Sobol.eps}
-	\caption{IID Gaussian (left) and Sobol'  points transformed to mimic a Gaussian distribution (right).  The LD points better represent the Gaussian distribution than the IID points. \label{fig:ld_Gauss}}
-	\vspace{-0.3cm}
-\end{wrapfigure}
-
-One may generate additional points while reusing the original ones.   QMCPy LD generators are randomized by default to ensure that no points lie on the boundary of the unit cube and to improve the order of convergence of $\hmu_n$ to $\mu$ \cite{Owe97}. The \pyinline{TrueMeasure} class automates the transformation required to construct good points that mimic distributions other than standard uniform.  The  inverse  distribution is often used.  \cref{fig:ld_Gauss} displays  IID and Sobol' points  transformed to mimic a multivariate  Gaussian distribution.
-%with mean $\begin{pmatrix} 3 \\ 2 \end{pmatrix}$ and covariance matrix $\begin{pmatrix} 9 & 5 \\ 5 & 4 \end{pmatrix}$.  
-\begin{pythoncode}
-gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specify the distribution parameters
-points = gaussian_ld.gen_samples(n = 64)  #construct points
-\end{pythoncode}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection*{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-One must specify the integrand to compute expectations and multivariate integrals as described in \eqref{eq:mean}.   The original form of the problem may not be convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with zero mean and covariance $\mI/2$:
-\begin{multline} \label{eq:KeisterAlt}
-\mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)}
-= \int_{\reals^d} \underbrace{\cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2)}_{h(\bt)}  \, \underbrace{\dif \bt}_{\text{Lebesgue}} \\
-=   \int_{[0,1]^d} f(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
-\end{multline}
-Alternatively, $\mu$ can be thought of as an integral of $h$ with respect to Lebesgue measure.  QMCPy can compute the integral either way.
-
-The first way begins by constructing the Gaussian transformed LD \pyinline{TrueMeasure} instance \pyinline{gs} as described in the previous section.  Next, one defines the function $g$ as in \eqref{eq:KeisterAlt} above.   \pyinline{CustomFun}  constructs an $f$ for which the integral, $\mu$, can be written in terms of the uniform distribution, which the LD sequence mimics.   \pyinline{CustomFun} automatically constructs the transformation $\bT$ in \eqref{eq:KeisterAlt}.
-\begin{pythoncode}
-gs = qmcpy.Gaussian(qmcpy.Sobol(5), covariance = 1/2)    #choose the Gaussian distribution
-def g(t):  #your desired integrand, calculations must be vectorized
-	d = t.shape[1]
-	g_val = np.pi**(d/2) * np.cos(np.sqrt((t**2).sum(1)))
-	return g_val  #size n vector
-f = qmcpy.CustomFun(gs, custom_fun = g)
-sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)   #stopping criterion must match  points
-solution, data = sc.integrate()
-\end{pythoncode}
-
-The final stage of the computation requires the construction of a \pyinline{StoppingCriterion} instance, \pyinline{sc}.  The one here is due to PI \FH and \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR) \cite{HicJim16a} and is based on Walsh transformations of the sampled integrand data.  Invoking the \pyinline{integrate} method of \pyinline{sc} yields $\hmu_n$ satisfying error criterion \eqref{eq:error_crit} and a data object containing summary results.
-
-Another way to compute the Keister integral \eqref{eq:KeisterAlt} is to think of it as an integral with respect to the Lebesgue measure.  Again \pyinline{CustomFun} selects a default variable transformation or sampling measure.  The answer from QMCPy is the same as the first way, but this second way takes twice the time.  The choice of variable transformation, $\bT$, that defines $f$ from the original integrand is equivalent to importance sampling.  Automatic and adaptive importance sampling requires further research (see Sec. 3.3).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{QMCPy Options and Support}
@@ -1089,3 +1044,60 @@ PhD students supported by this project will work with the senior personnel to ad
 \bibliography{FJH23,FJHown23,simon,choi}
 \end{document}
 
+%%%%%%%%%%QMCPy%%%%%%%%%%%%%%%
+
+
+
+ QMCPy may be installed using \pyinline{pip} and imported via \pyinline{from qmcpy import *}.
+
+ 
+\subsubsection*{\textup{\pyinline{DiscreteDistribution} and \pyinline{TrueMeasure}}} LD sequences are constructed by creating the object and then generating points.  The code below produces the center panel of \cref{fig:iid_vs_ld}.
+% \vspace{-0.7cm}
+\begin{pythoncode}
+lattice = qmcpy.Lattice(dimension = 2) #define a discrete LD distribution
+points = lattice.gen_samples(n = 64)   #construct points
+\end{pythoncode}
+% \vspace{-0.2cm}
+\indent LD generators provide points designed to mimic the distribution $\calu[0,1]^d$.  QMCPy also has \pyinline{Sobol} \cite{DicPil10a} and \pyinline{Halton} \cite{Hal60} LD generators whose syntax are comparable. QMCPy  has standard uniform and normal pseudorandom generators adopted from \pyinline{numpy} for comparison purposes.  
+
+\begin{wrapfigure}{r}{0.50\textwidth}
+	\centering
+	\includegraphics[height = 3.0cm]{ProgramsImages/Gauss_IID.eps}
+	\includegraphics[height = 3.0cm]{ProgramsImages/Gauss_Sobol.eps}
+	\caption{IID Gaussian (left) and Sobol'  points transformed to mimic a Gaussian distribution (right).  The LD points better represent the Gaussian distribution than the IID points. \label{fig:ld_Gauss}}
+	\vspace{-0.3cm}
+\end{wrapfigure}
+
+One may generate additional points while reusing the original ones.   QMCPy LD generators are randomized by default to ensure that no points lie on the boundary of the unit cube and to improve the order of convergence of $\hmu_n$ to $\mu$ \cite{Owe97}. The \pyinline{TrueMeasure} class automates the transformation required to construct good points that mimic distributions other than standard uniform.  The  inverse  distribution is often used.  \cref{fig:ld_Gauss} displays  IID and Sobol' points  transformed to mimic a multivariate  Gaussian distribution.
+%with mean $\begin{pmatrix} 3 \\ 2 \end{pmatrix}$ and covariance matrix $\begin{pmatrix} 9 & 5 \\ 5 & 4 \end{pmatrix}$.  
+\begin{pythoncode}
+gaussian_ld = qmcpy.Gaussian(qmcpy.Lattice(2), mean = [3,2], covariance = [[9,5],[5,4]])  #specify the distribution parameters
+points = gaussian_ld.gen_samples(n = 64)  #construct points
+\end{pythoncode}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection*{\textup{\pyinline{Integrand} and \pyinline{StoppingCriterion}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+One must specify the integrand to compute expectations and multivariate integrals as described in \eqref{eq:mean}.   The original form of the problem may not be convenient for computation.  For example, the Keister integral in \eqref{eq:Keister} can be thought of as an integral of $g$ with respect to the Gaussian distribution with zero mean and covariance $\mI/2$:
+\begin{multline} \label{eq:KeisterAlt}
+\mu = \int_{\reals^d} \underbrace{\pi^{d/2} \cos( \norm[2]{\bt})}_{g(\bt)}  \, \underbrace{\pi^{-d/2}\exp(-\norm[2]{\bt}^2)\, \dif \bt}_{\caln(\bzero, \mI/2)}
+= \int_{\reals^d} \underbrace{\cos( \norm[2]{\bt}) \exp(-\norm[2]{\bt}^2)}_{h(\bt)}  \, \underbrace{\dif \bt}_{\text{Lebesgue}} \\
+=   \int_{[0,1]^d} f(\bx) \, \dif \bx \qquad \text{for an appropriate transformation } \bt = \bT(\bx).
+\end{multline}
+Alternatively, $\mu$ can be thought of as an integral of $h$ with respect to Lebesgue measure.  QMCPy can compute the integral either way.
+
+The first way begins by constructing the Gaussian transformed LD \pyinline{TrueMeasure} instance \pyinline{gs} as described in the previous section.  Next, one defines the function $g$ as in \eqref{eq:KeisterAlt} above.   \pyinline{CustomFun}  constructs an $f$ for which the integral, $\mu$, can be written in terms of the uniform distribution, which the LD sequence mimics.   \pyinline{CustomFun} automatically constructs the transformation $\bT$ in \eqref{eq:KeisterAlt}.
+\begin{pythoncode}
+gs = qmcpy.Gaussian(qmcpy.Sobol(5), covariance = 1/2)    #choose the Gaussian distribution
+def g(t):  #your desired integrand, calculations must be vectorized
+	d = t.shape[1]
+	g_val = np.pi**(d/2) * np.cos(np.sqrt((t**2).sum(1)))
+	return g_val  #size n vector
+f = qmcpy.CustomFun(gs, custom_fun = g)
+sc = qmcpy.CubQMCSobolG(f, abs_tol = 1e-3)   #stopping criterion must match  points
+solution, data = sc.integrate()
+\end{pythoncode}
+
+The final stage of the computation requires the construction of a \pyinline{StoppingCriterion} instance, \pyinline{sc}.  The one here is due to PI \FH and \hypertarget{LlAJRlink}{Llu\'is Antoni Jim\'enez Rugama} (\LlAJR) \cite{HicJim16a} and is based on Walsh transformations of the sampled integrand data.  Invoking the \pyinline{integrate} method of \pyinline{sc} yields $\hmu_n$ satisfying error criterion \eqref{eq:error_crit} and a data object containing summary results.
+
+Another way to compute the Keister integral \eqref{eq:KeisterAlt} is to think of it as an integral with respect to the Lebesgue measure.  Again \pyinline{CustomFun} selects a default variable transformation or sampling measure.  The answer from QMCPy is the same as the first way, but this second way takes twice the time.  The choice of variable transformation, $\bT$, that defines $f$ from the original integrand is equivalent to importance sampling.  Automatic and adaptive importance sampling requires further research (see Sec. 3.3).
