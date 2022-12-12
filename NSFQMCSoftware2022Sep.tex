@@ -586,7 +586,9 @@ The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitr
 	\caption{LD lattice points, which have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{wrapfigure}
 
-Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  A two-dimensional grid of $64$ points would only have $8$ different values in each coordinate direction, whereas the LD sample covers $64$ different values in each coordinate direction. Such schemes are available in broad array of softwares, including BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}. PI \FH, co-PI \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
+Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  A two-dimensional grid of $64$ points would only have $8$ different values in each coordinate direction, whereas the LD sample covers $64$ different values in each coordinate direction. Such schemes are available in broad array of softwares, including BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}. 
+
+PI \FH, co-PI \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
 
 \subsubsection{Error Bounds and Stopping Criteria} \label{sec:stopcrit}
 Numerical algorithms based on efficient LD sampling are commonly called \hypertarget{QMClink}{\emph{quasi-Monte Carlo}} (\QMC) algorithms. To construct a \QMC algorithm, one needs not only an LD sequence but also \textit{reliable} and \textit{practical} bounds on the error $\abs{\mu - \hmu_n}$ which are based on the function data, $f(\bX_1), f(\bX_2), \ldots$.  Such \textit{data-based} error bounds inform the stopping criteria which guide the determination of sample size $n$ needed to satisfy the error tolerance \eqref{eq:error_crit}. One approach is to use $N$ different randomizations of a single LD sequence to compute $N$ sample means, and then estimate the error of the grand sample mean, $\hmu_{nN} = (\hmu_n^{(1)} +  \cdots \hmu_n^{(N)})/N$, via bootstrap or the variance of these $N$ sample means. Such an approach would be prohibitively costly for our motivating applications since it requires $nN$ evaluations of the potentially expensive function $f$ (see \Limone).
@@ -804,9 +806,9 @@ Besides computing expectations, we may wish to know the distribution, density, a
 
 Although the distribution, $F$, is defined as an integral in \cref{eq:distdensquant}, the integrand as it stands, $\bbone_{(-\infty,y]}(f(\cdot))$, is not smooth enough for  QMC theory to apply directly.  Approximating the density (derivative of $F$) and quantile function, (inverse of $F$) are harder problems.
 
-\begin{wrapfigure}{r}{0.65\textwidth}
+\begin{wrapfigure}{r}{0.5\textwidth}
 	\centering
-	\includegraphics[width = 0.65\textwidth]{ProgramsImages/distribExperEG.pdf}
+	\includegraphics[width = 0.5\textwidth]{ProgramsImages/distribExperEG.pdf}
 	\caption{Comparison of the empirical distribution functions of $Y = f(X)$ using $n=64$ IID and LD $X_i$ and for two definitions of $f$. The empirical distributions generated by LD points are closer to the true} \label{fig:empdistcomp}
 \end{wrapfigure}
 
@@ -837,7 +839,7 @@ Our publication plan will target a broad multi-disciplinary audience. We will pu
 \subsection{QMCPy as a Proving Ground} \label{sec:provingground}
 \cmtS{Fred \& Yuhan: maybe shorten the writing below, and focus on QMCPy as a vessel for connecting our new methods (\& existing state-of-the-art) to scientific practitioners who will use such tools for cost-efficient solutions to cutting-edge scientific problems.} \YDNote{shorten this part. Done.}  
 
-As mentioned in \cref{sec:lowdiscrep,sec:stopcrit}, \FH, \YD, \AS, \SCTC, \JR
+As mentioned in \cref{sec:lowdiscrep,sec:stopcrit}, \FH, \YD, \SCTC, \AS, \MM, \JR, \PR, and collaborators have created the Python QMC library QMCPy.  QMCPy includes LD sequences, basic variable transformations, and stopping rules
 
 QMCPy will aggregate the best QMC software with a clear structure and a consistent user interface.  When a potentially better LD generator, algorithm, or use case arises, it will be simple to swap out the old for the new and measure performance while all other pieces remain the same.  Moreover, the theoretical developments will pave the way for QMC in new application areas. \YDNote{Better to modify after finishing Section 2.4}
 
