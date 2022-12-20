@@ -483,9 +483,9 @@ Cost-Efficient and Confident Sampling for \\ Modern Scientific Discovery
 
 % We will develop and extend highly stratified sampling methods and sound, data-based stopping criteria to solve new applications.}
 
-With breakthroughs in experimental methods and computational technology, there are now novel sources of high-quality data for tackling a broad array of pressing problems in science and engineering. However, the generation of such high-fidelity data often requires expensive experimentation and/or costly simulations, which can greatly limit the amount of data available for scientific investigation. Given this cost bottleneck, it is thus of critical importance to develop \textit{cost-efficient} sampling methods for data generation and model training. Furthermore, for scientific inference, such sampling methods need to be performed with \textit{confidence}; they need to be coupled with theoretically sound stopping rules which guarantee the resulting statistical model achieves a desired error tolerance. This confidence is paramount for reliable scientific discovery: it provides a quantification of uncertainty for scientific inference, thus protecting against erroneous or spurious findings.
+With breakthroughs in experimental methods and computational technology, there are now novel sources of high-quality data for tackling a broad array of pressing problems in science and engineering. However, the generation of such high-fidelity data often requires expensive experimentation and/or costly simulations, which can greatly limit the amount of data available for scientific investigation. Given this cost bottleneck, it is thus of critical importance to develop \textit{cost-efficient} sampling methods for data generation and model training. Furthermore, for scientific inference, such sampling methods need to be performed with \textit{confidence}; they need to be coupled with theoretically sound but data-driven stopping rules which guarantee the resulting statistical model achieves a desired error tolerance. This confidence is paramount for reliable scientific discovery: it provides a quantification of uncertainty for scientific inference, thus protecting against erroneous or spurious findings.
 
-This project will develop a novel and timely suite of methods which jointly addresses this crucial need for cost-efficient and confident sampling for scientific discovery. Our framework features methodology (with supporting theory and algorithms) which extend classical low discrepancy (i.e., highly stratified) sampling techniques for a broad range of challenging scenarios encountered in modern scientific problems, including cost-efficient Bayesian inference, efficient subsampling of massive data, and multi-fidelity modeling, and density estimation. Major emphasis is placed on demonstrating the effectiveness of these methods for tackling a wide array of complex scientific and engineering problems, specifically the PIs' ongoing collaborations on the study of heavy-ion collisions and real-time engine control of unmanned aircraft vehicles.
+This project will develop a novel and timely suite of methods that jointly address this crucial need for cost-efficient and confident sampling for scientific discovery. Our framework features methodology (with supporting theory and algorithms) which extend classical low discrepancy (i.e., highly stratified) sampling techniques for a broad range of challenging scenarios encountered in modern scientific problems, including cost-efficient Bayesian inference, efficient subsampling of massive data, and multi-fidelity modeling, and density estimation. Major emphasis is placed on demonstrating the effectiveness of these methods for tackling a wide array of complex scientific and engineering problems, especially the PIs' ongoing collaborations on the study of heavy-ion collisions and real-time engine control of unmanned aircraft vehicles, but also new collaborations that will be developed over the life of the project.
 
 This project will be led by 
 \hypertarget{FHlink}{Fred Hickernell} (\FH\footnote{Initials of personnel are hyperlinks to their full names.}, PI from Illinois Tech), 
@@ -497,10 +497,12 @@ Our collaborators include
 %\hypertarget{DNlink}{Dirk Nuyens} (\DN,  Katholieke Universiteit Leuven),
 \hypertarget{COlink}{Chris Oates} (\CO, Newcastle U), 
 \hypertarget{AOlink}{Art Owen} (\AO, Stanford U), 
-\hypertarget{PRlink}{Pieterjan Robbe} (\PR, Sandia National Laboratories),  
+\hypertarget{PRlink}{Pieterjan Robbe} (\PR, Sandia National Laboratories and KU Leuven),  
 %\hypertarget{TSlink}{Tim Sullivan} (\TS, Warwick University), 
-\hypertarget{ASlink}{Aleksei Sorokin} (\AS, PhD student, Illinois Tech),
-\hypertarget{CHlink}{Claude Hall, Jr.} (\CH, African-American PhD student, Illinois Tech), \hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke U), \hypertarget{JMlink}{John Miller} (\JM, PhD student, Duke U), \hypertarget{KLlink}{Kevin Li} (\KL, PhD student, Duke U), \hypertarget{TTlink}{Tao Tang} (\TT, PhD student, Duke U) as well as other students, alumni, and friends.  
+\hypertarget{CHlink}{Claude Hall, Jr.} (\CH, African-American PhD student, \hypertarget{IJlink}{Irene Ji} (\IJi, PhD student, Duke U), \hypertarget{JMlink}{John Miller} (\JM, PhD student, Duke U), \hypertarget{KLlink}{Kevin Li} (\KL, PhD student, Duke U), \hypertarget{ASlink}{Aleksei Sorokin} (\AS, PhD student, Illinois Tech),
+Illinois Tech), 
+\hypertarget{TTlink}{Tao Tang} (\TT, PhD student, Duke U), 
+and other students, alumni, and friends.  
 
 
 
@@ -522,7 +524,7 @@ The second limitation is that the increasing sophistication of scientific experi
 
 These challenges necessitate two crucial ingredients to facilitate scientific discovery: cost-efficiency and confidence. The first, \textit{cost-efficiency}, refers to statistical methods which aim to maximize model performance given a limited cost (e.g., computational) budget. For the earlier nuclear physics problem, a cost-efficient method strives to provide an accurate solution to the inverse problem given a limited computational budget (and thus limited simulation runs). The second, \textit{confidence}, refers to methods which provide a reliable and estimable measure (or quantification) of model error. Such confidence is essential for verifiable scientific discovery: it provides a quantification of uncertainty for findings, thus protecting against spurious findings. This further allows for theoretically sound stopping rules which guarantees model performance, which is particularly crucial for the current cost-constrained setting. For our nuclear physics problem, a confident method yields a measure of uncertainty for the inverse problem, which can be used to guide the amount of simulation runs needed to ensure a desired error tolerance.
 
-Both of the above limitations can be alleviated via a careful integration of novel \textit{sampling} algorithms within the statistical learning framework. Here, ``sampling'' refers to the drawing of representative samples $\bT_1, \dots, \bT_n$ from a (potentially) complex probability distribution $\Pi$, and the use of such samples for scientific inference and decision-making. For limitation (i), a careful sampling design of the input parameters for the expensive simulator can enable accurate and precise scientific inference in reasonable turnaround times. For limitation (ii), a judicious sampling of the massive datasets from scientific experiments can allow for timely scientific discovery for useful decision-making. There is, however, much to be done on \textit{cost-efficient} and \textit{confident} sampling algorithms, given the complexities present in modern scientific problems. We will propose a suite of methods, with supporting theory and algorithms, which address this important gap. We first present the prototypical problem of interest, then provide a survey of \textit{low-discrepancy} sampling methods \citep{niederreiter1992random}, which we extend for the proposed suite of methods.
+Both of the above limitations can be alleviated via a careful integration of novel \textit{sampling} algorithms within the statistical learning framework. Here, ``sampling'' refers to the drawing of representative samples $\bT_1, \dots, \bT_n$ from a (potentially) complex probability distribution $\Pi$, and the use of such samples for scientific inference and decision-making. For limitation (i)\FJHNote{Is this limitation related to our later limitatins?}, a careful sampling design of the input parameters for the expensive simulator can enable accurate and precise scientific inference in reasonable turnaround times. For limitation (ii), a judicious sampling of the massive datasets from scientific experiments can allow for timely scientific discovery for useful decision-making. There is, however, much to be done on \textit{cost-efficient} and \textit{confident} sampling algorithms, given the complexities present in modern scientific problems. We will propose a suite of methods, with supporting theory and algorithms, which address this important gap. We first present the prototypical problem of interest, then provide a survey of \textit{low-discrepancy} sampling methods \citep{niederreiter1992random}, which we extend for the proposed suite of methods.
 
 
 % Why cost-efficient simulation? Lay out scope clearly. We need a pipeline for tackling scientific problems. Software \& interfacing for uncertainty propagation.
@@ -549,7 +551,7 @@ We first provide a brief background on the prototypical problem we aim to addres
 
 \subsubsection{Prototypical Problem}
 
-A problem arising in many applications is the \emph{expectation of a random variable} $Y$ whose distribution is some complicated function, $f$, of a \emph{standard uniform} random vector:
+A problem arising in many applications is the \emph{expectation of a random variable} $Y$ whose distribution is some complicated function, $f$, of a \emph{standard uniform} random vector: \FJHNote{Do we introduce $g$ in this line?}
 \begin{equation} \label{eq:prototype}
     \mu := \bbE(Y) = \bbE[f(\bX)] = \int_{\cube} f(\bx) \, \dif \bx = \, ?, \qquad \bX \sim \calu[0,1]^d.
 \end{equation}
@@ -595,7 +597,19 @@ The discrepancy is typically $\Order(n^{-1 + \delta})$, where $\delta$ is arbitr
 	\caption{LD lattice points, which have fewer gaps and clusters of points than either the IID or grid points. \label{fig:iid_vs_ld}}
 \end{wrapfigure}
 
-Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  A two-dimensional grid of $64$ points would only have $8$ different values in each coordinate direction, whereas the LD sample covers $64$ different values in each coordinate direction. Such schemes are available in broad array of softwares, including BRODA \cite{BRODA20a}, \MATLAB \cite{MAT9.9}, \NAG \cite{NAG27}, PyTorch \cite{paszke2019pytorch}, SciPy \cite{virtanen2020scipy}, TensorFlow \cite{tfqf2021a} and some uncertainty quantification libraries such as Dakota \cite{DakotaUsersManual}, MUQ \cite{MUQ}, UQLab \cite{UQLab2014}, and UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}. 
+Popular LD sampling schemes include lattices \cite{Nie92,SloJoe94,DicEtal22a} and digital nets \cite{Nie92,DicPil10a}. \cref{fig:iid_vs_ld} displays $n=64$ LD lattice points intended to mimic $\calu[0,1]^2$.  A two-dimensional grid of $64$ points would only have $8$ different values in each coordinate direction, whereas the LD sample covers $64$ different values in each coordinate direction. Such schemes are available in broad array of softwares, including 
+BRODA \cite{BRODA20a}, 
+CUBA \cite{CUBA}
+\MATLAB \cite{MAT9.9}, 
+\NAG \cite{NAG27}, 
+PyTorch \cite{paszke2019pytorch}, 
+SciPy \cite{virtanen2020scipy}, 
+TensorFlow \cite{tfqf2021a}, 
+and some uncertainty quantification libraries such as 
+Dakota \cite{DakotaUsersManual}, 
+MUQ \cite{MUQ}, 
+UQLab \cite{UQLab2014}, and 
+UQTk \cite{DebEtal04,UQTk}.  Efforts to identify better LD sequence generators include LatNet Builder \cite{LatNet} and the Magic Point Shop \cite{Nuy17a}. 
 
 PI \FH, co-PI \YD, \SCTC, \MM, \JR, \AS and collaborators have developed more comprehensive \QMC libraries, GAIL \cite{ChoEtal21a} for \MATLAB and \QMCPy \cite{QMCPy2020a} for Python.  These libraries include the stopping criteria mentioned above, as well as flexible variable transformations of the form \eqref{eq:vartrans}.  Our recent effort is focused on \QMCPy, and includes an active repository \cite{QMCPy2020a}, documentation \cite{QMCPyDocs}, a tutorial \cite{QMCPyTutMovie2020}, and a blog \cite{QMCBlog}.
 
