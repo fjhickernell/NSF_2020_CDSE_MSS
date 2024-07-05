@@ -517,85 +517,8 @@ We highlight under each proposed task what can and cannot be done in light of th
 \subsection{Bayesian Sampling for Expensive Posteriors} \label{sec:bayes}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Background and Preliminary Results.}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Bayesian methods \cite{gelman1995bayesian} rely on MCMC sampling to explore the posterior distribution $F$, which captures information on model parameters (see PI \SM's work \cite{mak2016regional,huang2022population,mak2021tsec}). However, $F$ can often be \textit{expensive} to evaluate in many scientific computing problems (see \LimOne). This is compounded by the highly correlated nature of traditional MCMC samplers, which reduces the information provided by each sample \citep{link2012thinning}. Existing samplers for such problems thus be prohibitively \textit{costly} \cite{joseph2015sequential}, and an LD posterior sampling method can provide improved Bayesian learning given a computational budget.
+We will develop the proposed ESP sampler (with supporting methods and algorithms) as initially proposed. We will explore associated theoretical rates and central limit theorems if there are sufficient resources at the end of the project. These methods will be applied to physical science and engineering applications, as initially intended.
 
-
-% While the QMC Metropolis method by \cite{OweTri05a} speeds up the convergence of samples, it still requires many posterior evaluations. We want method which can provide \LD sampling with limited posterior evaluations here.
-
-One approach for \LD posterior sampling is to minimize the \textit{kernel discrepancy} $D_K(\{\bT_i\}_{i=1}^n, F)$ \cite{Hic99a}, which measures the difference between the empirical distribution of $\{\bT_i\}_{i=1}^n$ and the posterior $F$ via a symmetric positive-definite kernel $K$. This approach, known as \textit{kernel herding} \citep{chen2012super}, has a key limitation: the discrepancy requires an analytic form for the integral $\int K(\bt,\cdot) \, \dif F(\bt)$, which is unattainable for complex posteriors $F$. To address this, \cite{pmlr-v80-chen18f} proposed the ``Steinized'' kernel:
-\begin{multline}\label{eq:stein}
-K_{\rm ST}(\bt,\bx) = \nabla_\bt \cdot \nabla_\bx K(\bt,\bx) + \nabla_\bt K(\bt,\bx) \cdot \nabla_\bx \log \dif F(\bx)\\
- + \nabla_\bx K(\bt,\bx) \cdot \nabla_\bt  \log \dif F(\bt) + K(\bt,\bx) \nabla_\bt \log \dif F(\bt) \cdot \nabla_\bx \log \dif F(\bx),
-\end{multline}
-where $\nabla$ and $\nabla \cdot$ are the gradient and divergence operators, respectively. With this, $\int K_{\rm ST}(\bt,
-\cdot) \, \dif F(\bt)$ evaluates to 0, thus yielding a closed form expression for the \textit{kernel Stein discrepancy} (KSD):
-\begin{equation}
-    D_K(\{\bT_i\}_{i=1}^n, F) := \sqrt{\frac{1}{n^2}\sum_{i,j=1}^{n}K_{\rm ST}(\bT_i, \bT_j)}.
-    \label{eq:ksd}
-\end{equation}
-\cite{pmlr-v80-chen18f} then employs a sequential optimization of the KSD: the first sample $\bT_1^*$ is taken at the mode of $F$, then subsequent samples $\bT_2^*, \bT_3^*, \cdots$ are obtained by sequentially optimizing the KSD, i.e.:
-\begin{equation}
-\bT_n^* \leftarrow \argmin_{\bt} \text{KSD}_n(\bt) := \argmin_{\bt} D_K(\{\bT_i^*\}_{i=1}^{n-1} \cup \bt, F), \quad K = K_{\rm ST}, \quad n = 2, 3, \cdots.
-\label{eq:ksdopt}
-\tag{$\text{ESP}_n$}
-\end{equation}
-These optimized samples, called \textit{Stein points}, can yield improved representation of the posterior $F$ over standard MCMC methods for a fixed sample size $n$.
-
-However, Stein points have a key drawback: they are \textit{not} cost-efficient. When the posterior $F$ is expensive, the optimization of the Stein discrepancy for a \textit{single} sample point will require \textit{many} evaluations of $F$ in the form of its score function $\nabla_\bt \log \dif F(\bt)$. For our heavy-ion application, given a fixed budget of $10^6$ CPU hours, we can afford $10^3$ evaluations of $F$, which translates to only $n \approx 50$ Stein points - this is inadequate for exploration of complex posterior distributions.
-
-We thus propose the following cost-Efficient Stein Points (ESPs). The key idea is the construction of a sequence of carefully constructed Gaussian process (GP) surrogate models \citep{santner2003design} on the expensive objective functions $\text{KSD}_n$. Consider first \eqref{eq:ksdopt} for a given $n$. Suppose the posterior in the form of its score function $\nabla_\bt \log \dif F(\bt)$ has already been at evaluated at $M_{n}$ candidate points $\{\bT_j\}_{j=1}^{M_{n}}$, yielding objective evaluations $\mathcal{D}_n = \{\text{KSD}_n(\bT_j)\}_{j=1}^{M_n}$ via \eqref{eq:ksd}. Under a GP prior on $\text{KSD}_n(\cdot)$, the posterior distribution of $\text{KSD}_n(\bt)$ can be shown to be $\text{KSD}_n(\bt)|\mathcal{D}_n \sim \mathcal{N}\{\mu_n(\bt),\sigma^2_n(\bt)\}$; specific forms for $\mu_n(\bt)$ and $\sigma^2_n(\bt)$ can be found in \cite{santner2003design}. Using this and following the literature on Bayesian optimization (e.g., \cite{jones1998efficient} and work from PI \SM \cite{chen2019hierarchical}), the \textit{expected improvement} in objective $\text{KSD}_n$ from evaluating the posterior at a new point $\bt$ takes the closed-form expression:
-\begin{equation}
-    \text{EIKSD}_{n}(\bt) = (\text{KSD}_{n,\rm{min}} -  \mu_n(\bt)) \Phi \left(\frac{\text{KSD}_{n, \rm{min}} -  \mu_n(\bt)}{  \sigma_n(\bt)} \right) +  \sigma_n(\bt) \phi \left(\frac{\text{KSD}_{n,\rm{min}} -  \mu_n(\bt)}{  \sigma_n(\bt)}\right),
-    \label{eq:ei}
-\end{equation}
-where $\text{KSD}_{n,\rm{min}}$ is the best observed $\text{KSD}_n$ value. We thus wish to evaluate the expensive posterior at the point that maximizes $\text{EIKSD}_{n}(\bt)$. This procedure, of refitting the GP surrogate and evaluating the posterior at the point of greatest expected improvement, is then iterated until a convergence criterion is met. The evaluated point with smallest $\text{KSD}_n$ is then taken as the next sample $\bT_n^*$ in \eqref{eq:ksdopt}.
-
-\begin{wrapfigure}{r}{0.55\textwidth}    \centering
-\vspace{-2ex}
-    \includegraphics[width=0.55\textwidth]{ProgramsImages/2d2m_corr_500Evals.png}
-    \caption{Visualizing the sampled points on a 2D two-mixture normal distribution, using four existing posterior samplers and the proposed ESPs. All samplers are limited to 500 posterior evaluations. \vspace{-2ex}}
-    \label{fig:esps}
-\end{wrapfigure}
-Consider next the \textit{sequence} of optimization problems in \eqref{eq:ksdopt} for ESP sampling. A key observation is that the posterior evaluations used for solving previous problems $\text{ESP}_2, \cdots, \text{ESP}_{n-1}$ can be directly \textit{reused} for the current problem $\text{ESP}_{n}$, since such evaluations translate directly to evaluations of $\text{KSD}_n$ via \eqref{eq:ksd}. Thus, as sample size $n$ increase, this allows for increasingly more data on the objective $\text{KSD}_n$ to generate the $n$-th ESP $\bT^*_n$. This recycling of posterior evaluations enables cost-efficient ESP sampling given a limited computational budget.
-
-To demonstrate the cost-efficiency of ESPs, \cref{fig:esps} compares several state-of-the-art samplers (the robust adaptive Metropolis sampler \citep{vihola2012robust}, the No-U-Turn sampler \citep{hoffman2014no}, Stein points \citep{pmlr-v80-chen18f}, minimum energy designs \citep{joseph2015sequential}) on a 2D two-mixture normal distribution. All samplers are limited to $B=500$ posterior evaluations. We see that, as expected, existing samplers that ignore the expensive nature of posterior evaluations provide a poor approximation of $F$: they either yield a small sample size ($n \approx 50$), or a highly correlated sample chain. ESPs, on the other hand, provide a noticeably larger sample size $n = 287$ with low sample correlation. This improved posterior representation is confirmed via a comparison of marginal statistics or distributional metrics.
-
-
-
-
-
-
-
-
-% Despite this, Stein points have a key limitation: they do not provide \textit{inference} for computed posterior quantities. Suppose we estimate the posterior mean $\mu = \mathbb{E}_{\bX\sim F}[g(\bX)]$ with $\hat{\mu}_n = n^{-1}\sum_{i=1}^n g(\bX_i^*)$, where $\{\bX_i^*\}_{i=1}^n$ are the Stein points. With these \textit{deterministic} samples, it is difficult to infer the error $|\mu - \hat{\mu}_n|$, since the deterministic error bounds for Stein points (see \cite{pmlr-v80-chen18f}) contain many constants which cannot be estimated in Bayesian problems. But the quantification of estimate uncertainty is paramount for expensive Bayesian problems: it provides a principled way to assess whether the posterior sample taken is large enough for validating scientific findings.
-
-% We propose a novel \textit{Randomized Stein points} (RSPs) method which addresses this need. This idea is inspired by randomized lattice rules (see \cite{l2002recent}), which randomizes lattices on $[0,1]^d$ by randomly shifting its first point. Here, instead of taking the first sample $\bX_1^*$ at the \textit{mode} of $F$, we select this point  \textit{randomly} from $F$ (e.g., after an initial MCMC burn-in). Subsequent samples $\bX_2^*, \bX_3^*, \cdots$ are then obtained via sequential optimization of $D(\{\bX_i\}_{i=1}^n, F)$, similar to the original Stein points. This random initialization for RSPs allows for probabilistic inference on error $|\mu - \hat{\mu}_n|$. Since the samples $\{\bX_i^*\}_{i=1}^n$ are now \textit{random}, one can now apply probabilistic confidence intervals used for standard MCMC samplers (e.g., \cite{atchade2016markov,rosenthal2017simple}). \cref{fig:rsp} compares the performance of RSPs with two popular MCMC samplers: Random-Walk Metropolis (RWM, \cite{metropolis1953equation}) and the Metropolis-Adjusted Langevin Algorithm (MALA, \cite{roberts1996exponential}), for a simple 1-d mixture normal distribution $F$. The left plot shows the effective sample size (ESS, a measure of sample quality \cite{GelEtal13}) of $n=300$ samples, and the right plot shows the length and coverage ratio of a simple 95\% confidence interval (CI) $\hat{\mu}_n \pm 1.96 \hat{\sigma} / \sqrt{\text{ESS}}$ for the mean of $F$, where $\hat{\sigma}^2$ is the estimated variance of the integrand. We see that RSPs enjoy noticeably improved sample quality (higher ESS), which translates to more precise CIs (smaller CI length) and higher coverage ratios. This suggests the proposed RSPs indeed provide the improved sample efficiency and uncertainty quantification required for expensive Bayesian problems.
-
-% \begin{wrapfigure}{r}{0.45\textwidth}
-% 	\centering
-% 	\includegraphics[width = 0.45\textwidth] {ProgramsImages/rsp.png}
-% 	\caption{ESS (left) and CI length / coverage ratio (right) for $n=300$ samples using RMW, MALA and RSPs. Boxplots show the distribution of metrics over 100 simulation replications. \label{fig:rsp}}
-% 	\vspace{-0.6cm}
-% \end{wrapfigure}
-
-% We will tackle the following tasks to develop RSPs for efficient Bayesian learning in \QMCPy.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Theory.} [Years 1--3]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Given these promising results, we will investigate key theoretical properties for ESP sampling. A key property to establish is, given an error tolerance $\varepsilon$ for posterior approximation, what is the computational cost (i.e., the number of posterior evaluations $B$) required to achieve such a tolerance with ESPs. This provides a theoretical basis for comparison with existing samplers which ignore evaluation costs. Such rates will require a careful integration of cost complexity results for Monte Carlo \citep{Gil15a} with Bayesian non-parametrics theory \citep{hjort2010bayesian}. We will also explore the cost-efficiency of ESPs using a variety of probabilistic surrogate models, particularly models that can learn embedded low-dimensional structure for high-dimensional approximation, and models that can integrate prior scientific information (see papers by PI \SM \cite{chen2020function,zheng2021online,zhang2022gaussian} and \cite{ji2021graphical,ji2022multi,liyanage2022efficient}).
-
-\subsubsection{Randomization and Central Limit Theorems.} [Years 1--2] In \QMC, the \textit{randomization} of \LD sequences is an important emerging topic, providing a basis for probabilistic inference (e.g., confidence intervals) on integral estimands \citep{dick2013high}. Such randomization is particularly important in this expensive Bayesian setting, where a quantification of estimation uncertainty is desired given limited posterior evaluations. We will develop a randomized implementation of ESPs, where in addition to providing an efficient \LD sampling of the posterior, each marginal sample $\bT_n^*$ is \textit{random} and follows the desired posterior distribution. We will further prove a Central Limit Theorem, which characterizes the asymptotic distribution of integral estimators as $n \rightarrow \infty$. With this, we will develop confidence intervals for the proposed randomized ESPs (following \cite{rosenthal2017simple}), and use this to demonstrate the improved cost-efficiency of ESPs over existing MCMC samplers.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Implementation and Application.}
-We will demonstrate the usefulness of ESPs in a wide range of modern scientific problems involving expensive Bayesian inference. This includes our motivating heavy-ion application (see \cref{sec:motiv}), where the Bayesian inference of plasma properties from particle colliders requires costly forward runs (thousands of CPU hours) for each evaluation of the posterior. PI \SM has worked extensively in this area (see \cite{everett2021multisystem,everett2021phenomenological,everett2022role,ehlers2022bayesian,fan2022multi,liyanage2022efficient,kumar2022inclusive}) as a member of the JETSCAPE collaboration (discussed later in \cref{sec:jetscape}). We will further explore broader applications of ESPs in Bayesian sensor imaging, rocket engine design and astrophysics, for which the PIs have close ongoing collaborations. The proposed algorithms will be implemented on our open-source package \QMCPy (discussed later in \cref{sec:provingground}).
-
-
-% \SMNote{expand on novel developments} \textit{We will implement Stein points} in \QMCPy. PI \SM has worked on a variety of complex Bayesian modeling problems, from climatology \cite{mak2016regional} to aerospace engineering \cite{mak2018efficient,chang2019kernel,yeh2018common}, and we will explore the effectiveness of Stein points for such problems. We will also explore further extensions of Stein points for approximate Bayesian computation, a popular class of Bayesian methods for population genetics and epidemiology.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Adaptive Multifidelity Algorithms} \label{sec:performance}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -605,50 +528,10 @@ While we will extend our rigorous data-based stopping rules to multifidelity pro
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Big Data Subsampling} [\SM lead, \AO, \IJi, \KL{}] \label{sec:bigdata}
+\subsection{Big Data Subsampling} \label{sec:bigdata}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Motivation and Preliminary Results.}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Big data is ubiquitous with advances in technology and computing. In our \UAV application, the output of the numerical simulator can require terabytes of storage (see \cref{sec:background}). A key challenge is that learning algorithms need to be \textit{scalable} to extract useful information from such data for \textit{real-time} decisions, e.g., real-time engine control for \UAV flight. One strategy is to iteratively train the model on small batches of the data, typically sampled uniformly at random. This \textit{subsampling} scales up state-of-the-art machine learning algorithms, such as stochastic gradient descent (SGD, \cite{Bot2010}) and stochastic gradient boosting \cite{friedman2002stochastic}.
-
-\sloppypar Consider SGD, which minimizes the loss $L(\theta;\mathcal{T}) = N^{-1} \sum_{m=1}^N l(\theta;\bT_m)$ over model parameters $\theta \in \mathbb{R}^q$, where $\mathcal{T} = \{\bT_m\}_{m=1}^N \subset \mathbb{R}^d$ is the large training data. Standard gradient descent \cite{nocedal2006numerical} is impractical here, since they require evaluation of the full gradient $N^{-1} \sum_{m=1}^N \nabla_\theta l(\theta;\bT_m)$, which is very expensive with $N$ large. Mini-batch SGD \cite{Bot2010} approximates this via a subsample $\mathcal{T}_{s}^{[l]} \subset \mathcal{T}$ of size $n \ll N$, taken \IID and uniformly from $\mathcal{T}$. The descent steps are iterated until convergence:
-\begin{equation}\label{eq:sgdopt}
-\theta^{[l+1]} \leftarrow \theta^{[l]} - \zeta \Biggl( \frac{1}{n} \sum_{\bT \in \mathcal{T}_{s}^{[l]}} l(\theta;\bT)\Biggr) , \quad l = 1, 2, \ldots,
-\end{equation}
-where $\zeta$ is the gradient descent step size. Mini-batch SGD is widely used for scalable training of neural networks and deep learning models with big data \citep{srivastava2014dropout}.
-
-Mini-batch SGD, however, has a key limitation. Since gradients are estimated by \textit{random} subsampling, the solution sequence $(\theta^{[l]})_{l=1}^\infty$ converges to a \textit{noise ball} of radius $\mathcal{O}(n^{-1})$ around the global optimum $\theta^*$. For small subsample sizes $n$ (as necessitated from our cost-constrained setting), SGD can thus return estimates \textit{very far} from  $\theta^*$. Our solution is to choose an \LD dataset that well-represents the big data $\mathcal{X}$. This is known as ``data squashing'' (termed by \AO in \cite{owen2003data}), and encompasses work on leverage-score subsampling \cite{ma2015statistical}, coresets \cite{chan2006faster,bachem2017practical, huggins2016coresets}, experimental design \cite{wang2018optimal,wang2021optimal}, and work by PI \SM \cite{mak2018support,mak2018minimax,mak2017projected,krishna2019distributional}. \LD data squashing for SGD is a timely problem, but one largely unaddressed in the literature for complex non-linear models (see \LimThree).
-% Existing methods, however, do not apply directly for the problem of data squashing for SGD optimization.
-
-We propose a new data squashing method which makes use of \LD subsampling of big data $\mathcal{T}$ for accelerating SGD. The preliminary result below guarantees the \textit{existence} of such a subsample:
-\begin{theorem}
-Let $\mathcal{T} = \{\bT_m\}_{m=1}^N$ (the ``big data'') be any set of points on $[0,1]^d$, and suppose the feasible space $\Theta$ is convex. Further suppose $n \leq \sqrt{N}$ and the loss function $l$ is convex with mild regularity conditions. Then there exists a subsample $\mathcal{T}_s \subseteq \mathcal{T}$ of size $n$ which, when used within the SGD iterative updates \eqref{eq:sgdopt}, yields a solution sequence $(\theta^{[l]})_{l=1}^\infty$ converging to a noise ball of radius $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$ around the global optimum $\theta^*$.
-\label{thm:ldsgd}
-\end{theorem}
-\noindent This theorem guarantees that, under mild assumptions on the loss function $l$ (satisfied by a broad range of learning models), there exists an \LD subsample of the big data which, when used within SGD, converges a noise ball of radius $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$ around the desired solution $\theta^*$. Thus, with a carefully chosen \LD subsample, the proposed ``\LD-batch SGD'' can yield \textit{improved} optimization over standard mini-batch SGD, which converges to a \textit{larger} noise ball of radius $\mathcal{O}(n^{-1})$. Put another way, this suggests that \LD-batch SGD can yield comparable performance to mini-batch SGD with far fewer optimization iterations, thus allowing for \textit{large computational savings for big data analysis}. We will tackle the following tasks to flesh out a comprehensive methodological framework for \LD-batch SGD.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Optimization of LD Subsample.} [Years 1--2]
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-While the existence of an \LD subsample is promising, one challenge is in finding such a subset efficiently. We will find this via the following optimization approach. Define the so-called ``data kernel'' using the big data $\mathcal{T} = \{\bT_m\}_{m=1}^N$:
-\begin{equation}
-K_{\rm data}(\bx,\by) = \sum_{\bk \in \mathbb{Z}^d \setminus \mathbf{0}} \lambda_{\bk} \phi_{\bk}(\bx)\overline{\phi_{\bk}(\by)}, \quad \phi_{\bk}(\bx) = e^{2 \pi {\rm i} \bk^T\bx} - b_{\bk}, \quad b_{\bk} = \frac{1}{N} \sum_{m=1}^N e^{2 \pi {\rm i} \bk^T\bT_m}.
-\end{equation}
-where ${\rm i}$ is the imaginary number, and $\lambda_{\bk}=\prod_{j=1}^d \max(1,2\pi|k_j|)^{-2}$. Here, the coefficients $b_{\bk}$ can be efficiently computed via non-linear fast Fourier transform \citep{wahls2015fast}. The data kernel $K_{\rm data}$ has two nice properties. We can show that the subsample $\mathcal{X}_s$ minimizing the kernel discrepancy with $K_{\rm data}$ yields the improved rate in \cref{thm:ldsgd}. We can also show that, with all coefficients computed, this discrepancy can be evaluated in $\mathcal{O}(n^2)$ work, \textit{independent} of $N$ (the big data size). We will develop \textit{scalable algorithms to optimize this data discrepancy for \LD subsampling}, leveraging recent developments in accelerated gradient descent \citep{jin2018accelerated} and randomized algorithms \citep{mahoney2011randomized}.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Implementation and Application.}
-[Years 2--3] We will show the usefulness of the proposed \LD subsampling on a broad range of scientific applications. In particular, we will showcase its effectiveness on our \UAV application. The goal here is to train an \textit{efficient} predictive model that can be used for \textit{real-time} \UAV flight, facilitating engine control decisions within a timeframe of several milliseconds. The challenge is that such a model has to be trained using massive simulation data from computational fluid dynamics models. We will show our \LD subsampling approach can indeed facilitate this real-time control for \UAV flight. We will also provide specific \textit{implementations} of \LD-batch SGD for a broad range of popular learning models (e.g., regression, neural networks, kernel methods), with full documentation on \QMCPy (see \cref{sec:provingground}).
-
-% We will provide an efficient and streamlined implementation of \LD-batch SGD within \QMCPy. Given recent breakthroughs in high-performance and distributed computing, we will develop scalable algorithms which exploit such technologies for efficient \LD-batch subsampling. We will also provide specific \textit{implementations} of \LD-batch SGD for \textit{popular learning models} (e.g., regression, neural networks, kernel methods) on \QMCPy.
-
-% \cmtS{Discuss \UAV application with preliminary results, where we're trying to build emulators for real-time control via virtual engines (digital twins). We need these virtual engines (with emulators) to provide robust and real-time control in milliseconds. There are $n \approx 25,000$ data points for curve emulation, and we need to achieve this quickly. Some preliminary results.}
-
-
-% \textit{We will implement these existing methods} in \QMCPy, and explore their effectiveness in a suite of big data problems. There is little work on which data squashing procedure is most appropriate for SGD optimization. Our preliminary results show that a \LD subsample exists for \textit{any} big dataset $\mathcal{X} \subset \mathbb{R}^d$ that achieves a noise ball radius of $\mathcal{O}\{(\log n)^{3d+1}/n^2\}$. We will investigate this further and implement this in \QMCPy.
+The development of the LD subsampling method will proceed as proposed. We will explore its implementation in a broad range of test cases, but its application for real-time UAV flight may be deferred unless there is sufficient time and resources at the end of the project.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Distribution, Density and Quantile Estimation} \label{sec:distdensquant}
@@ -656,7 +539,7 @@ where ${\rm i}$ is the imaginary number, and $\lambda_{\bk}=\prod_{j=1}^d \max(1
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The exploration of the effectiveness of LD Sequences for these problems that are not integration/expectation problems will proceed, but not be as large in scope as originally proposed.  We will test on some industrial strength applications.
+The exploration of the effectiveness of LD Sequences for these important problems that are beyond computing integrals or expectations will proceed, but not as large in scope as originally proposed.  We will test our new methods on some industrial strength applications as originally proposed.
 
 
 
@@ -666,7 +549,7 @@ The exploration of the effectiveness of LD Sequences for these problems that are
 % \cmtS{``Broader Impacts and Implementation''? We can then discuss \QMCPy as an open-source vessel for disseminating the proposed framework, geared towards the goal of scientific progress \& engineering advancement, etc.}
 
 \subsection{Dissemination to the Broad Scientific Community.}
-Given the reduction in travel budget and budget to host visitors as recommended by the program director, our dissemination efforts may not be as effective as originally envisioned, however, we will use means to accomplish what we can with limited travel.
+Given the reduction in travel budget and the elimination of the budget to host visitors and pay for article processing charges, as recommended by the program director, our dissemination efforts may not be as effective as originally envisioned, however, we will use electronic communication to accomplish what we can with limited travel.
 
 
 
@@ -683,9 +566,9 @@ We will use online discussion groups along with some travel to grow the QMC comm
 % Educating and Mentoring Cross-Disciplinary Computational Researchers
 \subsection{Training the Next Generation of {\em Science-Based} Computational Researchers.}
 
-Given the reduction in student support, we will look for other opportunities not funded by this grant to leverage what this grant provides to train computational researchers.
+Given the reduction in student support, we will look for other opportunities not funded by this grant to leverage what this grant provides to train computational researchers.  We have retained support for a PhD student for three years.
 
-\subsection{Incorporating Diversity, Equity and Inclusion} We will look for collaborations with under-served groups outside what can now be funded by this grant, but we may not be able to fund as many summer students as orginally planned.  We may also request an REU supplement.
+\subsection{Incorporating Diversity, Equity and Inclusion} We will look for collaborations with under-served groups outside what can now be funded by this grant, but we may not be able to fund as many summer students as originally planned.  We may request an REU supplement.
 
 % % \subsection*{}
 % \subsection{Expanding the Scope of QMC Applications} \label{sec:scopeapplication}
